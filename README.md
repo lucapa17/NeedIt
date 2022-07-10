@@ -1,4 +1,4 @@
 # TesiLaurea
 
-uncle pear (zio peroni)
+uncle pear (zio peretta)
 #SIUUUUUUUUUM
