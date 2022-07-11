@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "540677045225",
+    "project_id": "tesilaurea-f0ef0",
+    "storage_bucket": "tesilaurea-f0ef0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540677045225:android:7a6278702e0affff82e978",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540677045225-221vr696lqq717gr2rp5imun3iq4o7t0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkYu3mrr2c2ueG2iMzc7ZSbeQGJ-QHiO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540677045225-221vr696lqq717gr2rp5imun3iq4o7t0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
