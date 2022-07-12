@@ -4,14 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.LoginActivity">
-
+    tools:context=".activities.RegistrationActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center">
 
+
+        <EditText
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_margin="15dp"
+            android:inputType="textPersonName"
+            android:hint="insert name...." />
+
+        <EditText
+            android:id="@+id/userSurname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_margin="15dp"
+            android:inputType="textPersonName"
+            android:hint="insert surname...." />
 
         <EditText
             android:id="@+id/userEmail"
@@ -31,21 +48,31 @@
             android:hint="insert password...."
             android:inputType="textPassword" />
 
-        <Button
-            android:id="@+id/buttonLogin"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Login" />
-
-        <TextView
-            android:id="@+id/switchToRegistration"
+        <EditText
+            android:id="@+id/userPassword2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:ems="10"
-            android:text="Aren't you registered yet? Sign up!"
+            android:hint="confirm password...."
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/buttonRegistration"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="Sign Up" />
+
+        <TextView
+            android:id="@+id/switchToLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:ems="10"
+            android:text="Are you already registered? Sign in!"
             android:textAlignment="center"/>
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

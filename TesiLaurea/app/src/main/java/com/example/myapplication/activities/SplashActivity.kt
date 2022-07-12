@@ -12,15 +12,17 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         // TODO: check if user logged or not
-        val firebaseWrapper : FireBaseWrapper = FireBaseWrapper()
+        val firebaseWrapper : FireBaseWrapper = FireBaseWrapper(this)
         if (!firebaseWrapper.isAuthenticated()) {
             //redirect to login/register activity
             val intent = Intent(this, LoginActivity::class.java)
+            this.startActivity(intent)
         }
-
-        //Start Main Activity
-        val intent = Intent(this, MainActivity::class.java)
-        this.startActivity(intent)
+        else{
+            //Start Main Activity
+            val intent = Intent(this, MainActivity::class.java)
+            this.startActivity(intent)
+        }
         finish()
     }
 }
