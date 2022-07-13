@@ -2,7 +2,6 @@ package com.example.myapplication.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Button
 import com.example.myapplication.R
 import android.content.Intent
@@ -10,7 +9,9 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.example.myapplication.models.FireBaseWrapper
+import com.example.myapplication.models.FirebaseAuthWrapper
+import com.example.myapplication.models.FirebaseDbWrapper
+import com.example.myapplication.models.User
 
 
 class RegistrationActivity : AppCompatActivity() {
@@ -32,8 +33,10 @@ class RegistrationActivity : AppCompatActivity() {
                 }
                 else{
                         if(password.text.toString() == confirm.text.toString()){
-                            val firebaseWrapper : FireBaseWrapper = FireBaseWrapper(v!!.context)
-                            firebaseWrapper.signUp(email.text.toString(), password.text.toString())
+
+                            val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(v!!.context)
+                            firebaseWrapper.signUp(email.text.toString(), password.text.toString(), name.text.toString(), surname.text.toString())
+
                         }
                         else
                             Toast.makeText(v!!.context, "Passwords mismatched", Toast.LENGTH_SHORT).show()

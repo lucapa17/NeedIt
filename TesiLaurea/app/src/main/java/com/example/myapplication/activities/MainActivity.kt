@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import com.example.myapplication.R
-import com.example.myapplication.models.FireBaseWrapper
+import com.example.myapplication.models.FirebaseAuthWrapper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         val buttonlogout : Button = findViewById(R.id.buttonLogOut)
         buttonlogout.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
-                val firebaseWrapper : FireBaseWrapper = FireBaseWrapper(v!!.context)
+                val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(v!!.context)
                 firebaseWrapper.logOut()
             }
 
