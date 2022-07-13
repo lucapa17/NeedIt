@@ -26,9 +26,12 @@ class FirebaseAuthWrapper(private val context: Context) {
     fun signUp(email: String, password: String, name : String, surname : String) {
         this.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val user : User = User(name, surname, email)
-                    val firebasedbWrapper : FirebaseDbWrapper = FirebaseDbWrapper(this.context)
+                    val user = User(name, surname, email)
+                    val firebasedbWrapper : FirebaseDbWrapper = FirebaseDbWrapper(context)
                     firebasedbWrapper.writeDbUser(user)
+
+
+                    //fermati qui logSuccess()
 
                 } else {
                     // If sign in fails, display a message to the user.
@@ -71,7 +74,7 @@ class FirebaseDbWrapper(private val context: Context) {
         context.startActivity(intent)
     }
 
-    /*private fun getDb() : DatabaseReference?{
+    private fun getDb() : DatabaseReference?{
         val ref = Firebase.database.getReference(CHILD)
         val uid = FirebaseAuthWrapper(context).getUid()
 
@@ -79,25 +82,29 @@ class FirebaseDbWrapper(private val context: Context) {
             return null
 
         return ref.child(uid)
-    }*/
+    }
     // Write a message to the database
     fun writeDbUser(user : User) {
-        val ref = Firebase.database.getReference(CHILD)
-        val uid = FirebaseAuthWrapper(context).getUid()
+        val ref = getDb()
 
-        if(uid == null)
+        if(ref == null)
             return
-        
-        ref.child(uid).setValue(user).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                logSuccess()
-            } else {
+
+        ref.setValue(user).addOnCompleteListener {
+                if(it.isSuccessful)
+                    logSuccess()
+                else
+                    Toast.makeText(context, it.exception!!.message, Toast.LENGTH_SHORT).show()
+
+        }
+            .addOnFailureListener {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            }
                 // If sign in fails, display a message to the user.
-                Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
             }
         }
-    }
 
 
 
-}
+
+
