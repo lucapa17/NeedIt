@@ -34,7 +34,7 @@ class NewGroupActivity : AppCompatActivity() {
                         override fun onDataChangeCallback(snapshot: DataSnapshot) {
                             val user : User? = snapshot.getValue(User ::class.java)
                             val group : Group = Group(groupName.text.toString(), mutableListOf<Long>())
-                            FirebaseDbWrapper(v!!.context).createGroup(group, user!!)
+                            FirebaseDbWrapper(v.context).createGroup(group, user!!)
 
                         }
 

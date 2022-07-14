@@ -3,6 +3,7 @@ package com.example.myapplication.models
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.example.myapplication.activities.MainActivity
 import com.example.myapplication.activities.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -12,6 +13,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class FirebaseAuthWrapper(private val context: Context) {
     private var auth: FirebaseAuth = Firebase.auth
@@ -64,9 +66,12 @@ class FirebaseAuthWrapper(private val context: Context) {
 
 }
 
+
+
 class FirebaseDbWrapper(private val context: Context) {
 
     private var auth: FirebaseAuth = Firebase.auth
+    //var groupId : Long = -1
 
 
     private fun logSuccess() {
@@ -98,8 +103,8 @@ class FirebaseDbWrapper(private val context: Context) {
     }
 
     fun readDbUser(callback: FirebaseReadCallback) {
-        val ref = Firebase.database.getReference("users")
-        //val ref = getDb("users")
+        //val ref = Firebase.database.getReference("users")
+        val ref = getDb("users")
         if(ref == null)
             return
 
@@ -120,23 +125,25 @@ class FirebaseDbWrapper(private val context: Context) {
 
     fun createGroup(group : Group, user: User) {
 
-        val ref = getDb("groups")
+        //val ref = getDb("groups")
+        val ref = Firebase.database.getReference("groups")
         val uid = FirebaseAuthWrapper(context).getUid()
 
         if(ref == null)
             return
-
-        ref.setValue(group).addOnCompleteListener {
+        val groupId : Long = getGroupId(context)
+        ref.child(groupId.toString()).setValue(group).addOnCompleteListener {
             if(it.isSuccessful){
 
                 val ref = getDb("users")
-                user.groups!!.add(getGroupId(context))
+                user.groups!!.add(groupId)
                 if (ref != null) {
                     ref.setValue(user)
                 }
 
-                //TODO : redirect to group activity
-                logSuccess()
+
+                val intent : Intent = Intent(this.context, MainActivity::class.java)
+                context.startActivity(intent)
             }
 
             else
@@ -145,15 +152,23 @@ class FirebaseDbWrapper(private val context: Context) {
     }
 
     fun getGroupId (context: Context) : Long {
-        var groupId : Long = -1
+        var groupId : Long = 0
         readDbGroup(object : FirebaseDbWrapper.Companion.FirebaseReadCallback{
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                groupId = snapshot.key!!.toLong()
+                //groupId = snapshot.key!!.toLong()
+                var max : Long = 0
+                for(child in snapshot.children){
+                    if(child.key!!.toLong() > max) {
+                        max = child.key!!.toLong()
+                    }
+                }
+                groupId = max+1
             }
 
             override fun onCancelledCallback(error: DatabaseError) {
             }
         })
+
         return groupId
     }
 
