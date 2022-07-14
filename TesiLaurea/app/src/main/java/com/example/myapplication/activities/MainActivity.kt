@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -20,6 +21,27 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
+
+
+        val buttonprofile : Button = findViewById(R.id.buttonProfile)
+        buttonprofile.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(v!!.context, ProfileActivity::class.java)
+                v.context.startActivity(intent)
+            }
+
+        })
+
+        val buttongroup : Button = findViewById(R.id.buttonNewGroup)
+        buttongroup.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(v!!.context, NewGroupActivity::class.java)
+                v.context.startActivity(intent)
+            }
+
+        })
+
     }
 
 
