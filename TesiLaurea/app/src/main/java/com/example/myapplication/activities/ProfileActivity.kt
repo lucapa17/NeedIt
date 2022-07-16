@@ -21,7 +21,6 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
         var user : User? =null
-        /*
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 user= getUser(this@ProfileActivity)
@@ -35,7 +34,6 @@ class ProfileActivity : AppCompatActivity() {
                 }
             }
         }
-        */
         /*
         GlobalScope.launch {
             user= getUser(this@ProfileActivity)
