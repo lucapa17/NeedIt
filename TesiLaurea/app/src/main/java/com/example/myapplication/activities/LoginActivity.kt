@@ -9,7 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.example.myapplication.R
-import com.example.myapplication.models.FireBaseWrapper
+import com.example.myapplication.models.FirebaseAuthWrapper
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,12 +20,11 @@ class LoginActivity : AppCompatActivity() {
             override fun onClick(v : View?) {
                 val email : EditText = findViewById(R.id.userEmail)
                 val password : EditText = findViewById(R.id.userPassword)
-
                 if(email.text.toString().isEmpty() || password.text.toString().isEmpty()) {
                     Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
                 }
                 else {
-                    val firebaseWrapper : FireBaseWrapper = FireBaseWrapper(v!!.context)
+                    val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(v!!.context)
                     firebaseWrapper.signIn(email.text.toString(), password.text.toString())
                 }
             }

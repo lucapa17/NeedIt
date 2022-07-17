@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "540677045225",
-    "project_id": "tesilaurea-f0ef0",
-    "storage_bucket": "tesilaurea-f0ef0.appspot.com"
+    "project_number": "597023864745",
+    "firebase_url": "https://tesilaurea-9c59a-default-rtdb.firebaseio.com",
+    "project_id": "tesilaurea-9c59a",
+    "storage_bucket": "tesilaurea-9c59a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:540677045225:android:7a6278702e0affff82e978",
+        "mobilesdk_app_id": "1:597023864745:android:b618837779b129685b76b8",
         "android_client_info": {
           "package_name": "com.example.myapplication"
         }
       },
       "oauth_client": [
         {
-          "client_id": "540677045225-221vr696lqq717gr2rp5imun3iq4o7t0.apps.googleusercontent.com",
+          "client_id": "597023864745-pi070m2kec5m9vg8j594niunqp823ar5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCkYu3mrr2c2ueG2iMzc7ZSbeQGJ-QHiO8"
+          "current_key": "AIzaSyCkuQTJO0xMUHe_0p7KhGY-sq0lHppUJkY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "540677045225-221vr696lqq717gr2rp5imun3iq4o7t0.apps.googleusercontent.com",
+              "client_id": "597023864745-pi070m2kec5m9vg8j594niunqp823ar5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
