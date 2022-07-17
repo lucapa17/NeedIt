@@ -33,10 +33,8 @@ class RegistrationActivity : AppCompatActivity() {
                 }
                 else{
                         if(password.text.toString() == confirm.text.toString()){
-
                             val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(v!!.context)
                             firebaseWrapper.signUp(email.text.toString(), password.text.toString(), name.text.toString(), surname.text.toString())
-
                         }
                         else
                             Toast.makeText(v!!.context, "Passwords mismatched", Toast.LENGTH_SHORT).show()

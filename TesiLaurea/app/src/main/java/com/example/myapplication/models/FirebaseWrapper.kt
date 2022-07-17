@@ -1,5 +1,6 @@
 package com.example.myapplication.models
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -37,7 +38,7 @@ class FirebaseAuthWrapper(private val context: Context) {
         this.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = User(name, surname, email, mutableListOf())
-                    FirebaseDbWrapper(context).writeUser(user)
+                    FirebaseDbWrapper(context).registerUser(user)
                 }
                 else {
                     // If sign in fails, display a message to the user.
@@ -67,7 +68,6 @@ class FirebaseAuthWrapper(private val context: Context) {
 }
 
 fun getUser(context: Context): User {
-    val uid = FirebaseAuthWrapper(context).getUid()
     val lock = ReentrantLock()
     val condition = lock.newCondition()
     var user: User? = null
@@ -75,14 +75,12 @@ fun getUser(context: Context): User {
         FirebaseDbWrapper(context).readDbUser(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                Log.d("onDataChangeCallback", "invoked")
                 user = snapshot.getValue(User::class.java)
                 lock.withLock {
                     condition.signal()
                 }
             }
             override fun onCancelledCallback(error: DatabaseError) {
-                Log.d("onCancelledCallback", "invoked")
             }
 
         })
@@ -96,64 +94,33 @@ fun getUser(context: Context): User {
 
 
 fun createGroup(group : Group, groupId : Long, context: Context) {
-    Log.d(TAG,"AAA Now we want to create the group " )
-    val uid = FirebaseAuthWrapper(context).getUid()
-    Log.d(TAG,"AAA uid :" + uid )
-
-    Log.d(TAG,"AAA Now we want to know current user")
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var user: User? = null
-    /*GlobalScope.launch {
-        Log.d(TAG,"AAA we are inside the Global Scope" )
-        user = getUser(context)
-        Log.d(TAG,"AAA User: " +user!!.name)
-        lock.withLock {
-            condition.signal()
-        }
-    }
-    lock.withLock {
-        condition.await()
-    }
-    Log.d(TAG,"AAA Out of Global Scope")
-
-     */
-    user = getUser(context)
-    Log.d(TAG,"AAA User: " +user.name)
+    val user : User = getUser(context)
     if (user.groups == null) {
         user.groups = mutableListOf(groupId)
     } else {
         user.groups!!.add(groupId)
     }
-    Log.d(TAG,"AAA User groups: " +user.groups)
-    Log.d(TAG,"AAA Modify User..")
-    FirebaseDbWrapper(context).writeUser(user)
-    Log.d(TAG,"AAA Create Group...")
+    val uid = FirebaseAuthWrapper(context).getUid()
+    Firebase.database.getReference("users").child(uid!!).setValue(user)
     Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
-    Log.d(TAG,"AAA Group created")
 }
 
 fun getGroupId (context: Context) : Long {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
     var groupId: Long = 0
-    Log.d(TAG,"AAA we are entering the GlobalScope" )
     GlobalScope.launch {
-        Log.d(TAG,"AAA we are inside the Global Scope" )
         FirebaseDbWrapper(context).readDbGroup(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                Log.d(TAG,"AAA we are inside the snapshot " + groupId)
-                Log.d(TAG,"AAA snapshot children " + snapshot.children)
                 val children = snapshot.children
                 for(child in children){
-                    Log.d(TAG,"AAA we are inside the cicle for " + groupId)
                     if(child.key!!.toLong() > groupId) {
                         groupId = child.key!!.toLong()
                     }
                 }
-                Log.d(TAG,"AAA max groupId " + groupId)
-
                 lock.withLock {
                     condition.signal()
                 }
@@ -168,30 +135,34 @@ fun getGroupId (context: Context) : Long {
         condition.await()
     }
     groupId++
-    Log.d(TAG,"AAA final groupId " + groupId)
     return groupId
 }
 
 
 
 class FirebaseDbWrapper(private val context: Context) {
-    private val TAG = FirebaseDbWrapper::class.simpleName.toString()
     private val uid = FirebaseAuthWrapper(context).getUid()
-    val ref = Firebase.database.reference
-    val ref1 = Firebase.database.reference
 
-    fun readDbData(callback: FirebaseReadCallback) {
-        ref.addValueEventListener(FirebaseReadListener(callback))
-    }
-
-    fun writeUser(user: User) {
-        ref.child("users").child(uid!!).setValue(user).addOnCompleteListener {
+    fun registerUser(user: User) {
+        Firebase.database.getReference("users").child(uid!!).setValue(user).addOnCompleteListener {
             if (it.isSuccessful) {
                 val intent: Intent = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
             } else
                 Toast.makeText(context, it.exception!!.message, Toast.LENGTH_SHORT).show()
         }
+    }
+
+
+    fun readDbUser(callback: FirebaseReadCallback) {
+        val ref = Firebase.database.getReference("users").child(uid!!)
+        ref.addValueEventListener(FirebaseReadListener(callback))
+
+    }
+    fun readDbGroup(callback: FirebaseReadCallback) {
+        val ref = Firebase.database.getReference("groups")
+        ref.addValueEventListener(FirebaseReadListener(callback))
+
     }
 
     companion object {
@@ -209,36 +180,6 @@ class FirebaseDbWrapper(private val context: Context) {
             fun onDataChangeCallback(snapshot: DataSnapshot)
             fun onCancelledCallback(error: DatabaseError)
         }
-    }
-
-    fun readDbUser(callback: FirebaseReadCallback) {
-        //val ref = Firebase.database.getReference("users")
-        val ref = getDb("users")
-        if(ref == null)
-            return
-
-        // Read from the database
-        ref.addValueEventListener(FirebaseReadListener(callback))
-
-    }
-    fun readDbGroup(callback: FirebaseReadCallback) {
-        val ref = Firebase.database.getReference("groups")
-        //val ref = getDb("groups")
-
-        // Read from the database
-        ref.addValueEventListener(FirebaseReadListener(callback))
-
-    }
-
-
-
-    private fun getDb(CHILD : String) : DatabaseReference?{
-        val ref = Firebase.database.getReference(CHILD)
-        val uid = FirebaseAuthWrapper(context).getUid()
-
-        if(uid == null)
-            return null
-        return ref.child(uid)
     }
 }
 

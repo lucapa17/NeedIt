@@ -20,7 +20,6 @@ class LoginActivity : AppCompatActivity() {
             override fun onClick(v : View?) {
                 val email : EditText = findViewById(R.id.userEmail)
                 val password : EditText = findViewById(R.id.userPassword)
-
                 if(email.text.toString().isEmpty() || password.text.toString().isEmpty()) {
                     Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
                 }

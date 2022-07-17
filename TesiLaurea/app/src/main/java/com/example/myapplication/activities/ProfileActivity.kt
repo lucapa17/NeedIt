@@ -15,7 +15,6 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 class ProfileActivity : AppCompatActivity() {
-    private val TAG = ProfileActivity::class.simpleName.toString()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
