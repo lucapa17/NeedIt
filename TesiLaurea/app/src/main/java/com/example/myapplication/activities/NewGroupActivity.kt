@@ -32,10 +32,10 @@ class NewGroupActivity : AppCompatActivity() {
                     Toast.makeText(v!!.context, "Insert the group name!", Toast.LENGTH_SHORT).show()
                 }
                 else{
-                    val group : Group = Group(groupName.text.toString(), mutableListOf(uid!!))
                     GlobalScope.launch{
                         val groupId : Long = getGroupId(this@NewGroupActivity)
-                        createGroup(group, groupId, this@NewGroupActivity)
+                        val group : Group = Group(groupId, groupName.text.toString(), mutableListOf(uid!!))
+                        createGroup(group, this@NewGroupActivity)
                     }
                     val intent : Intent = Intent(this@NewGroupActivity, MainActivity::class.java)
                     this@NewGroupActivity.startActivity(intent)

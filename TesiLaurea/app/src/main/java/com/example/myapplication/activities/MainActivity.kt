@@ -43,6 +43,15 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        val buttonshowgroups : Button = findViewById(R.id.buttonShowGroups)
+        buttonshowgroups.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(v!!.context, ShowGroupsActivity::class.java)
+                v.context.startActivity(intent)
+            }
+
+        })
+
 
     }
 

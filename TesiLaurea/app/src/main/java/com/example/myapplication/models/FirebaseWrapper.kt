@@ -93,18 +93,18 @@ fun getUser(context: Context): User {
 }
 
 
-fun createGroup(group : Group, groupId : Long, context: Context) {
+fun createGroup(group : Group, context: Context) {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
     val user : User = getUser(context)
     if (user.groups == null) {
-        user.groups = mutableListOf(groupId)
+        user.groups = mutableListOf(group.groupId)
     } else {
-        user.groups!!.add(groupId)
+        user.groups!!.add(group.groupId)
     }
     val uid = FirebaseAuthWrapper(context).getUid()
     Firebase.database.getReference("users").child(uid!!).setValue(user)
-    Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
+    Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
 }
 
 fun getGroupId (context: Context) : Long {
@@ -139,6 +139,64 @@ fun getGroupId (context: Context) : Long {
 }
 
 
+fun getGroups (context: Context) : MutableList<Group> {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var list : MutableList<Group> = mutableListOf()
+    GlobalScope.launch {
+        val uid = FirebaseAuthWrapper(context).getUid()
+        FirebaseDbWrapper(context).readDbGroup(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                val children = snapshot.children
+                for(child in children){
+                    if(child.getValue(Group::class.java)!!.users!!.contains(uid!!))
+                        list.add(child.getValue(Group::class.java)!!)
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return list
+}
+
+
+fun getGroupById (context: Context, groupId : Long) : Group {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var group : Group = Group()
+    GlobalScope.launch {
+        val uid = FirebaseAuthWrapper(context).getUid()
+        FirebaseDbWrapper(context).readDbGroup(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                group = snapshot.child(groupId.toString()).getValue(Group::class.java)!!
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return group
+}
+
+
 
 class FirebaseDbWrapper(private val context: Context) {
     private val uid = FirebaseAuthWrapper(context).getUid()
@@ -164,6 +222,7 @@ class FirebaseDbWrapper(private val context: Context) {
         ref.addValueEventListener(FirebaseReadListener(callback))
 
     }
+
 
     companion object {
         class FirebaseReadListener(val callback: FirebaseReadCallback) : ValueEventListener {
