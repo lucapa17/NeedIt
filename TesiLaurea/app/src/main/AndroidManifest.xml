@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".activities.GroupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ShowGroupsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.gay"
+            android:exported="false" />
+        <activity
             android:name=".activities.NewGroupActivity"
             android:exported="false" />
         <activity
