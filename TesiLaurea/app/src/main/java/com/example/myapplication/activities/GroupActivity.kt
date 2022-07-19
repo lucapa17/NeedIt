@@ -11,6 +11,9 @@ import com.example.myapplication.R
 import com.example.myapplication.models.Group
 import com.example.myapplication.models.getGroupById
 import com.example.myapplication.models.getGroups
+import com.example.myapplication.models.getNicknameById
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 
 class GroupActivity: AppCompatActivity() {
@@ -26,12 +29,14 @@ class GroupActivity: AppCompatActivity() {
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val group : Group = getGroupById(this@GroupActivity, groupId)
+                val groupMembersList : MutableList<String> = mutableListOf()
+                for (user in group.users!!){
+                    val nickname : String = getNicknameById(this@GroupActivity, user)
+                    groupMembersList.add(nickname)
+                }
                 withContext(Dispatchers.Main) {
                     groupName.setText(group.nameGroup)
-                    val groupMembersList : MutableList<String> = mutableListOf()
-                    for (users in group.users!!){
-                        groupMembersList.add(users)
-                    }
+
                     val arrayAdapter : ArrayAdapter<String> = ArrayAdapter(this@GroupActivity, android.R.layout.simple_list_item_1, groupMembersList
                     )
                     listview.adapter = arrayAdapter

@@ -204,15 +204,19 @@ fun getGroups (context: Context) : MutableList<Group> {
 
 
 fun getGroupById (context: Context, groupId : Long) : Group {
+    Log.d(TAG, "AAA 6")
     val lock = ReentrantLock()
     val condition = lock.newCondition()
     var group : Group = Group()
     GlobalScope.launch {
-        val uid = FirebaseAuthWrapper(context).getUid()
+        Log.d(TAG, "AAA 7")
         FirebaseDbWrapper(context).readDbGroup(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                Log.d(TAG, "AAA 8")
                 group = snapshot.child(groupId.toString()).getValue(Group::class.java)!!
+                Log.d(TAG, "AAA 9")
+                Log.d(TAG, "problem: " + snapshot.child(groupId.toString()).getValue(Group::class.java)!!.nameGroup)
                 lock.withLock {
                     condition.signal()
                 }
@@ -293,6 +297,63 @@ fun getUserByNickname (context: Context, nickname: String ) : User {
     return user
 }
 
+/*fun getNicknameById (context: Context, id: String ) : String {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var nickname : String = ""
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbData(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                var children = snapshot.children
+                for(child in children) {
+                    if (child.key.equals(id)) {
+                        nickname = child.child("nickname").getValue(String::class.java)!!
+                        break
+                    }
+
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return nickname
+}
+
+ */
+fun getNicknameById (context: Context, id: String ) : String {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var nickname : String = ""
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbData(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                nickname = snapshot.child(id).child("nickname").getValue(String::class.java)!!
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return nickname
+}
 
 
 class FirebaseDbWrapper(private val context: Context) {

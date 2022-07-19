@@ -47,6 +47,8 @@ class AddMemberActivity : AppCompatActivity() {
                         }
                     }
                 }
+
+
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -58,26 +60,33 @@ class AddMemberActivity : AppCompatActivity() {
         button.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 if(!userExists)
-                    Toast.makeText(v!!.context, "user with this nickname does not existtttt", Toast.LENGTH_SHORT).show()
-                else if(nicknameEditText.text.toString().trim()==myNickname)
+                    nicknameEditText.error = "user with this nickname does not exist"
+                else if(nicknameEditText.text.toString().trim() == myNickname)
                     nicknameEditText.error = "this is your nickname"
                 else {
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
+                            Log.d(TAG, "AAA 1")
                             val group : Group = getGroupById(this@AddMemberActivity, groupId)
+                            Log.d(TAG, "AAA 2")
                             val id : String? = getUserIdByNickname(this@AddMemberActivity, nicknameEditText.text.toString().trim())
+                            Log.d(TAG, "AAA 3")
                             val user : User = getUserByNickname(this@AddMemberActivity, nicknameEditText.text.toString().trim())
+                            Log.d(TAG, "AAA 4")
+                            //val myId : String = FirebaseAuthWrapper(this@AddMemberActivity).getUid()!!
                             withContext(Dispatchers.Main) {
+                                Log.d(TAG, "AAA 5")
                                 if(id == null)
-                                    Toast.makeText(v!!.context, "user with this nickname does not exist", Toast.LENGTH_SHORT).show()
+                                    nicknameEditText.error = "user with this nickname does not exist"
+                                else if (group.users!!.contains(id))
+                                    nicknameEditText.error = "user is already a member of the group"
                                 else {
-                                    Log.d(TAG, "AAA id : "+id)
                                     group.users!!.add(id)
                                     user.groups!!.add(groupId)
-                                    //Log.d(TAG, "AAA user: "+Firebase.database.getReference("users").child(id).key)
                                     Firebase.database.getReference("users").child(id).setValue(user)
                                     Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
                                     val intent = Intent(this@AddMemberActivity, GroupActivity::class.java)
+                                    intent.putExtra("groupId", groupId)
                                     this@AddMemberActivity.startActivity(intent)
                                 }
                             }
