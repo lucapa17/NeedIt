@@ -27,9 +27,11 @@ class ProfileActivity : AppCompatActivity() {
                     val name : String = user?.name.toString()
                     val surname : String = user?.surname.toString()
                     val email : String = user?.email.toString()
+                    val nickname : String = user?.nickname.toString()
                     findViewById<TextView>(R.id.profile_name).setText(name)
                     findViewById<TextView>(R.id.profile_surname).setText(surname)
                     findViewById<TextView>(R.id.profile_email).setText(email)
+                    findViewById<TextView>(R.id.profile_nickname).setText(nickname)
                 }
             }
         }

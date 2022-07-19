@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -34,10 +35,10 @@ class FirebaseAuthWrapper(private val context: Context) {
         return auth.currentUser?.uid
     }
 
-    fun signUp(email: String, password: String, name : String, surname : String) {
+    fun signUp(email: String, password: String, name : String, surname : String, nickname : String) {
         this.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val user = User(name, surname, email, mutableListOf())
+                    val user = User(name, surname, email, nickname, mutableListOf())
                     FirebaseDbWrapper(context).registerUser(user)
                 }
                 else {
@@ -65,6 +66,38 @@ class FirebaseAuthWrapper(private val context: Context) {
         val intent : Intent = Intent(this.context, SplashActivity::class.java)
         context.startActivity(intent)
     }
+}
+
+
+fun nicknameIsAlreadyUsed(context: Context, nickname: String) : Boolean{
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var used: Boolean = false
+    GlobalScope.launch{
+        FirebaseDbWrapper(context).readDbData(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                var children = snapshot.children
+                for(child in children) {
+                    if (child.child("nickname").getValue(String::class.java).equals(nickname)) {
+                        used = true
+                        break
+                    }
+
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return used
 }
 
 fun getUser(context: Context): User {
@@ -196,6 +229,70 @@ fun getGroupById (context: Context, groupId : Long) : Group {
     return group
 }
 
+fun getUserIdByNickname (context: Context, nickname: String ) : String? {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var id : String? = null
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbData(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                var children = snapshot.children
+                for(child in children) {
+                    if (child.child("nickname").getValue(String::class.java).equals(nickname)) {
+                        id = child.key.toString()
+                        break
+                    }
+
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return id
+}
+
+fun getUserByNickname (context: Context, nickname: String ) : User {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var user : User = User()
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbData(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                var children = snapshot.children
+                for(child in children) {
+                    if (child.child("nickname").getValue(String::class.java).equals(nickname)) {
+                        user = child.getValue(User::class.java)!!
+                        break
+                    }
+
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return user
+}
+
 
 
 class FirebaseDbWrapper(private val context: Context) {
@@ -219,6 +316,11 @@ class FirebaseDbWrapper(private val context: Context) {
     }
     fun readDbGroup(callback: FirebaseReadCallback) {
         val ref = Firebase.database.getReference("groups")
+        ref.addValueEventListener(FirebaseReadListener(callback))
+
+    }
+    fun readDbData(callback: FirebaseReadCallback) {
+        val ref = Firebase.database.getReference("users")
         ref.addValueEventListener(FirebaseReadListener(callback))
 
     }

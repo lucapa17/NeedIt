@@ -31,6 +31,16 @@
             android:hint="insert surname...." />
 
         <EditText
+            android:id="@+id/userNickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_margin="15dp"
+            android:inputType="textPersonName"
+            android:hint="insert nickname...." />
+
+
+        <EditText
             android:id="@+id/userEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

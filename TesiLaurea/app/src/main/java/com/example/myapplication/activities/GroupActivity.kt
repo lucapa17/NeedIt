@@ -5,10 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
+import android.view.View
+import android.widget.*
 import com.example.myapplication.R
 import com.example.myapplication.models.Group
 import com.example.myapplication.models.getGroupById
@@ -41,5 +39,14 @@ class GroupActivity: AppCompatActivity() {
                 }
             }
         }
+        val buttonNewMember : Button = findViewById(R.id.buttonNewMember)
+        buttonNewMember.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(v!!.context, AddMemberActivity::class.java)
+                intent.putExtra("groupId", groupId)
+                v.context.startActivity(intent)
+            }
+
+        })
     }
 }

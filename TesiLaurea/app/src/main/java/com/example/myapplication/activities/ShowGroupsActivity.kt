@@ -33,15 +33,9 @@ class ShowGroupsActivity : AppCompatActivity() {
                     )
                     listview.adapter = arrayAdapter
                     listview.setOnItemClickListener { adapterView, view, i, l ->
-
                         val groupId : Long = groupList.get(i).groupId
-
                         val intent : Intent = Intent(this@ShowGroupsActivity, GroupActivity::class.java)
-
                         intent.putExtra("groupId", groupId)
-
-
-
                         this@ShowGroupsActivity.startActivity(intent)
                     }
                 }

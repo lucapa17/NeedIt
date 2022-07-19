@@ -20,12 +20,12 @@ class LoginActivity : AppCompatActivity() {
             override fun onClick(v : View?) {
                 val email : EditText = findViewById(R.id.userEmail)
                 val password : EditText = findViewById(R.id.userPassword)
-                if(email.text.toString().isEmpty() || password.text.toString().isEmpty()) {
+                if(email.text.toString().trim().isEmpty() || password.text.toString().trim().isEmpty()) {
                     Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
                 }
                 else {
                     val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(v!!.context)
-                    firebaseWrapper.signIn(email.text.toString(), password.text.toString())
+                    firebaseWrapper.signIn(email.text.toString().trim(), password.text.toString().trim())
                 }
             }
         })
