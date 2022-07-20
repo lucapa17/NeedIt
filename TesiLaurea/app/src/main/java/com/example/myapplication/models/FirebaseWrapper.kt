@@ -127,8 +127,6 @@ fun getUser(context: Context): User {
 
 
 fun createGroup(group : Group, context: Context) {
-    val lock = ReentrantLock()
-    val condition = lock.newCondition()
     val user : User = getUser(context)
     if (user.groups == null) {
         user.groups = mutableListOf(group.groupId)
@@ -169,6 +167,37 @@ fun getGroupId (context: Context) : Long {
     }
     groupId++
     return groupId
+}
+
+fun getRequestId (context: Context) : Long {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var requestId: Long = 0
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbRequest(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                val children = snapshot.children
+                for(child in children){
+                    if(child.key!!.toLong() > requestId) {
+                        requestId = child.key!!.toLong()
+                    }
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    requestId++
+    return requestId
 }
 
 
@@ -297,39 +326,7 @@ fun getUserByNickname (context: Context, nickname: String ) : User {
     return user
 }
 
-/*fun getNicknameById (context: Context, id: String ) : String {
-    val lock = ReentrantLock()
-    val condition = lock.newCondition()
-    var nickname : String = ""
-    GlobalScope.launch {
-        FirebaseDbWrapper(context).readDbData(object :
-            FirebaseDbWrapper.Companion.FirebaseReadCallback {
-            override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                var children = snapshot.children
-                for(child in children) {
-                    if (child.key.equals(id)) {
-                        nickname = child.child("nickname").getValue(String::class.java)!!
-                        break
-                    }
 
-                }
-                lock.withLock {
-                    condition.signal()
-                }
-            }
-
-            override fun onCancelledCallback(error: DatabaseError) {
-            }
-
-        })
-    }
-    lock.withLock {
-        condition.await()
-    }
-    return nickname
-}
-
- */
 fun getNicknameById (context: Context, id: String ) : String {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
@@ -377,6 +374,11 @@ class FirebaseDbWrapper(private val context: Context) {
     }
     fun readDbGroup(callback: FirebaseReadCallback) {
         val ref = Firebase.database.getReference("groups")
+        ref.addValueEventListener(FirebaseReadListener(callback))
+
+    }
+    fun readDbRequest(callback: FirebaseReadCallback) {
+        val ref = Firebase.database.getReference("requests")
         ref.addValueEventListener(FirebaseReadListener(callback))
 
     }

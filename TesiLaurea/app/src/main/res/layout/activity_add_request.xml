@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.GroupActivity">
+    tools:context=".activities.AddRequestActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,31 +12,35 @@
         android:orientation="vertical"
         android:gravity="center">
 
-        <TextView
-            android:id="@+id/groupName"
+
+        <EditText
+            android:id="@+id/nameRequest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:text="" />
-        <Button
-            android:id="@+id/buttonNewMember"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Add new Member" />
+            android:ems="10"
+            android:hint="insert a request...."
+            android:inputType="text" />
 
-        <Button
-            android:id="@+id/buttonNewRequest"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Add new Request" />
-
-        <ListView
-            android:id="@+id/membersList"
+        <EditText
+            android:id="@+id/commentRequest"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:ems="10"
+            android:hint="insert a comment (optional)"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/buttonAddRequest"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="Add Request" />
+
+
 
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

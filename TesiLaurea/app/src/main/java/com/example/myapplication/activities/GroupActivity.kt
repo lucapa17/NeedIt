@@ -8,10 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import com.example.myapplication.R
-import com.example.myapplication.models.Group
-import com.example.myapplication.models.getGroupById
-import com.example.myapplication.models.getGroups
-import com.example.myapplication.models.getNicknameById
+import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
@@ -23,7 +20,7 @@ class GroupActivity: AppCompatActivity() {
 
         val intent : Intent = getIntent()
         val groupId : Long = intent.getLongExtra("groupId", 0L)
-
+        val uid : String = FirebaseAuthWrapper(this).getUid()!!
         val listview = findViewById<ListView>(R.id.membersList)
         val groupName = findViewById<TextView>(R.id.groupName)
         CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -49,6 +46,18 @@ class GroupActivity: AppCompatActivity() {
             override fun onClick(v: View?) {
                 val intent = Intent(v!!.context, AddMemberActivity::class.java)
                 intent.putExtra("groupId", groupId)
+                v.context.startActivity(intent)
+            }
+
+        })
+
+        val buttonNewRequest : Button = findViewById(R.id.buttonNewRequest)
+        buttonNewRequest.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(v!!.context, AddRequestActivity::class.java)
+                intent.putExtra("groupId", groupId)
+                intent.putExtra("userId", uid)
+
                 v.context.startActivity(intent)
             }
 
