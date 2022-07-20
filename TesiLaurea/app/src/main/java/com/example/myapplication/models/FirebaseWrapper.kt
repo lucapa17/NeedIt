@@ -231,6 +231,35 @@ fun getGroups (context: Context) : MutableList<Group> {
     return list
 }
 
+fun getRequestsList (context: Context, groupId : Long) : MutableList<Request> {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var list : MutableList<Request> = mutableListOf()
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbRequest(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                val children = snapshot.children
+                for(child in children){
+                    if(child.getValue(Request::class.java)!!.groupId.equals(groupId))
+                        list.add(child.getValue(Request::class.java)!!)
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return list
+}
+
 
 fun getGroupById (context: Context, groupId : Long) : Group {
     Log.d(TAG, "AAA 6")

@@ -32,10 +32,40 @@
             android:layout_margin="15dp"
             android:text="Add new Request" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="List active Request"
+            android:textAlignment="center"/>
+        <ListView
+            android:id="@+id/activeRequestList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="List completed Request"
+            android:textAlignment="center" />
+        <ListView
+            android:id="@+id/completedRequestList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="Members"
+            android:textAlignment="center" />
+
+
         <ListView
             android:id="@+id/membersList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content" />
 
 
     </LinearLayout>

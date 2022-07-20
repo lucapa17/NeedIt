@@ -21,7 +21,33 @@ class GroupActivity: AppCompatActivity() {
         val intent : Intent = getIntent()
         val groupId : Long = intent.getLongExtra("groupId", 0L)
         val uid : String = FirebaseAuthWrapper(this).getUid()!!
-        val listview = findViewById<ListView>(R.id.membersList)
+
+        val listviewActiveRequest = findViewById<ListView>(R.id.activeRequestList)
+        val listviewCompletedRequest = findViewById<ListView>(R.id.completedRequestList)
+
+        CoroutineScope(Dispatchers.Main + Job()).launch {
+            withContext(Dispatchers.IO) {
+                val requestList : MutableList<Request> = getRequestsList(this@GroupActivity, groupId)
+                withContext(Dispatchers.Main) {
+                    val groupActiveList : MutableList<String> = mutableListOf()
+                    val groupCompletedList : MutableList<String> = mutableListOf()
+
+                    for (request in requestList){
+                        if(!request.isCompleted)
+                            groupActiveList.add(request.nameRequest)
+                        else
+                            groupCompletedList.add(request.nameRequest)
+                    }
+                    val arrayAdapterActive : ArrayAdapter<String> = ArrayAdapter(this@GroupActivity, android.R.layout.simple_list_item_1, groupActiveList)
+                    val arrayAdapterCompleted : ArrayAdapter<String> = ArrayAdapter(this@GroupActivity, android.R.layout.simple_list_item_1, groupCompletedList)
+
+                    listviewActiveRequest.adapter = arrayAdapterActive
+                    listviewCompletedRequest.adapter = arrayAdapterCompleted
+                }
+            }
+        }
+
+        val listviewMembers = findViewById<ListView>(R.id.membersList)
         val groupName = findViewById<TextView>(R.id.groupName)
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
@@ -36,7 +62,7 @@ class GroupActivity: AppCompatActivity() {
 
                     val arrayAdapter : ArrayAdapter<String> = ArrayAdapter(this@GroupActivity, android.R.layout.simple_list_item_1, groupMembersList
                     )
-                    listview.adapter = arrayAdapter
+                    listviewMembers.adapter = arrayAdapter
 
                 }
             }
