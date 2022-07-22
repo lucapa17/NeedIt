@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseError
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class NewGroupActivity : AppCompatActivity() {
+class NewGroupActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
