@@ -1,6 +1,7 @@
 package com.example.myapplication.activities
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -34,8 +35,12 @@ class ShowGroupsActivity : AppCompatActivity() {
                     listview.adapter = arrayAdapter
                     listview.setOnItemClickListener { adapterView, view, i, l ->
                         val groupId : Long = groupList.get(i).groupId
-                        val intent : Intent = Intent(this@ShowGroupsActivity, GroupActivity::class.java)
+                        val groupName : String = groupList.get(i).nameGroup
+                        Log.d(TAG, "ei: "+ groupName)
+                        val intent : Intent = Intent(this@ShowGroupsActivity, MainActivity2::class.java)
                         intent.putExtra("groupId", groupId)
+                        intent.putExtra("groupName", groupName)
+
                         this@ShowGroupsActivity.startActivity(intent)
                     }
                 }
