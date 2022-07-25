@@ -40,5 +40,12 @@
             android:layout_margin="15dp"
             android:text="Show Groups" />
 
+        <Button
+            android:id="@+id/buttonMain2"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="Main 2" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

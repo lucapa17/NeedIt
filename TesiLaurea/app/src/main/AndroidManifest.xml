@@ -10,9 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".activities.MainActivity2"
+            android:exported="false" />
+        <activity
             android:name=".activities.AddRequestActivity"
             android:exported="false"
-            android:label="New Request"/>
+            android:label="New Request" />
         <activity
             android:name=".activities.AddMemberActivity"
             android:exported="false" />

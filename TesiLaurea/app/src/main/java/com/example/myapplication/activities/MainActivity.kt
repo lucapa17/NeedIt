@@ -55,6 +55,15 @@ class MainActivity : BaseActivity() {
 
         })
 
+        val buttonmain2 : Button = findViewById(R.id.buttonMain2)
+        buttonmain2.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(v!!.context, MainActivity2::class.java)
+                v.context.startActivity(intent)
+            }
+
+        })
+
 
     }
 
