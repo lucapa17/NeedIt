@@ -31,10 +31,6 @@ class CompletedListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_completed_list, container, false)
 
-        //val intent : Intent = getIntent()
-        //val groupId : Long = intent.getLongExtra("groupId", 0L)
-        //val uid : String = FirebaseAuthWrapper(this).getUid()!!
-
 
         val listviewCompletedRequest : ListView = view.findViewById(R.id.completedRequestList)
         //val listviewCompletedRequest = findViewById<ListView>(R.id.completedRequestList)

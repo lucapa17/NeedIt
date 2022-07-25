@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
     <item android:id="@+id/nav_home"
         android:icon="@drawable/ic_baseline_home_24"
         android:title="home"
@@ -11,12 +12,9 @@
         android:icon="@drawable/ic_baseline_account_circle_24"
         android:title="profile"
         app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/nav_show_groups"
+    <item
+        android:id="@+id/nav_show_groups"
         android:icon="@drawable/ic_baseline_account_circle_24"
         android:title="show groups"
-        app:showAsAction="never"/>
-
-
-
+        app:showAsAction="never" />
 </menu>
