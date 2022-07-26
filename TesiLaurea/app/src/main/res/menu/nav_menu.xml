@@ -14,7 +14,10 @@
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/nav_show_groups"
-        android:icon="@drawable/ic_baseline_account_circle_24"
         android:title="show groups"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="logout"
         app:showAsAction="never" />
 </menu>

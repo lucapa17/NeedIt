@@ -16,11 +16,13 @@ import com.example.myapplication.adapter.ViewPagerAdapter
 import com.example.myapplication.databinding.ActivityMain2Binding
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
+import com.example.myapplication.models.FirebaseAuthWrapper
 
 class MainActivity2 : AppCompatActivity() {
 
     private var binding : ActivityMain2Binding? = null
     private var groupId : Long? = null
+    private var groupName : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMain2Binding.inflate(layoutInflater)
@@ -28,14 +30,14 @@ class MainActivity2 : AppCompatActivity() {
 
         val intent : Intent = getIntent()
         groupId = intent.getLongExtra("groupId", 0L)
-        val groupName : String? = intent.getStringExtra("groupName")
-        Log.d(TAG, "wwwwei: "+ groupName)
+        groupName = intent.getStringExtra("groupName")
+        Log.d(TAG, "wwwAAA: "+ groupName)
 
         val titleGroup = findViewById<TextView>(R.id.titleGroup)
         titleGroup.setText(groupName)
         val fragmentArrayList = ArrayList<Fragment>()
 
-        fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!))
+        fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!, FirebaseAuthWrapper(this).getUid()!!, groupName!!))
         fragmentArrayList.add(CompletedListFragment.newInstance(groupId!!))
 
         val adapter = ViewPagerAdapter(this, supportFragmentManager, fragmentArrayList)

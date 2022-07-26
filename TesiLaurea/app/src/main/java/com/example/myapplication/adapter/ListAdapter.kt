@@ -1,20 +1,27 @@
 package com.example.myapplication.adapter
 
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.activities.MainActivity2
 import com.example.myapplication.models.Request
+import com.example.myapplication.models.getGroupById
 import com.example.myapplication.models.getNicknameById
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class ListAdapter(val c:Context,val requestList:ArrayList<Request>):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
+class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupName: String):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
 
 
@@ -41,18 +48,33 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>):RecyclerView
                 when(it.itemId){
                     R.id.editText->{
                         val v = LayoutInflater.from(c).inflate(R.layout.add_request,null)
+                        val title = v.findViewById<TextView>(R.id.Title)
                         val name = v.findViewById<EditText>(R.id.nameRequest)
                         val comment = v.findViewById<EditText>(R.id.commentRequest)
+                        title.setText("Edit Request")
+                        name.setText(position.nameRequest)
+                        comment.setText(position.comment)
                         AlertDialog.Builder(c)
                             .setView(v)
                             .setPositiveButton("Ok"){
                                     dialog,_->
-                                position.nameRequest = name.text.toString()
-                                position.comment = comment.text.toString()
-                                notifyDataSetChanged()
-                                Toast.makeText(c,"User Information is Edited",Toast.LENGTH_SHORT).show()
+                                if(name.text.toString().trim().isEmpty()){
+                                    Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
+                                }
+                                else if (name.text.toString().trim().equals(position.nameRequest) && comment.text.toString().trim().equals(position.comment)){
+                                    Toast.makeText(c,"You changed nothing",Toast.LENGTH_SHORT).show()
+                                }
+                                else {
+                                    position.nameRequest = name.text.toString()
+                                    position.comment = comment.text.toString()
+                                    Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
+                                    val intent : Intent = Intent(c, MainActivity2::class.java)
+                                    intent.putExtra("groupId", position.groupId)
+                                    //Log.d(ContentValues.TAG,"www: "+groupName)
+                                    intent.putExtra("groupName", groupName)
+                                    c.startActivity(intent)
+                                }
                                 dialog.dismiss()
-
                             }
                             .setNegativeButton("Cancel"){
                                     dialog,_->
@@ -69,13 +91,42 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>):RecyclerView
                         AlertDialog.Builder(c)
                             .setTitle("Delete")
                             .setIcon(R.drawable.ic_warning)
-                            .setMessage("Are you sure delete this Information")
+                            .setMessage("Are you sure delete this Request?")
                             .setPositiveButton("Yes"){
                                     dialog,_->
-                                requestList.removeAt(adapterPosition)
-                                notifyDataSetChanged()
-                                Toast.makeText(c,"Deleted this Information",Toast.LENGTH_SHORT).show()
+                                Firebase.database.getReference("requests").child(position.Id.toString()).removeValue()
+                                val intent : Intent = Intent(c, MainActivity2::class.java)
+                                intent.putExtra("groupId", position.groupId)
+                                //Log.d(ContentValues.TAG,"www: "+groupName)
+                                intent.putExtra("groupName", groupName)
+                                c.startActivity(intent)
+
+                            }
+                            .setNegativeButton("No"){
+                                    dialog,_->
                                 dialog.dismiss()
+                            }
+                            .create()
+                            .show()
+
+                        true
+                    }
+                    R.id.complete->{
+                        /**set delete*/
+                        AlertDialog.Builder(c)
+                            .setTitle("Complete")
+                            .setIcon(R.drawable.ic_baseline_check_circle_24)
+                            .setMessage("Do you want to complete this request?")
+                            .setPositiveButton("Yes"){
+                                    dialog,_->
+                                position.isCompleted = true
+                                Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
+                                val intent : Intent = Intent(c, MainActivity2::class.java)
+                                intent.putExtra("groupId", position.groupId)
+                                //Log.d(ContentValues.TAG,"www: "+groupName)
+                                intent.putExtra("groupName", groupName)
+                                c.startActivity(intent)
+
                             }
                             .setNegativeButton("No"){
                                     dialog,_->
