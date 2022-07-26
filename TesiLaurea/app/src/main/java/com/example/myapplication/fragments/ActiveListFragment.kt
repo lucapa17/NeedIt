@@ -10,17 +10,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.ListView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
-import com.example.myapplication.activities.MainActivity2
 import com.example.myapplication.adapter.ListAdapter
-import com.example.myapplication.models.FirebaseAuthWrapper
 import com.example.myapplication.models.Request
 import com.example.myapplication.models.getRequestId
 import com.example.myapplication.models.getRequestsList
@@ -28,8 +24,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 
 class ActiveListFragment : Fragment() {
@@ -69,7 +63,7 @@ class ActiveListFragment : Fragment() {
                     addsBtn = view.findViewById(R.id.addingBtn)
 
                     /**set Adapter*/
-                    listAdapter = ListAdapter(requireContext(),groupActiveList, groupName!!)
+                    listAdapter = ListAdapter(requireContext(),groupActiveList, groupName!!, true)
                     /**setRecycler view Adapter*/
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
@@ -131,7 +125,7 @@ class ActiveListFragment : Fragment() {
                     val requestId : Long = getRequestId(requireContext())
                     request = Request(requestId, groupId!!, uid!!, namerequest, false, comment)
                     Firebase.database.getReference("requests").child(request.Id.toString()).setValue(request)
-                    val intent : Intent = Intent(requireContext(), MainActivity2::class.java)
+                    val intent : Intent = Intent(requireContext(), GroupActivity::class.java)
                     intent.putExtra("groupId", groupId)
                     Log.d(TAG,"www: "+groupName)
                     intent.putExtra("groupName", groupName)

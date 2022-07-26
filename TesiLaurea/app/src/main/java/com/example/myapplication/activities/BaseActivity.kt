@@ -29,8 +29,8 @@ open class BaseActivity : AppCompatActivity() {
                 this.startActivity(intent)
                 true
             }
-            com.example.myapplication.R.id.nav_show_groups -> {
-                val intent : Intent = Intent(this, ShowGroupsActivity::class.java)
+            com.example.myapplication.R.id.nav_new_group -> {
+                val intent : Intent = Intent(this, NewGroupActivity::class.java)
                 this.startActivity(intent)
                 true
             }

@@ -1,19 +1,16 @@
 package com.example.myapplication.adapter
 
 import android.app.AlertDialog
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.activities.MainActivity2
+import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.models.Request
-import com.example.myapplication.models.getGroupById
 import com.example.myapplication.models.getNicknameById
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -21,7 +18,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupName: String):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
+class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
 
 
@@ -43,7 +40,11 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
         private fun popupMenus(v:View) {
             val position = requestList[adapterPosition]
             val popupMenus = PopupMenu(c,v)
-            popupMenus.inflate(R.menu.options_menu)
+            if(active)
+                popupMenus.inflate(R.menu.options_menu)
+            else
+                popupMenus.inflate(R.menu.options_complete_menu)
+
             popupMenus.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.editText->{
@@ -68,7 +69,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                                     position.nameRequest = name.text.toString()
                                     position.comment = comment.text.toString()
                                     Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
-                                    val intent : Intent = Intent(c, MainActivity2::class.java)
+                                    val intent : Intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
                                     //Log.d(ContentValues.TAG,"www: "+groupName)
                                     intent.putExtra("groupName", groupName)
@@ -95,7 +96,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                             .setPositiveButton("Yes"){
                                     dialog,_->
                                 Firebase.database.getReference("requests").child(position.Id.toString()).removeValue()
-                                val intent : Intent = Intent(c, MainActivity2::class.java)
+                                val intent : Intent = Intent(c, GroupActivity::class.java)
                                 intent.putExtra("groupId", position.groupId)
                                 //Log.d(ContentValues.TAG,"www: "+groupName)
                                 intent.putExtra("groupName", groupName)
@@ -121,7 +122,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                                     dialog,_->
                                 position.isCompleted = true
                                 Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
-                                val intent : Intent = Intent(c, MainActivity2::class.java)
+                                val intent : Intent = Intent(c, GroupActivity::class.java)
                                 intent.putExtra("groupId", position.groupId)
                                 //Log.d(ContentValues.TAG,"www: "+groupName)
                                 intent.putExtra("groupName", groupName)
