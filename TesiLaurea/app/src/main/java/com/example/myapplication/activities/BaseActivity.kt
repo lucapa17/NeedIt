@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.models.FirebaseAuthWrapper
 
 
 open class BaseActivity : AppCompatActivity() {
@@ -28,11 +29,18 @@ open class BaseActivity : AppCompatActivity() {
                 this.startActivity(intent)
                 true
             }
-            com.example.myapplication.R.id.nav_show_groups -> {
-                val intent : Intent = Intent(this, ShowGroupsActivity::class.java)
+            com.example.myapplication.R.id.nav_new_group -> {
+                val intent : Intent = Intent(this, NewGroupActivity::class.java)
                 this.startActivity(intent)
                 true
             }
+            com.example.myapplication.R.id.nav_logout -> {
+                val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(this)
+                firebaseWrapper.logOut()
+                true
+            }
+
+
             else -> super.onOptionsItemSelected(item)
         }
     }

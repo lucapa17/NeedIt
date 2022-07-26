@@ -8,10 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import com.example.myapplication.R
 import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
@@ -87,6 +85,8 @@ class AddMemberActivity : AppCompatActivity() {
                                     Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
                                     val intent = Intent(this@AddMemberActivity, GroupActivity::class.java)
                                     intent.putExtra("groupId", groupId)
+                                    intent.putExtra("groupName", group.nameGroup)
+
                                     this@AddMemberActivity.startActivity(intent)
                                 }
                             }
@@ -96,10 +96,6 @@ class AddMemberActivity : AppCompatActivity() {
             }
         })
     }
-
-    /*override fun onBackPressed() {
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-    }*/
 
 
 }

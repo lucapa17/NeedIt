@@ -5,88 +5,78 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.example.myapplication.R
-import com.example.myapplication.models.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.*
+import com.example.myapplication.adapter.ViewPagerAdapter
+import com.example.myapplication.databinding.ActivityGroupBinding
+import com.example.myapplication.fragments.ActiveListFragment
+import com.example.myapplication.fragments.CompletedListFragment
+import com.example.myapplication.models.FirebaseAuthWrapper
 
-class GroupActivity: AppCompatActivity() {
+class GroupActivity : AppCompatActivity() {
+
+    private var binding : ActivityGroupBinding? = null
+    private var groupId : Long? = null
+    private var groupName : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group)
+        binding = ActivityGroupBinding.inflate(layoutInflater)
+        setContentView(binding!!.root)
 
         val intent : Intent = getIntent()
-        val groupId : Long = intent.getLongExtra("groupId", 0L)
-        val uid : String = FirebaseAuthWrapper(this).getUid()!!
+        groupId = intent.getLongExtra("groupId", 0L)
+        groupName = intent.getStringExtra("groupName")
+        Log.d(TAG, "wwwAAA: "+ groupName)
 
-        val listviewActiveRequest = findViewById<ListView>(R.id.activeRequestList)
-        val listviewCompletedRequest = findViewById<ListView>(R.id.completedRequestList)
+        val titleGroup = findViewById<TextView>(R.id.titleGroup)
+        titleGroup.setText(groupName)
+        val fragmentArrayList = ArrayList<Fragment>()
 
-        CoroutineScope(Dispatchers.Main + Job()).launch {
-            withContext(Dispatchers.IO) {
-                val requestList : MutableList<Request> = getRequestsList(this@GroupActivity, groupId)
-                withContext(Dispatchers.Main) {
-                    val groupActiveList : MutableList<String> = mutableListOf()
-                    val groupCompletedList : MutableList<String> = mutableListOf()
+        fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!, FirebaseAuthWrapper(this).getUid()!!, groupName!!))
+        fragmentArrayList.add(CompletedListFragment.newInstance(groupId!!,FirebaseAuthWrapper(this).getUid()!!, groupName!!))
 
-                    for (request in requestList){
-                        if(!request.isCompleted)
-                            groupActiveList.add(request.nameRequest)
-                        else
-                            groupCompletedList.add(request.nameRequest)
-                    }
-                    val arrayAdapterActive : ArrayAdapter<String> = ArrayAdapter(this@GroupActivity, android.R.layout.simple_list_item_1, groupActiveList)
-                    val arrayAdapterCompleted : ArrayAdapter<String> = ArrayAdapter(this@GroupActivity, android.R.layout.simple_list_item_1, groupCompletedList)
+        val adapter = ViewPagerAdapter(this, supportFragmentManager, fragmentArrayList)
+        binding!!.viewPager.adapter = adapter
+        binding!!.tabs.setupWithViewPager(binding!!.viewPager)
 
-                    listviewActiveRequest.adapter = arrayAdapterActive
-                    listviewCompletedRequest.adapter = arrayAdapterCompleted
-                }
-            }
-        }
-
-        val listviewMembers = findViewById<ListView>(R.id.membersList)
-        val groupName = findViewById<TextView>(R.id.groupName)
-        CoroutineScope(Dispatchers.Main + Job()).launch {
-            withContext(Dispatchers.IO) {
-                val group : Group = getGroupById(this@GroupActivity, groupId)
-                val groupMembersList : MutableList<String> = mutableListOf()
-                for (user in group.users!!){
-                    val nickname : String = getNicknameById(this@GroupActivity, user)
-                    groupMembersList.add(nickname)
-                }
-                withContext(Dispatchers.Main) {
-                    groupName.setText(group.nameGroup)
-
-                    val arrayAdapter : ArrayAdapter<String> = ArrayAdapter(this@GroupActivity, android.R.layout.simple_list_item_1, groupMembersList
-                    )
-                    listviewMembers.adapter = arrayAdapter
-
-                }
-            }
-        }
-        val buttonNewMember : Button = findViewById(R.id.buttonNewMember)
-        buttonNewMember.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                val intent = Intent(v!!.context, AddMemberActivity::class.java)
-                intent.putExtra("groupId", groupId)
-                v.context.startActivity(intent)
-            }
-
-        })
-
-        val buttonNewRequest : Button = findViewById(R.id.buttonNewRequest)
-        buttonNewRequest.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                val intent = Intent(v!!.context, AddRequestActivity::class.java)
-                intent.putExtra("groupId", groupId)
-                intent.putExtra("userId", uid)
-
-                v.context.startActivity(intent)
-            }
-
-        })
     }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(com.example.myapplication.R.menu.nav_menu_group, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            com.example.myapplication.R.id.nav_home -> {
+                val intent : Intent = Intent(this, MainActivity::class.java)
+                this.startActivity(intent)
+                true
+            }
+            com.example.myapplication.R.id.nav_add_member -> {
+                val intent : Intent = Intent(this, AddMemberActivity::class.java)
+                intent.putExtra("groupId", groupId)
+
+                this.startActivity(intent)
+                true
+            }
+            com.example.myapplication.R.id.nav_show_members -> {
+                val intent : Intent = Intent(this, InfoGroupActivity::class.java)
+                intent.putExtra("groupId", groupId)
+                this.startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
+
 }

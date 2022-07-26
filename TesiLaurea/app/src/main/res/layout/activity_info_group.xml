@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.AddRequestActivity">
+    tools:context=".activities.InfoGroupActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,35 +12,25 @@
         android:orientation="vertical"
         android:gravity="center">
 
-
-        <EditText
-            android:id="@+id/nameRequest"
+        <TextView
+            android:id="@+id/groupName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:ems="10"
-            android:hint="insert a request...."
-            android:inputType="text" />
+            android:text="" />
 
-        <EditText
-            android:id="@+id/commentRequest"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:ems="10"
-            android:hint="insert a comment (optional)"
-            android:inputType="text" />
+            android:text="Members"
+            android:textAlignment="center" />
 
-        <Button
-            android:id="@+id/buttonAddRequest"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Add Request" />
-
-
+        <ListView
+            android:id="@+id/membersList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

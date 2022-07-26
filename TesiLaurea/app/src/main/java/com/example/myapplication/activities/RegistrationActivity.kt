@@ -72,4 +72,9 @@ class RegistrationActivity : AppCompatActivity() {
         })
     }
 
+    override fun onBackPressed() {
+        finishAffinity()
+        //startActivity(Intent(this, MainActivity::class.java))
+    }
+
 }

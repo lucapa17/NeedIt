@@ -18,18 +18,34 @@
         <entry key="..\:/Users/giaco/AndroidStudioProjects/TesiLaurea/TesiLaurea/app/src/main/res/layout/fragment_login.xml" value="0.1984375" />
         <entry key="..\:/Users/giaco/AndroidStudioProjects/TesiLaurea/TesiLaurea/app/src/main/res/layout/fragment_registration.xml" value="0.184375" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.1" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_more.xml" value="0.208" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_person_add_24.xml" value="0.208" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_delete.xml" value="0.208" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_edit.xml" value="0.208" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_warning.xml" value="0.208" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/shape_background.xml" value="0.208" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_add_member.xml" value="0.32447916666666665" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_add_request.xml" value="0.35" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_group.xml" value="0.26253687315634217" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_login.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_main.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_main2.xml" value="0.3411458333333333" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_new_group.xml" value="0.358695652173913" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_profile.xml" value="0.2368659420289855" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_registration.xml" value="0.32447916666666665" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_show_groups.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/add_request.xml" value="0.27049180327868855" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/fragment_active_list.xml" value="0.358695652173913" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/fragment_blank.xml" value="0.358695652173913" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/fragment_completed_list.xml" value="0.14114583333333333" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/list_requests.xml" value="0.358695652173913" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/menu.xml" value="0.3651041666666667" />
-        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/nav_menu.xml" value="0.1" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/menu_prova.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/nav_menu.xml" value="0.33" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/nav_menu2.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/nav_menu_group.xml" value="0.3640625" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/options_complete_menu.xml" value="0.3651041666666667" />
+        <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/options_menu.xml" value="0.273828125" />
       </map>
     </option>
   </component>
