@@ -1,6 +1,7 @@
 package com.example.myapplication.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,7 +11,9 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
+import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.adapter.ListAdapter
 import com.example.myapplication.models.Request
 import com.example.myapplication.models.getRequestsList
@@ -69,7 +72,13 @@ class CompletedListFragment : Fragment() {
             }
         }
 
-
+        val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
+        mySwipeRefreshLayout.setOnRefreshListener {
+            val intent : Intent = Intent(requireContext(), GroupActivity::class.java)
+            intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
+            requireContext().startActivity(intent)
+        }
         return view
 
     }

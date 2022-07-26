@@ -6,14 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.adapter.ListAdapter
@@ -87,8 +91,19 @@ class ActiveListFragment : Fragment() {
 
         /*
 
-
+        /*
+ * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
+ * performs a swipe-to-refresh gesture.
  */
+}
+ */    //val button : Button = findViewById(R.id.buttonAddNewMember)
+        val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
+        mySwipeRefreshLayout.setOnRefreshListener {
+            val intent : Intent = Intent(requireContext(), GroupActivity::class.java)
+            intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
+            requireContext().startActivity(intent)
+        }
         return view
 
     }
