@@ -36,9 +36,10 @@ class NewGroupActivity : BaseActivity() {
                         val groupId : Long = getGroupId(this@NewGroupActivity)
                         val group : Group = Group(groupId, groupName.text.toString(), mutableListOf(uid!!))
                         createGroup(group, this@NewGroupActivity)
+                        val intent : Intent = Intent(this@NewGroupActivity, MainActivity::class.java)
+                        this@NewGroupActivity.startActivity(intent)
                     }
-                    val intent : Intent = Intent(this@NewGroupActivity, MainActivity::class.java)
-                    this@NewGroupActivity.startActivity(intent)
+
                 }
 
             }

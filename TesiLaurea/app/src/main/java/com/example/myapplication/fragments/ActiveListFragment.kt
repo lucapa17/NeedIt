@@ -87,16 +87,7 @@ class ActiveListFragment : Fragment() {
                 }
             }
         }
-        /**set List*/
 
-        /*
-
-        /*
- * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
- * performs a swipe-to-refresh gesture.
- */
-}
- */    //val button : Button = findViewById(R.id.buttonAddNewMember)
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
             val intent : Intent = Intent(requireContext(), GroupActivity::class.java)
