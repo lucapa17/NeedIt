@@ -381,6 +381,30 @@ fun getNicknameById (context: Context, id: String ) : String {
     return nickname
 }
 
+fun getUserById (context: Context, id: String) : User {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var user : User = User()
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbData(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                user = snapshot.child(id).getValue(User::class.java)!!
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return user
+}
 
 class FirebaseDbWrapper(private val context: Context) {
     private val uid = FirebaseAuthWrapper(context).getUid()
