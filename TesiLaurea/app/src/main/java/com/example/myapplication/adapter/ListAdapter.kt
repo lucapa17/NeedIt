@@ -10,12 +10,14 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
+import com.example.myapplication.models.FirebaseAuthWrapper
 import com.example.myapplication.models.Request
 import com.example.myapplication.models.getNicknameById
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 
 
 class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
@@ -28,11 +30,19 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
         var userName:TextView
         var commentRequest:TextView
         var optionsMenu:ImageView
+        var completedBy:TextView
+        var date:TextView
+        var time:TextView
+
+
 
         init {
             nameRequest = v.findViewById<TextView>(R.id.nameRequest)
+            completedBy = v.findViewById<TextView>(R.id.completedBy)
             userName = v.findViewById<TextView>(R.id.userName)
             commentRequest = v.findViewById<TextView>(R.id.commentRequest)
+            date = v.findViewById<TextView>(R.id.Date)
+            time = v.findViewById<TextView>(R.id.Time)
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
         }
@@ -121,6 +131,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                             .setPositiveButton("Yes"){
                                     dialog,_->
                                 position.isCompleted = true
+                                position.completedById = FirebaseAuthWrapper(c).getUid()!!
                                 Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
                                 val intent : Intent = Intent(c, GroupActivity::class.java)
                                 intent.putExtra("groupId", position.groupId)
@@ -159,11 +170,29 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val newList = requestList[position]
-        holder.commentRequest.text = newList.comment
+        if(newList.comment!!.isEmpty())
+            holder.commentRequest.setVisibility(View.GONE)
+        else
+            holder.commentRequest.text = "Comment: ${newList.comment}"
         holder.nameRequest.text = newList.nameRequest
+        if(!newList.isCompleted)
+            holder.completedBy.setVisibility(View.GONE)
+
+        val sdf = SimpleDateFormat("dd/MM/yy")
+        val day = sdf.format(newList.date)
+        val sdf2 = SimpleDateFormat("HH:mm")
+        val time = sdf2.format(newList.date)
+        holder.date.text = day
+        holder.time.text = time
+
         GlobalScope.launch {
             val userName : String = getNicknameById(c,newList.userId )
-            holder.userName.text = userName
+            holder.userName.text = "Request by: ${userName}"
+            if(newList.isCompleted) {
+                val completedByName : String = getNicknameById(c,newList.completedById )
+                holder.completedBy.text = "Completed by: ${completedByName}"
+
+            }
         }
 
     }

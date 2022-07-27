@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_margin="16dp"
+        android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
@@ -20,7 +20,7 @@
             android:textSize="19sp"
             android:textColor="@color/white"
             android:background="@color/purple_500"
-            android:padding="10dp"
+            android:padding="5dp"
             android:elevation="15dp"
             android:layout_gravity="center"
             android:gravity="center"
@@ -30,7 +30,7 @@
             android:id="@+id/nameRequest"
             android:hint="insert a request...."
             android:inputType="text"
-            android:textColor="@color/purple_500"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             android:background="@drawable/shape_background"
@@ -44,8 +44,8 @@
         <EditText
             android:id="@+id/commentRequest"
             android:hint="insert a comment (optional)"
-            android:inputType="text"
-            android:textColor="@color/purple_500"
+            android:inputType="textMultiLine"
+            android:textColor="@color/black"
             android:background="@drawable/shape_background"
             android:padding="15dp"
             android:textSize="18sp"

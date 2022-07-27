@@ -21,6 +21,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.adapter.ListAdapter
+import com.example.myapplication.models.FirebaseAuthWrapper
 import com.example.myapplication.models.Request
 import com.example.myapplication.models.getRequestId
 import com.example.myapplication.models.getRequestsList
@@ -28,6 +29,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ActiveListFragment : Fragment() {
@@ -129,7 +132,8 @@ class ActiveListFragment : Fragment() {
                 var request : Request = Request()
                 GlobalScope.launch {
                     val requestId : Long = getRequestId(requireContext())
-                    request = Request(requestId, groupId!!, uid!!, namerequest, false, comment)
+                    val currentDate : Date =  java.util.Calendar.getInstance().time
+                    request = Request(requestId, groupId!!, uid!!, namerequest, false, comment, "", currentDate)
                     Firebase.database.getReference("requests").child(request.Id.toString()).setValue(request)
                     val intent : Intent = Intent(requireContext(), GroupActivity::class.java)
                     intent.putExtra("groupId", groupId)
