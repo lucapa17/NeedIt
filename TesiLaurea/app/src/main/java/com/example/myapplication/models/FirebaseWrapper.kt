@@ -201,6 +201,38 @@ fun getRequestId (context: Context) : Long {
 }
 
 
+fun getNotificationId (context: Context) : Long {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var notificationId: Long = 0
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbNotification(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                val children = snapshot.children
+                for(child in children){
+                    if(child.key!!.toLong() > notificationId) {
+                        notificationId = child.key!!.toLong()
+                    }
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    notificationId++
+    return notificationId
+}
+
+
 fun getGroups (context: Context) : MutableList<Group> {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
@@ -243,6 +275,35 @@ fun getRequestsList (context: Context, groupId : Long) : MutableList<Request> {
                 for(child in children){
                     if(child.getValue(Request::class.java)!!.groupId.equals(groupId))
                         list.add(child.getValue(Request::class.java)!!)
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return list
+}
+
+fun getNotificationList (context: Context, userId : String) : MutableList<Notification> {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var list : MutableList<Notification> = mutableListOf()
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbNotification(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                val children = snapshot.children
+                for(child in children){
+                    if(child.getValue(Notification::class.java)!!.userId.equals(userId))
+                        list.add(child.getValue(Notification::class.java)!!)
                 }
                 lock.withLock {
                     condition.signal()
@@ -432,6 +493,12 @@ class FirebaseDbWrapper(private val context: Context) {
     }
     fun readDbRequest(callback: FirebaseReadCallback) {
         val ref = Firebase.database.getReference("requests")
+        ref.addValueEventListener(FirebaseReadListener(callback))
+
+    }
+
+    fun readDbNotification(callback: FirebaseReadCallback) {
+        val ref = Firebase.database.getReference("notifications")
         ref.addValueEventListener(FirebaseReadListener(callback))
 
     }

@@ -10,9 +10,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
-import com.example.myapplication.models.FirebaseAuthWrapper
-import com.example.myapplication.models.Request
-import com.example.myapplication.models.getNicknameById
+import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
@@ -133,13 +131,25 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                                 position.isCompleted = true
                                 position.completedById = FirebaseAuthWrapper(c).getUid()!!
                                 Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
-                                val intent : Intent = Intent(c, GroupActivity::class.java)
-                                intent.putExtra("groupId", position.groupId)
-                                //Log.d(ContentValues.TAG,"www: "+groupName)
-                                intent.putExtra("groupName", groupName)
-                                c.startActivity(intent)
+                                GlobalScope.launch {
+                                    val group : Group = getGroupById(c, position.groupId)
+                                    val uid : String = FirebaseAuthWrapper(c).getUid()!!
+                                    for(userId in group.users!!){
+                                        if(userId != uid){
+                                            val notificationId : Long = getNotificationId(c)
+                                            val notification : Notification = Notification(position, userId, notificationId, Notification.Type.CompletedRequest)
+                                            Firebase.database.getReference("notifications").child(notificationId.toString()).setValue(notification)
+                                        }
+                                    }
+                                    val intent : Intent = Intent(c, GroupActivity::class.java)
+                                    intent.putExtra("groupId", position.groupId)
+                                    //Log.d(ContentValues.TAG,"www: "+groupName)
+                                    intent.putExtra("groupName", groupName)
+                                    c.startActivity(intent)
 
+                                }
                             }
+
                             .setNegativeButton("No"){
                                     dialog,_->
                                 dialog.dismiss()

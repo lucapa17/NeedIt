@@ -11,10 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.adapter.GroupsAdapter
 import com.example.myapplication.adapter.ListAdapter
-import com.example.myapplication.models.Group
-import com.example.myapplication.models.Request
-import com.example.myapplication.models.getGroups
-import com.example.myapplication.models.getRequestsList
+import com.example.myapplication.models.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
 
@@ -25,6 +22,8 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        runInstantWorker(this)
 
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {

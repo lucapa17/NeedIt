@@ -21,10 +21,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.adapter.ListAdapter
-import com.example.myapplication.models.FirebaseAuthWrapper
-import com.example.myapplication.models.Request
-import com.example.myapplication.models.getRequestId
-import com.example.myapplication.models.getRequestsList
+import com.example.myapplication.models.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -135,6 +132,16 @@ class ActiveListFragment : Fragment() {
                     val currentDate : Date =  java.util.Calendar.getInstance().time
                     request = Request(requestId, groupId!!, uid!!, namerequest, false, comment, "", currentDate)
                     Firebase.database.getReference("requests").child(request.Id.toString()).setValue(request)
+                    val group : Group = getGroupById(requireContext(), groupId!!)
+                    for(userId in group.users!!){
+                        if(userId != uid){
+                            val notificationId : Long = getNotificationId(requireContext())
+                            val notification : Notification = Notification(request, userId, notificationId, Notification.Type.NewRequest)
+                            Firebase.database.getReference("notifications").child(notificationId.toString()).setValue(notification)
+                        }
+
+                    }
+
                     val intent : Intent = Intent(requireContext(), GroupActivity::class.java)
                     intent.putExtra("groupId", groupId)
                     Log.d(TAG,"www: "+groupName)
