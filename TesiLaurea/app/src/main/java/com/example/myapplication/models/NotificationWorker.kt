@@ -26,9 +26,9 @@ fun runInstantWorker(context: Context) {
 }
 
 fun startWorker(context: Context) {
-
+    val uid : String = FirebaseAuthWrapper(context).getUid()!!
     GlobalScope.launch {
-        Firebase.database.getReference("notifications").addValueEventListener(object : ValueEventListener {
+        Firebase.database.getReference("notifications").child(uid).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val requestNotificationWorker = OneTimeWorkRequestBuilder<RequestNotificationWorker>().build()
                 WorkManager.getInstance(context).enqueue(requestNotificationWorker)
@@ -43,29 +43,23 @@ fun startWorker(context: Context) {
 
 class RequestNotificationWorker(val context: Context, params: WorkerParameters) :
     Worker(context, params) {
+    val uid = FirebaseAuthWrapper(context).getUid()
     override fun doWork(): Result {
 
         GlobalScope.launch {
-            val uid = FirebaseAuthWrapper(context).getUid()
             val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
             if(notificationList.isNotEmpty()){
                 for(notification in notificationList){
                     var notificationText : String = ""
-                    val sender : String = getNicknameById(context, notification.request.userId)
-                    val groupName = getGroupById(context, notification.request.groupId).nameGroup
-
                     if(notification.type.equals(Notification.Type.NewRequest)){
-                        notificationText = "$sender sent a new request :  \n ${notification.request.nameRequest} "
+                        notificationText = "${notification.sender} sent a new request :  \n ${notification.request!!.nameRequest} "
                     }
                     else if(notification.type.equals(Notification.Type.CompletedRequest)){
-                        val completedBy : String = getNicknameById(context, notification.request.completedById)
-                        notificationText = "$completedBy has completed the following request of $sender :  \n ${notification.request.nameRequest} "
+                        notificationText = "${notification.completedBy} has completed the following request of ${notification.sender} :  \n ${notification.request!!.nameRequest} "
                     }
 
-
-
                     val builder = NotificationCompat.Builder(context, "NOTIFICATION")
-                        .setSmallIcon(R.drawable.ic_baseline_adb_24).setContentTitle(groupName)
+                        .setSmallIcon(R.drawable.ic_baseline_adb_24).setContentTitle(notification.groupName)
                         .setContentText(notificationText).setStyle(
                             NotificationCompat.BigTextStyle().bigText(notificationText)
                         ).setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -91,7 +85,7 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                         notify(notification.notificationId.toInt(), builder.build())
                     }
 
-                    Firebase.database.getReference("notifications").child(notification.notificationId.toString()).removeValue()
+                    Firebase.database.getReference("notifications").child(uid).child(notification.notificationId.toString()).removeValue()
                 }
 
 

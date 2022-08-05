@@ -130,14 +130,15 @@ class ActiveListFragment : Fragment() {
                 GlobalScope.launch {
                     val requestId : Long = getRequestId(requireContext())
                     val currentDate : Date =  java.util.Calendar.getInstance().time
+                    val user : User = getUser(requireContext())
                     request = Request(requestId, groupId!!, uid!!, namerequest, false, comment, "", currentDate)
                     Firebase.database.getReference("requests").child(request.Id.toString()).setValue(request)
                     val group : Group = getGroupById(requireContext(), groupId!!)
                     for(userId in group.users!!){
                         if(userId != uid){
-                            val notificationId : Long = getNotificationId(requireContext())
-                            val notification : Notification = Notification(request, userId, notificationId, Notification.Type.NewRequest)
-                            Firebase.database.getReference("notifications").child(notificationId.toString()).setValue(notification)
+                            val notificationId : Long = getNotificationId(requireContext(), userId)
+                            val notification : Notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, Notification.Type.NewRequest)
+                            Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                         }
 
                     }

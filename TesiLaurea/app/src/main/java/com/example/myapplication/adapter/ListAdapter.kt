@@ -134,11 +134,13 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                                 GlobalScope.launch {
                                     val group : Group = getGroupById(c, position.groupId)
                                     val uid : String = FirebaseAuthWrapper(c).getUid()!!
+                                    val completedBy : String = getNicknameById(c,uid)
+                                    val sender : String = getNicknameById(c, position.userId)
                                     for(userId in group.users!!){
                                         if(userId != uid){
-                                            val notificationId : Long = getNotificationId(c)
-                                            val notification : Notification = Notification(position, userId, notificationId, Notification.Type.CompletedRequest)
-                                            Firebase.database.getReference("notifications").child(notificationId.toString()).setValue(notification)
+                                            val notificationId : Long = getNotificationId(c, userId)
+                                            val notification : Notification = Notification(userId, position, sender, completedBy, groupName,  notificationId, Notification.Type.CompletedRequest)
+                                            Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                         }
                                     }
                                     val intent : Intent = Intent(c, GroupActivity::class.java)

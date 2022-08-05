@@ -201,7 +201,7 @@ fun getRequestId (context: Context) : Long {
 }
 
 
-fun getNotificationId (context: Context) : Long {
+fun getNotificationId (context: Context, userId : String) : Long {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
     var notificationId: Long = 0
@@ -209,7 +209,7 @@ fun getNotificationId (context: Context) : Long {
         FirebaseDbWrapper(context).readDbNotification(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                val children = snapshot.children
+                val children = snapshot.child(userId).children
                 for(child in children){
                     if(child.key!!.toLong() > notificationId) {
                         notificationId = child.key!!.toLong()
@@ -296,11 +296,12 @@ fun getNotificationList (context: Context, userId : String) : MutableList<Notifi
     val lock = ReentrantLock()
     val condition = lock.newCondition()
     var list : MutableList<Notification> = mutableListOf()
+    val uid = FirebaseAuthWrapper(context).getUid()
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbNotification(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                val children = snapshot.children
+                val children = snapshot.child(uid!!).children
                 for(child in children){
                     if(child.getValue(Notification::class.java)!!.userId.equals(userId))
                         list.add(child.getValue(Notification::class.java)!!)
