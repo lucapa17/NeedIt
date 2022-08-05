@@ -139,7 +139,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                                     for(userId in group.users!!){
                                         if(userId != uid){
                                             val notificationId : Long = getNotificationId(c, userId)
-                                            val notification : Notification = Notification(userId, position, sender, completedBy, groupName,  notificationId, Notification.Type.CompletedRequest)
+                                            val notification : Notification = Notification(userId, position, sender, completedBy, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
                                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                         }
                                     }

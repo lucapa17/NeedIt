@@ -135,7 +135,7 @@ class ActiveListFragment : Fragment() {
                     for(userId in group.users!!){
                         if(userId != uid){
                             val notificationId : Long = getNotificationId(requireContext(), userId)
-                            val notification : Notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, Notification.Type.NewRequest)
+                            val notification : Notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, request.date, request.groupId, Notification.Type.NewRequest)
                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                         }
 

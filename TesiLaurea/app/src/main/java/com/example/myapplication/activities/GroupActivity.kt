@@ -30,7 +30,6 @@ class GroupActivity : AppCompatActivity() {
         val intent : Intent = getIntent()
         groupId = intent.getLongExtra("groupId", 0L)
         groupName = intent.getStringExtra("groupName")
-        Log.d(TAG, "wwwAAA: "+ groupName)
 
         val titleGroup = findViewById<TextView>(R.id.titleGroup)
         titleGroup.setText(groupName)

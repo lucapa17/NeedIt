@@ -82,7 +82,7 @@ class AddMemberActivity : AppCompatActivity() {
                                     user.groups!!.add(groupId)
 
 
-                                    val notification : Notification = Notification(id, null, myNickname!!, null, group.nameGroup, notificationId!!, Notification.Type.NewGroup)
+                                    val notification : Notification = Notification(id, null, myNickname!!, null, group.nameGroup, notificationId!!, java.util.Calendar.getInstance().time, groupId, Notification.Type.NewGroup)
                                     Firebase.database.getReference("notifications").child(id).child(notificationId.toString()).setValue(notification)
 
                                     Firebase.database.getReference("users").child(id).setValue(user)

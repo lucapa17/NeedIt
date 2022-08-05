@@ -2,14 +2,23 @@ package com.example.myapplication.models
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.*
 import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS
 import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.example.myapplication.R
+import com.example.myapplication.activities.GroupActivity
+import com.example.myapplication.activities.MainActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -17,6 +26,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun runInstantWorker(context: Context) {
@@ -68,15 +78,24 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     else if(notification.type.equals(Notification.Type.NewGroup)){
                         notificationText = "${notification.sender} added you "
                     }
+                    val intent = Intent(context, GroupActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                    intent.putExtra("groupId", notification.groupId)
+                    intent.putExtra("groupName", notification.groupName)
+                    val pendingIntent: PendingIntent = PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
 
                     val builder = NotificationCompat.Builder(context, "NOTIFICATION")
-                        .setSmallIcon(R.drawable.ic_baseline_adb_24).setContentTitle(notification.groupName)
+                        .setSmallIcon(R.drawable.ic_baseline_adb_24)
+                        .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.goku))
+                        .setContentTitle(notification.groupName)
+                        .setWhen(notification.date!!.time)
                         .setContentText(notificationText).setStyle(
                             NotificationCompat.BigTextStyle().bigText(notificationText)
                         ).setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .setContentIntent(pendingIntent)
                         .setAutoCancel(true)
-
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val name = "notification"

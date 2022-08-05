@@ -10,11 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <receiver
-            android:name=".receivers.BootReceiver"
+            android:name=".receivers.MyReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <activity
