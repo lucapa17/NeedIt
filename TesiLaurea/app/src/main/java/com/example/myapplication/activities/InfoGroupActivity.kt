@@ -23,6 +23,11 @@ class InfoGroupActivity: BaseActivity() {
         val intent : Intent = getIntent()
         val groupId : Long = intent.getLongExtra("groupId", 0L)
 
+        recv = this.findViewById(R.id.mRecycler)
+        membersAdapter = MembersAdapter(this, ArrayList())
+        recv.layoutManager = LinearLayoutManager(this)
+        recv.adapter = membersAdapter
+
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val group : Group = getGroupById(this@InfoGroupActivity, groupId)
@@ -32,7 +37,6 @@ class InfoGroupActivity: BaseActivity() {
                     groupMembersList.add(user)
                 }
                 withContext(Dispatchers.Main) {
-                    recv = this@InfoGroupActivity.findViewById(R.id.mRecycler)
                     membersAdapter = MembersAdapter(this@InfoGroupActivity, ArrayList(groupMembersList))
                     recv.layoutManager = LinearLayoutManager(this@InfoGroupActivity)
                     recv.adapter = membersAdapter

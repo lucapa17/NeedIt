@@ -6,10 +6,9 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Worker
-import androidx.work.WorkerParameters
+import androidx.work.*
+import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS
+import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.example.myapplication.R
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,11 +17,13 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 fun runInstantWorker(context: Context) {
     val requestNotificationWorker = OneTimeWorkRequestBuilder<RequestNotificationWorker>().build()
     WorkManager.getInstance(context).enqueue(requestNotificationWorker)
     startWorker(context)
+    startPeriodicWorker(context)
 }
 
 fun startWorker(context: Context) {
@@ -40,14 +41,21 @@ fun startWorker(context: Context) {
         })
     }
 }
+fun startPeriodicWorker(context: Context) {
+    val requestNotificationWorker =
+        PeriodicWorkRequestBuilder<RequestNotificationWorker>(15, TimeUnit.MINUTES)
+            .build()
+
+    WorkManager
+        .getInstance(context)
+        .enqueueUniquePeriodicWork("myPeriodicWork", ExistingPeriodicWorkPolicy.KEEP, requestNotificationWorker)
+}
 
 class RequestNotificationWorker(val context: Context, params: WorkerParameters) :
     Worker(context, params) {
     val uid = FirebaseAuthWrapper(context).getUid()
+    val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
     override fun doWork(): Result {
-
-        GlobalScope.launch {
-            val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
             if(notificationList.isNotEmpty()){
                 for(notification in notificationList){
                     var notificationText : String = ""
@@ -56,6 +64,9 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     }
                     else if(notification.type.equals(Notification.Type.CompletedRequest)){
                         notificationText = "${notification.completedBy} has completed the following request of ${notification.sender} :  \n ${notification.request!!.nameRequest} "
+                    }
+                    else if(notification.type.equals(Notification.Type.NewGroup)){
+                        notificationText = "${notification.sender} added you "
                     }
 
                     val builder = NotificationCompat.Builder(context, "NOTIFICATION")
@@ -85,14 +96,9 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                         notify(notification.notificationId.toInt(), builder.build())
                     }
 
-                    Firebase.database.getReference("notifications").child(uid).child(notification.notificationId.toString()).removeValue()
+                    Firebase.database.getReference("notifications").child(uid!!).child(notification.notificationId.toString()).removeValue()
                 }
-
-
-
             }
-
-        }
         return Result.success()
     }
 }

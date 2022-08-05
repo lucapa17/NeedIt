@@ -17,6 +17,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 
 class AddMemberActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_member)
@@ -64,16 +65,14 @@ class AddMemberActivity : AppCompatActivity() {
                 else {
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
-                            Log.d(TAG, "AAA 1")
                             val group : Group = getGroupById(this@AddMemberActivity, groupId)
-                            Log.d(TAG, "AAA 2")
                             val id : String? = getUserIdByNickname(this@AddMemberActivity, nicknameEditText.text.toString().trim())
-                            Log.d(TAG, "AAA 3")
                             val user : User = getUserByNickname(this@AddMemberActivity, nicknameEditText.text.toString().trim())
-                            Log.d(TAG, "AAA 4")
+                            var notificationId : Long? = null
+                            if(id != null)
+                                 notificationId = getNotificationId(this@AddMemberActivity, id)
                             //val myId : String = FirebaseAuthWrapper(this@AddMemberActivity).getUid()!!
                             withContext(Dispatchers.Main) {
-                                Log.d(TAG, "AAA 5")
                                 if(id == null)
                                     nicknameEditText.error = "user with this nickname does not exist"
                                 else if (group.users!!.contains(id))
@@ -81,6 +80,11 @@ class AddMemberActivity : AppCompatActivity() {
                                 else {
                                     group.users!!.add(id)
                                     user.groups!!.add(groupId)
+
+
+                                    val notification : Notification = Notification(id, null, myNickname!!, null, group.nameGroup, notificationId!!, Notification.Type.NewGroup)
+                                    Firebase.database.getReference("notifications").child(id).child(notificationId.toString()).setValue(notification)
+
                                     Firebase.database.getReference("users").child(id).setValue(user)
                                     Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
                                     val intent = Intent(this@AddMemberActivity, GroupActivity::class.java)

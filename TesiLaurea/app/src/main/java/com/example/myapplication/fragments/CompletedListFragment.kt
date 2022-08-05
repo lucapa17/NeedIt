@@ -44,6 +44,10 @@ class CompletedListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_completed_list, container, false)
         val context : Context = this.requireContext()
+        recv = view.findViewById(R.id.mRecycler)
+        listAdapter = ListAdapter(context, ArrayList(), groupName!!, false)
+        recv.layoutManager = LinearLayoutManager(context)
+        recv.adapter = listAdapter
 
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
@@ -51,15 +55,12 @@ class CompletedListFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     requestsList = ArrayList(requestList)
                     var groupCompletedList : ArrayList<Request> = ArrayList()
-                    /**set find Id*/
-                    recv = view.findViewById(R.id.mRecycler)
 
-                    /**set Adapter*/
                     listAdapter = ListAdapter(requireContext(),groupCompletedList, groupName!!, false)
-                    /**setRecycler view Adapter*/
+
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
-                    /**set Dialog*/
+
 
                     for (request in requestList){
                         if(request.isCompleted){

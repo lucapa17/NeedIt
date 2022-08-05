@@ -55,6 +55,11 @@ class ActiveListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_active_list, container, false)
         val context : Context = this.requireContext()
+        recv = view.findViewById(R.id.mRecycler)
+        addsBtn = view.findViewById(R.id.addingBtn)
+        listAdapter = ListAdapter(context, ArrayList(), groupName!!, true)
+        recv.layoutManager = LinearLayoutManager(requireContext())
+        recv.adapter = listAdapter
 
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
@@ -62,18 +67,11 @@ class ActiveListFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     requestsList = ArrayList(requestList)
                     var groupActiveList : ArrayList<Request> = ArrayList()
-                    /**set find Id*/
-                    recv = view.findViewById(R.id.mRecycler)
-                    addsBtn = view.findViewById(R.id.addingBtn)
 
-                    /**set Adapter*/
                     listAdapter = ListAdapter(requireContext(),groupActiveList, groupName!!, true)
-                    /**setRecycler view Adapter*/
+
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
-                    /**set Dialog*/
-
-
 
                     for (request in requestList){
                         if(!request.isCompleted){
