@@ -1,6 +1,7 @@
 package com.example.myapplication.activities
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -12,6 +13,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 
 class EditProfileActivity : AppCompatActivity() {
+    private var profileImage: ImageView? = null
+    var image: Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
@@ -25,12 +28,14 @@ class EditProfileActivity : AppCompatActivity() {
         var user : User? =null
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
-                user= getUser(this@EditProfileActivity)
+                user = getUser(this@EditProfileActivity)
+                //image = FirebaseStorageWrapper().download(id)
                 withContext(Dispatchers.Main) {
                     name = user?.name.toString()
                     surname = user?.surname.toString()
                     email = user?.email.toString()
                     nickname = user?.nickname.toString()
+
                     findViewById<TextView>(R.id.name).setText(name)
                     findViewById<TextView>(R.id.surname).setText(surname)
                     findViewById<TextView>(R.id.email).setText(email)
@@ -38,6 +43,9 @@ class EditProfileActivity : AppCompatActivity() {
                     findViewById<EditText>(R.id.edit_nickname).setText(nickname)
                     findViewById<EditText>(R.id.edit_name).setText(name)
                     findViewById<EditText>(R.id.edit_surname).setText(surname)
+                    if (image != null) {
+                        findViewById<ImageView>(R.id.photo).setImageURI(image)
+                    }
 
 
                 }

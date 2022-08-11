@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import com.example.myapplication.activities.MainActivity
@@ -17,8 +18,10 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -470,10 +473,10 @@ fun getUserById (context: Context, id: String) : User {
 
 class FirebaseDbWrapper(private val context: Context) {
     private val uid = FirebaseAuthWrapper(context).getUid()
-
     fun registerUser(user: User) {
         Firebase.database.getReference("users").child(uid!!).setValue(user).addOnCompleteListener {
             if (it.isSuccessful) {
+                //FirebaseStorage.getInstance().reference.child("images/${uid}").putFile("drawable/goku")
                 val intent: Intent = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
             } else
@@ -526,6 +529,49 @@ class FirebaseDbWrapper(private val context: Context) {
             fun onCancelledCallback(error: DatabaseError)
         }
     }
+}
+
+class FirebaseStorageWrapper {
+    private val storage = FirebaseStorage.getInstance().reference
+
+
+    fun upload(image: Uri, id: String, context: Context) {
+        storage.child("images/${id}.jpg").putFile(image).addOnSuccessListener {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
+
+    fun download(id: String): Uri? {
+        val tmp = File.createTempFile(id, "jpg")
+        var image: Uri? = null
+
+        val lock = ReentrantLock()
+        val condition = lock.newCondition()
+
+
+        GlobalScope.launch {
+            storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
+                image = Uri.fromFile(tmp)
+                lock.withLock {
+                    condition.signal()
+                }
+            }.addOnFailureListener {
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+        }
+        lock.withLock {
+            condition.await()
+        }
+        return image
+    }
+
+    fun delete(id: String) {
+        storage.child("images/${id}.jpg").delete()
+    }
+
 }
 
 
