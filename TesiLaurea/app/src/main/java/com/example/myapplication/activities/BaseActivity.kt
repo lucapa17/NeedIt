@@ -25,7 +25,7 @@ open class BaseActivity : AppCompatActivity() {
                 true
             }
             com.example.myapplication.R.id.nav_profile -> {
-                val intent : Intent = Intent(this, ProfileActivity::class.java)
+                val intent : Intent = Intent(this, EditProfileActivity::class.java)
                 this.startActivity(intent)
                 true
             }

@@ -4,11 +4,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo_notifica"
         android:label="Need!t"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo_notifica"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+        <activity
+            android:name=".activities.EditProfileActivity"
+            android:exported="false" />
+
         <receiver
             android:name=".receivers.MyReceiver"
             android:enabled="true"
@@ -17,6 +21,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name=".activities.GroupActivity"
             android:exported="false" />

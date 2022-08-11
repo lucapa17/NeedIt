@@ -129,7 +129,7 @@ class ActiveListFragment : Fragment() {
                     val requestId : Long = getRequestId(requireContext())
                     val currentDate : Date =  java.util.Calendar.getInstance().time
                     val user : User = getUser(requireContext())
-                    request = Request(requestId, groupId!!, uid!!, namerequest, false, comment, "", currentDate)
+                    request = Request(requestId, groupId!!, uid!!, namerequest, false, comment, "", currentDate, null)
                     Firebase.database.getReference("requests").child(request.Id.toString()).setValue(request)
                     val group : Group = getGroupById(requireContext(), groupId!!)
                     for(userId in group.users!!){

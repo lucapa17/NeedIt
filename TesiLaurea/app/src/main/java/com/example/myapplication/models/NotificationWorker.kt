@@ -78,16 +78,16 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     else if(notification.type.equals(Notification.Type.NewGroup)){
                         notificationText = "${notification.sender} added you "
                     }
-                    val intent = Intent(context, GroupActivity::class.java).apply {
+                    val intent = Intent(context, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }
-                    intent.putExtra("groupId", notification.groupId)
-                    intent.putExtra("groupName", notification.groupName)
+                    //intent.putExtra("groupId", notification.groupId)
+                    //intent.putExtra("groupName", notification.groupName)
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
 
                     val builder = NotificationCompat.Builder(context, "NOTIFICATION")
                         .setSmallIcon(R.drawable.ic_baseline_adb_24)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.goku))
+                        .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.logo_notifica_2))
                         .setContentTitle(notification.groupName)
                         .setWhen(notification.date!!.time)
                         .setContentText(notificationText).setStyle(

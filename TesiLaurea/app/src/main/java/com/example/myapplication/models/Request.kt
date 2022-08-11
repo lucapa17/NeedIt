@@ -13,8 +13,9 @@ class Request() {
     var isCompleted : Boolean = false
     var comment : String? = null
     var date : Date? = null
+    var price : String? = ""
 
-    constructor(Id : Long, groupId : Long,  userId : String, nameRequest : String, isCompleted : Boolean, comment : String?, completedById : String, date : Date) : this() {
+    constructor(Id : Long, groupId : Long,  userId : String, nameRequest : String, isCompleted : Boolean, comment : String?, completedById : String, date : Date, price : String?) : this() {
         this.groupId = groupId
         this.completedById = completedById
         this.Id = Id
@@ -23,6 +24,7 @@ class Request() {
         this.isCompleted = isCompleted
         this.comment = comment
         this.date = date
+        this.price = price
 
     }
 }

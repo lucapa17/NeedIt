@@ -3,10 +3,12 @@ package com.example.myapplication.adapter
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
@@ -31,6 +33,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
         var completedBy:TextView
         var date:TextView
         var time:TextView
+        var price: TextView
 
 
 
@@ -40,6 +43,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
             userName = v.findViewById<TextView>(R.id.userName)
             commentRequest = v.findViewById<TextView>(R.id.commentRequest)
             date = v.findViewById<TextView>(R.id.Date)
+            price = v.findViewById<TextView>(R.id.price)
             time = v.findViewById<TextView>(R.id.Time)
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
@@ -60,6 +64,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                         val title = v.findViewById<TextView>(R.id.Title)
                         val name = v.findViewById<EditText>(R.id.nameRequest)
                         val comment = v.findViewById<EditText>(R.id.commentRequest)
+
                         title.setText("Edit Request")
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
@@ -121,14 +126,23 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                         true
                     }
                     R.id.complete->{
+                        val v = LayoutInflater.from(c).inflate(R.layout.set_price,null)
+                        val input = v.findViewById<EditText>(R.id.price)
+
+
                         /**set delete*/
-                        AlertDialog.Builder(c)
-                            .setTitle("Complete")
-                            .setIcon(R.drawable.ic_baseline_check_circle_24)
-                            .setMessage("Do you want to complete this request?")
-                            .setPositiveButton("Yes"){
+                        val builder = AlertDialog.Builder(c)
+
+
+                        builder.setView(v)
+                            builder.setTitle("Complete")
+                            builder.setIcon(R.drawable.ic_baseline_check_circle_24)
+                            builder.setMessage("Do you want to complete this request?")
+                            builder.setPositiveButton("Yes"){
                                     dialog,_->
                                 position.isCompleted = true
+                                var price_value : String = input.text.toString()
+                                position.price = price_value
                                 position.completedById = FirebaseAuthWrapper(c).getUid()!!
                                 Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
                                 GlobalScope.launch {
@@ -152,12 +166,12 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                                 }
                             }
 
-                            .setNegativeButton("No"){
+                            builder.setNegativeButton("No"){
                                     dialog,_->
                                 dialog.dismiss()
                             }
-                            .create()
-                            .show()
+                            builder.create()
+                            builder.show()
 
                         true
                     }
@@ -182,6 +196,10 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val newList = requestList[position]
+        if(newList.price!!.isEmpty())
+            holder.price.setVisibility(View.GONE)
+        else
+            holder.price.text = "Bought for: ${newList.price} €"
         if(newList.comment!!.isEmpty())
             holder.commentRequest.setVisibility(View.GONE)
         else
