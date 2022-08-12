@@ -1,14 +1,17 @@
 package com.example.myapplication.activities
 
-import android.content.ContentValues.TAG
+import android.R.drawable
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.adapter.ViewPagerAdapter
@@ -16,6 +19,7 @@ import com.example.myapplication.databinding.ActivityGroupBinding
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.FirebaseAuthWrapper
+
 
 class GroupActivity : AppCompatActivity() {
 
@@ -30,9 +34,11 @@ class GroupActivity : AppCompatActivity() {
         val intent : Intent = getIntent()
         groupId = intent.getLongExtra("groupId", 0L)
         groupName = intent.getStringExtra("groupName")
+        supportActionBar?.setTitle(groupName)
 
-        val titleGroup = findViewById<TextView>(R.id.titleGroup)
-        titleGroup.setText(groupName)
+
+        //supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_pageview_24)
+        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val fragmentArrayList = ArrayList<Fragment>()
 
         fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!, FirebaseAuthWrapper(this).getUid()!!, groupName!!))
