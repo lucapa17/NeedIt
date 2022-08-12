@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.database.Cursor
@@ -21,18 +22,17 @@ import kotlinx.coroutines.*
 
 class EditProfileActivity : AppCompatActivity() {
     private var profileImage: ImageView? = null
-    var image: Bitmap? = null
-    var new_image : Uri? = null
+    var image: Uri? = null
+    val id : String = FirebaseAuthWrapper(this@EditProfileActivity).getUid()!!
+    //var new_image : Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
-        val id : String = FirebaseAuthWrapper(this@EditProfileActivity).getUid()!!
+
         var name : String = ""
         var surname : String = ""
         var email : String = ""
         var nickname : String = ""
-
-
         var user : User? =null
 
 
@@ -57,14 +57,21 @@ class EditProfileActivity : AppCompatActivity() {
             }
         }
 
+        val progressDialog = ProgressDialog(this@EditProfileActivity)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
+
+
                 image = FirebaseStorageWrapper().download(id)
                 withContext(Dispatchers.Main) {
-
                     if (image != null) {
-                        findViewById<ImageView>(R.id.profile_image).setImageBitmap(image)
+                        findViewById<ImageView>(R.id.profile_image).setImageURI(image)
                     }
+
+
                 }
             }
         }
@@ -126,7 +133,9 @@ class EditProfileActivity : AppCompatActivity() {
                 if(t_name.isEmpty() || t_surname.isEmpty() || t_nickname.isEmpty()) {
                     Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
                 }
+
                 else {
+
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
                             val nicknameAlreadyUsed : Boolean = nicknameIsAlreadyUsed(v!!.context, t_nickname)
@@ -135,10 +144,12 @@ class EditProfileActivity : AppCompatActivity() {
                                 if(t_nickname != findViewById<TextView>(R.id.nickname).text && nicknameAlreadyUsed)
                                     Toast.makeText(v.context, "Nickname is already used", Toast.LENGTH_SHORT).show()
                                 else{
-
-                                    if(new_image != null) {
-                                        FirebaseStorageWrapper().upload(new_image!!, id, this@EditProfileActivity)
+                                    /*
+                                    if(image != null) {
+                                        FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
                                     }
+
+                                     */
 
                                     user!!.name = t_name
                                     user!!.surname = t_surname
@@ -162,9 +173,12 @@ class EditProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(requestCode == 100 && resultCode == RESULT_OK){
-            new_image = data?.data!!
-            findViewById<ImageView>(R.id.profile_image).setImageURI(new_image)
-            findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
+            image = data?.data!!
+            findViewById<ImageView>(R.id.profile_image).setImageURI(image)
+            GlobalScope.launch{
+                //FirebaseStorageWrapper().delete(id)
+                FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
+            }
 
         }
     }

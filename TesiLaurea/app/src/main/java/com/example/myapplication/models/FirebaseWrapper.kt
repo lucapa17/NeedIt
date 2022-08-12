@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import com.example.myapplication.activities.EditProfileActivity
 import com.example.myapplication.activities.MainActivity
 import com.example.myapplication.activities.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -539,15 +540,30 @@ class FirebaseStorageWrapper {
 
 
     fun upload(image: Uri, id: String, context: Context) {
-        storage.child("images/${id}.jpg").putFile(image).addOnSuccessListener {
-            val intent = Intent(context, MainActivity::class.java)
-            context.startActivity(intent)
+        val lock = ReentrantLock()
+        val condition = lock.newCondition()
+        GlobalScope.launch {
+            storage.child("images/${id}.jpg").putFile(image)
+            lock.withLock {
+                condition.signal()
+            }
         }
+        /*storage.child("images/${id}.jpg").putFile(image).addOnSuccessListener {
+
+        }
+
+         */
+        lock.withLock {
+            condition.await()
+        }
+        //val intent = Intent(context, EditProfileActivity::class.java)
+        //context.startActivity(intent)
     }
 
-    fun download(id: String): Bitmap? {
-        val tmp = File.createTempFile("tempImage", "jpg")
-        var bitmap: Bitmap? = null
+    fun download(id: String): Uri? {
+        val tmp = File.createTempFile(id, "jpg")
+        //var bitmap: Bitmap? = null
+        var image : Uri? = null
 
         val lock = ReentrantLock()
         val condition = lock.newCondition()
@@ -556,10 +572,10 @@ class FirebaseStorageWrapper {
                 Log.d(TAG, "AAA global scope")
 
                 storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
-                    //image = Uri.fromFile(tmp)
+                    image = Uri.fromFile(tmp)
                     Log.d(TAG, "AAA success listener")
 
-                    bitmap = BitmapFactory.decodeFile(tmp.absolutePath)
+                    //bitmap = BitmapFactory.decodeFile(tmp.absolutePath)
 
                     Log.d(TAG, "AAA bitmap")
 
@@ -590,11 +606,23 @@ class FirebaseStorageWrapper {
         lock.withLock {
             condition.await()
         }
-        return bitmap
+        return image
     }
 
     fun delete(id: String) {
-        storage.child("images/${id}.jpg").delete()
+        val lock = ReentrantLock()
+        val condition = lock.newCondition()
+        GlobalScope.launch {
+            storage.child("images/${id}.jpg").delete()
+            lock.withLock {
+                condition.signal()
+            }
+        }
+        lock.withLock {
+            condition.await()
+        }
+
+
     }
 
 }
