@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,10 @@ class InfoGroupActivity: BaseActivity() {
         recv.adapter = membersAdapter
 
         var uri : Uri? = null
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val group : Group = getGroupById(this@InfoGroupActivity, groupId!!)
@@ -48,6 +53,7 @@ class InfoGroupActivity: BaseActivity() {
                     membersAdapter = MembersAdapter(this@InfoGroupActivity, ArrayList(groupMembersList))
                     recv.layoutManager = LinearLayoutManager(this@InfoGroupActivity)
                     recv.adapter = membersAdapter
+                    progressDialog.dismiss()
 
                 }
             }

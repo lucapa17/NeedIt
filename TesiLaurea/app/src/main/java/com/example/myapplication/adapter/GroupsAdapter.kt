@@ -1,6 +1,7 @@
 package com.example.myapplication.adapter
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -43,6 +44,10 @@ class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.
     }
 
     override fun onBindViewHolder(holder: GroupsAdapter.UserViewHolder, position: Int) {
+        val progressDialog = ProgressDialog(c)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         val newList = groupList[position]
         holder.nameGroup.text = newList.nameGroup
         var uri : Uri? = null
@@ -52,6 +57,7 @@ class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.
                 withContext(Dispatchers.Main) {
                     if(uri != null)
                         holder.logoGroup.setImageURI(uri)
+                    progressDialog.dismiss()
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
@@ -29,6 +30,10 @@ class MainActivity : BaseActivity() {
         recv.adapter = groupsAdapter
 
         runInstantWorker(this)
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
 
             withContext(Dispatchers.IO) {
@@ -37,6 +42,7 @@ class MainActivity : BaseActivity() {
                     groupsAdapter = GroupsAdapter(this@MainActivity, ArrayList(groupList))
                     recv.layoutManager = LinearLayoutManager(this@MainActivity)
                     recv.adapter = groupsAdapter
+                    progressDialog.dismiss()
                 }
             }
         }

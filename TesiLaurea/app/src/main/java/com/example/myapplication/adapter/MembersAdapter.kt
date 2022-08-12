@@ -1,5 +1,6 @@
 package com.example.myapplication.adapter
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -40,6 +41,10 @@ class MembersAdapter (val c: Context, val memberList:ArrayList<User>): RecyclerV
         var uri : Uri? = null
         holder.username.text = newList.nickname
         holder.name.text = "${newList.name} ${newList.surname}"
+        val progressDialog = ProgressDialog(c)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val id = getUserIdByNickname(c, newList.nickname)
@@ -47,6 +52,7 @@ class MembersAdapter (val c: Context, val memberList:ArrayList<User>): RecyclerV
                 withContext(Dispatchers.Main) {
                     if(uri != null)
                         holder.photo.setImageURI(uri)
+                    progressDialog.dismiss()
                 }
             }
         }

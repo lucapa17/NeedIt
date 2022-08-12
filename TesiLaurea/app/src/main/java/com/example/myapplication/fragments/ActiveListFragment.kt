@@ -1,6 +1,7 @@
 package com.example.myapplication.fragments
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -58,9 +59,12 @@ class ActiveListFragment : Fragment() {
         recv = view.findViewById(R.id.mRecycler)
         addsBtn = view.findViewById(R.id.addingBtn)
         listAdapter = ListAdapter(context, ArrayList(), groupName!!, true)
-        recv.layoutManager = LinearLayoutManager(requireContext())
+        recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
-
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
@@ -81,6 +85,7 @@ class ActiveListFragment : Fragment() {
                         }
                     }
                     addsBtn.setOnClickListener { addInfo(groupActiveList) }
+                    progressDialog.dismiss()
 
                 }
             }
