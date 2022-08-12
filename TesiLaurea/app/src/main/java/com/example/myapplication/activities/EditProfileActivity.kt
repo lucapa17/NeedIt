@@ -1,20 +1,28 @@
 package com.example.myapplication.activities
 
+import android.content.ContentValues.TAG
 import android.content.Intent
+import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 
+
 class EditProfileActivity : AppCompatActivity() {
     private var profileImage: ImageView? = null
-    var image: Uri? = null
+    var image: Bitmap? = null
+    var new_image : Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
@@ -26,10 +34,11 @@ class EditProfileActivity : AppCompatActivity() {
 
 
         var user : User? =null
+
+
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 user = getUser(this@EditProfileActivity)
-                //image = FirebaseStorageWrapper().download(id)
                 withContext(Dispatchers.Main) {
                     name = user?.name.toString()
                     surname = user?.surname.toString()
@@ -43,14 +52,26 @@ class EditProfileActivity : AppCompatActivity() {
                     findViewById<EditText>(R.id.edit_nickname).setText(nickname)
                     findViewById<EditText>(R.id.edit_name).setText(name)
                     findViewById<EditText>(R.id.edit_surname).setText(surname)
-                    if (image != null) {
-                        findViewById<ImageView>(R.id.photo).setImageURI(image)
-                    }
-
 
                 }
             }
         }
+
+        CoroutineScope(Dispatchers.Main + Job()).launch {
+            withContext(Dispatchers.IO) {
+                image = FirebaseStorageWrapper().download(id)
+                withContext(Dispatchers.Main) {
+
+                    if (image != null) {
+                        findViewById<ImageView>(R.id.profile_image).setImageBitmap(image)
+                    }
+                }
+            }
+        }
+
+
+
+
         val modify_name : ImageView = findViewById(R.id.modify_name)
         modify_name.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v : View?) {
@@ -82,6 +103,19 @@ class EditProfileActivity : AppCompatActivity() {
             }
         })
 
+        val edit_photo : ImageView = findViewById(R.id.edit_photo)
+        edit_photo.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v : View?) {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(intent, 100)
+
+
+
+            }
+        })
+
         val button : Button = findViewById(R.id.edit_button)
         button.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v : View?) {
@@ -100,7 +134,12 @@ class EditProfileActivity : AppCompatActivity() {
                             withContext(Dispatchers.Main) {
                                 if(t_nickname != findViewById<TextView>(R.id.nickname).text && nicknameAlreadyUsed)
                                     Toast.makeText(v.context, "Nickname is already used", Toast.LENGTH_SHORT).show()
-                                else {
+                                else{
+
+                                    if(new_image != null) {
+                                        FirebaseStorageWrapper().upload(new_image!!, id, this@EditProfileActivity)
+                                    }
+
                                     user!!.name = t_name
                                     user!!.surname = t_surname
                                     user!!.nickname = t_nickname
@@ -117,6 +156,17 @@ class EditProfileActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == 100 && resultCode == RESULT_OK){
+            new_image = data?.data!!
+            findViewById<ImageView>(R.id.profile_image).setImageURI(new_image)
+            findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
+
+        }
     }
     override fun onBackPressed() {
         startActivity(Intent(this, MainActivity::class.java))

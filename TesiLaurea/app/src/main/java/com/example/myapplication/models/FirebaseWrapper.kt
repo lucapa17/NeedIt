@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -19,6 +21,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -542,30 +545,52 @@ class FirebaseStorageWrapper {
         }
     }
 
-    fun download(id: String): Uri? {
-        val tmp = File.createTempFile(id, "jpg")
-        var image: Uri? = null
+    fun download(id: String): Bitmap? {
+        val tmp = File.createTempFile("tempImage", "jpg")
+        var bitmap: Bitmap? = null
 
         val lock = ReentrantLock()
         val condition = lock.newCondition()
-
-
         GlobalScope.launch {
-            storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
-                image = Uri.fromFile(tmp)
+            try{
+                Log.d(TAG, "AAA global scope")
+
+                storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
+                    //image = Uri.fromFile(tmp)
+                    Log.d(TAG, "AAA success listener")
+
+                    bitmap = BitmapFactory.decodeFile(tmp.absolutePath)
+
+                    Log.d(TAG, "AAA bitmap")
+
+                    lock.withLock {
+                        condition.signal()
+                    }
+
+
+                }/*addOnFailureListener {
+                val errorCode = (it as StorageException).errorCode
+                if(errorCode == -13010)
+                    image = null
                 lock.withLock {
                     condition.signal()
                 }
-            }.addOnFailureListener {
+            }
+            */
+            } catch (e: StorageException){
+                /*if(e.errorCode == -13010) {
+                    image = null
+                }*/
                 lock.withLock {
                     condition.signal()
                 }
+
             }
         }
         lock.withLock {
             condition.await()
         }
-        return image
+        return bitmap
     }
 
     fun delete(id: String) {
