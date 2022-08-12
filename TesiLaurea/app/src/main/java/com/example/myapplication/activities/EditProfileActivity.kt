@@ -35,10 +35,16 @@ class EditProfileActivity : AppCompatActivity() {
         var nickname : String = ""
         var user : User? =null
 
+        val progressDialog = ProgressDialog(this@EditProfileActivity)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
 
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 user = getUser(this@EditProfileActivity)
+                image = FirebaseStorageWrapper().download(id)
+                Log.d(TAG, "aaa"+image)
                 withContext(Dispatchers.Main) {
                     name = user?.name.toString()
                     surname = user?.surname.toString()
@@ -52,29 +58,16 @@ class EditProfileActivity : AppCompatActivity() {
                     findViewById<EditText>(R.id.edit_nickname).setText(nickname)
                     findViewById<EditText>(R.id.edit_name).setText(name)
                     findViewById<EditText>(R.id.edit_surname).setText(surname)
-
-                }
-            }
-        }
-
-        val progressDialog = ProgressDialog(this@EditProfileActivity)
-        progressDialog.setMessage("Fetching...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
-        CoroutineScope(Dispatchers.Main + Job()).launch {
-            withContext(Dispatchers.IO) {
-
-
-                image = FirebaseStorageWrapper().download(id)
-                withContext(Dispatchers.Main) {
                     if (image != null) {
                         findViewById<ImageView>(R.id.profile_image).setImageURI(image)
                     }
-
+                    Log.d(TAG, "bello")
+                    progressDialog.dismiss()
 
                 }
             }
         }
+
 
 
 

@@ -3,6 +3,7 @@ package com.example.myapplication.adapter
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +11,10 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
-import com.example.myapplication.models.Group
-import com.example.myapplication.models.Request
-import com.example.myapplication.models.getNicknameById
+import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.Adapter<GroupsAdapter.UserViewHolder>() {
     inner class UserViewHolder(val v:View):RecyclerView.ViewHolder(v) {
@@ -47,6 +45,16 @@ class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.
     override fun onBindViewHolder(holder: GroupsAdapter.UserViewHolder, position: Int) {
         val newList = groupList[position]
         holder.nameGroup.text = newList.nameGroup
+        var uri : Uri? = null
+        CoroutineScope(Dispatchers.Main + Job()).launch {
+            withContext(Dispatchers.IO) {
+                uri = FirebaseStorageWrapper().download(newList.groupId.toString())
+                withContext(Dispatchers.Main) {
+                    if(uri != null)
+                        holder.logoGroup.setImageURI(uri)
+                }
+            }
+        }
 
     }
 

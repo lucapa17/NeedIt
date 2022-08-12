@@ -17,14 +17,17 @@
         android:layout_weight="1"
         android:orientation="horizontal"
         android:padding="2dp">
-
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/logoGroup"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
             android:layout_marginLeft="12dp"
-            android:src="@drawable/ic_baseline_groups_24" />
+            android:src="@drawable/ic_baseline_groups_24"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="0.2dp">
+
+        </de.hdodenhof.circleimageview.CircleImageView>
 
         <TextView
             android:id="@+id/nameGroup"
@@ -34,7 +37,7 @@
             android:text="Title"
             android:textColor="@color/black"
             android:textSize="25dp"
-
+            android:gravity="center_vertical"
             android:textStyle="bold" />
     </LinearLayout>
 

@@ -561,47 +561,30 @@ class FirebaseStorageWrapper {
     }
 
     fun download(id: String): Uri? {
-        val tmp = File.createTempFile(id, "jpg")
+        val tmp = File.createTempFile("image_${id}", "jpg")
         //var bitmap: Bitmap? = null
         var image : Uri? = null
 
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {
-            try{
                 Log.d(TAG, "AAA global scope")
 
                 storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
                     image = Uri.fromFile(tmp)
                     Log.d(TAG, "AAA success listener")
-
                     //bitmap = BitmapFactory.decodeFile(tmp.absolutePath)
-
                     Log.d(TAG, "AAA bitmap")
-
                     lock.withLock {
                         condition.signal()
                     }
 
-
-                }/*addOnFailureListener {
-                val errorCode = (it as StorageException).errorCode
-                if(errorCode == -13010)
-                    image = null
+                }.addOnFailureListener {
                 lock.withLock {
                     condition.signal()
                 }
             }
-            */
-            } catch (e: StorageException){
-                /*if(e.errorCode == -13010) {
-                    image = null
-                }*/
-                lock.withLock {
-                    condition.signal()
-                }
 
-            }
         }
         lock.withLock {
             condition.await()
