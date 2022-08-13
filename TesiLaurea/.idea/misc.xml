@@ -49,20 +49,26 @@
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/options_complete_menu.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/lucap/Documents/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/options_menu.xml" value="0.273828125" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.345" />
+        <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.184" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_groups_24.xml" value="0.233" />
+        <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_more.xml" value="0.184" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_pageview_24.xml" value="0.345" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_people_24.xml" value="0.345" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_people_grey.xml" value="0.233" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/ic_baseline_person_grey.xml" value="0.345" />
+        <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/drawable/shape_background.xml" value="0.184" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_edit_profile.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_group.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_info_group.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/activity_splash.xml" value="0.1743659420289855" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/add_request.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/fragment_active_list.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/fragment_completed_list.xml" value="0.1743659420289855" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/list_groups.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/list_members.xml" value="0.2604166666666667" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/layout/list_requests.xml" value="0.36302083333333335" />
         <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/nav_menu.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/lucap/OneDrive - unige.it/Documenti/GitHub/TesiLaurea/TesiLaurea/app/src/main/res/menu/nav_menu_group.xml" value="0.17552083333333332" />
       </map>
     </option>
   </component>

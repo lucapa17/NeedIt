@@ -1,22 +1,23 @@
 package com.example.myapplication.adapter
 
+import android.app.ActionBar
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.text.InputType
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.setPadding
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 
 
@@ -34,6 +35,9 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
         var date:TextView
         var time:TextView
         var price: TextView
+        var photo: ImageView
+        var card : CardView
+
 
 
 
@@ -45,6 +49,9 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
             date = v.findViewById<TextView>(R.id.Date)
             price = v.findViewById<TextView>(R.id.price)
             time = v.findViewById<TextView>(R.id.Time)
+            photo = v.findViewById<ImageView>(R.id.photo)
+            card = v.findViewById<CardView>(R.id.card)
+
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
         }
@@ -195,7 +202,12 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
+        val progressDialog = ProgressDialog(c)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         val newList = requestList[position]
+
         if(newList.price!!.isEmpty())
             holder.price.setVisibility(View.GONE)
         else
@@ -217,11 +229,22 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
 
         GlobalScope.launch {
             val userName : String = getNicknameById(c,newList.userId )
-            holder.userName.text = "Request by: ${userName}"
+            holder.userName.text = userName
             if(newList.isCompleted) {
                 val completedByName : String = getNicknameById(c,newList.completedById )
                 holder.completedBy.text = "Completed by: ${completedByName}"
 
+            }
+        }
+        var uri : Uri? = null
+        CoroutineScope(Dispatchers.Main + Job()).launch {
+            withContext(Dispatchers.IO) {
+                uri = FirebaseStorageWrapper().download(newList.userId)
+                withContext(Dispatchers.Main) {
+                    if(uri != null)
+                        holder.photo.setImageURI(uri)
+                    progressDialog.dismiss()
+                }
             }
         }
 

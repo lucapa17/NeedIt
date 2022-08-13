@@ -15,7 +15,7 @@ import com.example.myapplication.adapter.MembersAdapter
 import com.example.myapplication.models.*
 import kotlinx.coroutines.*
 
-class InfoGroupActivity: BaseActivity() {
+class InfoGroupActivity: AppCompatActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var membersAdapter: MembersAdapter
     var image: Uri? = null

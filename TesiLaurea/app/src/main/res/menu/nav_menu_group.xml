@@ -13,7 +13,7 @@
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/nav_show_members"
-        android:icon="@drawable/ic_baseline_people_24"
+        android:icon="@drawable/ic_baseline_info_24"
         android:title="show members"
         app:showAsAction="ifRoom"/>
 
