@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -547,7 +548,7 @@ class FirebaseStorageWrapper {
             e.printStackTrace()
         }
         val baos = ByteArrayOutputStream()
-        bmp!!.compress(Bitmap.CompressFormat.JPEG, 5, baos)
+        bmp!!.compress(Bitmap.CompressFormat.JPEG, 10, baos)
         val fileInBytes: ByteArray = baos.toByteArray()
         GlobalScope.launch {
             storage.child("images/${id}.jpg").putBytes(fileInBytes)
@@ -567,8 +568,10 @@ class FirebaseStorageWrapper {
         //context.startActivity(intent)
     }
 
-    fun download(id: String): Uri? {
-        val tmp = File.createTempFile("image_${id}", "jpg")
+    fun download(id: String, context: Context): Uri? {
+        //val tmp = File.createTempFile("image_${id}_", "jpg")
+        val tmp = File.createTempFile("image_${id}_", null, context.cacheDir)
+        tmp.deleteOnExit()
         //var bitmap: Bitmap? = null
         var image : Uri? = null
 
@@ -576,21 +579,19 @@ class FirebaseStorageWrapper {
         val condition = lock.newCondition()
         GlobalScope.launch {
                 Log.d(TAG, "AAA global scope")
-
                 storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
                     image = Uri.fromFile(tmp)
                     Log.d(TAG, "AAA success listener")
                     //bitmap = BitmapFactory.decodeFile(tmp.absolutePath)
-                    Log.d(TAG, "AAA bitmap")
                     lock.withLock {
                         condition.signal()
                     }
 
                 }.addOnFailureListener {
-                lock.withLock {
-                    condition.signal()
+                    lock.withLock {
+                        condition.signal()
+                    }
                 }
-            }
 
         }
         lock.withLock {

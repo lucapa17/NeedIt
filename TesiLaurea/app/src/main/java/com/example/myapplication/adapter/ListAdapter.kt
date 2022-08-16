@@ -3,14 +3,17 @@ package com.example.myapplication.adapter
 import android.app.ActionBar
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
@@ -18,10 +21,11 @@ import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.io.File
 import java.text.SimpleDateFormat
 
 
-class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoList:ArrayList<Uri>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
+class ListAdapter(val c:Context,val requestList:ArrayList<Request>, /*val photoList:ArrayList<Uri>,*/ val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
 
 
@@ -37,7 +41,6 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
         var price: TextView
         var photo: ImageView
         var card : CardView
-
 
 
 
@@ -233,7 +236,6 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
             holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
 
         }
-        progressDialog.dismiss()
 
         var uri : Uri? = null
         /*
@@ -248,12 +250,44 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
             }
         }
          */
+
+        val dir: File = File(c.getCacheDir().getAbsolutePath())
+        var found = false
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                if (f.name.toString().contains("image_${newList.user.id}_")) {
+                    uri = Uri.fromFile(f)
+                    found = true
+                    if(!(f.length() == 0L))
+                        holder.photo.setImageURI(uri)
+                    progressDialog.dismiss()
+                    break
+                }
+            }
+        }
+        if(!found){
+            CoroutineScope(Dispatchers.Main + Job()).launch {
+                withContext(Dispatchers.IO) {
+                    uri = FirebaseStorageWrapper().download(newList.user.id, c)
+                }
+                withContext(Dispatchers.Main) {
+                    if(uri != null)
+                        holder.photo.setImageURI(uri)
+                    progressDialog.dismiss()
+                }
+            }
+        }
+
+        /*
         for(photo in photoList){
-            if(photo.toString().contains(newList.user.id)){
+            Log.d(TAG, "ccc "+photo.toString())
+            if(photo.toString().contains("${newList.user.id}_")){
                 holder.photo.setImageURI(photo)
                 break
             }
         }
+
+         */
 
     }
 

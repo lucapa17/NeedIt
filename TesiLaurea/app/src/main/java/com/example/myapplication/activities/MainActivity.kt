@@ -3,6 +3,7 @@ package com.example.myapplication.activities
 import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -15,6 +16,7 @@ import com.example.myapplication.adapter.ListAdapter
 import com.example.myapplication.models.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
+import java.io.File
 
 class MainActivity : BaseActivity() {
     private lateinit var recv: RecyclerView
@@ -22,13 +24,13 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
+
+        delete_cache()
         recv = this.findViewById(R.id.mRecycler)
         groupsAdapter = GroupsAdapter(this, ArrayList())
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = groupsAdapter
-
         runInstantWorker(this)
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Fetching...")
@@ -52,5 +54,13 @@ class MainActivity : BaseActivity() {
     override fun onBackPressed() {
         finishAffinity()
         //startActivity(Intent(this, MainActivity::class.java))
+    }
+    fun delete_cache(){
+        val dir: File = File(this.getCacheDir().getAbsolutePath())
+        for (f in dir.listFiles()) {
+            val minutes : Long =  (java.util.Calendar.getInstance().timeInMillis - f.lastModified()) / (1000*60)
+            if(minutes >= 5)
+                f.delete()
+        }
     }
 }

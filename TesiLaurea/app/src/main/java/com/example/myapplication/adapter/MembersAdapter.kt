@@ -17,6 +17,7 @@ import com.example.myapplication.models.Group
 import com.example.myapplication.models.User
 import com.example.myapplication.models.getUserIdByNickname
 import kotlinx.coroutines.*
+import java.io.File
 
 class MembersAdapter (val c: Context, val memberList:ArrayList<User>): RecyclerView.Adapter<MembersAdapter.UserViewHolder>() {
     inner class UserViewHolder(val v: View): RecyclerView.ViewHolder(v) {
@@ -45,20 +46,33 @@ class MembersAdapter (val c: Context, val memberList:ArrayList<User>): RecyclerV
         progressDialog.setMessage("Fetching...")
         progressDialog.setCancelable(false)
         progressDialog.show()
-        CoroutineScope(Dispatchers.Main + Job()).launch {
-            withContext(Dispatchers.IO) {
-                val id = getUserIdByNickname(c, newList.nickname)
-                uri = FirebaseStorageWrapper().download(id!!)
-                withContext(Dispatchers.Main) {
-                    if(uri != null)
-                        holder.photo.setImageURI(uri)
+        val dir: File = File(c.getCacheDir().getAbsolutePath())
+        var found = false
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                if(f.name.toString().contains("image_${newList.id}_")){
+                    if(!(f.length() == 0L))
+                        holder.photo.setImageURI(Uri.fromFile(f))
+                    found = true
                     progressDialog.dismiss()
+                    break
+                }
+
+            }
+        }
+        if(!found){
+            CoroutineScope(Dispatchers.Main + Job()).launch {
+                withContext(Dispatchers.IO) {
+                    val id = getUserIdByNickname(c, newList.nickname)
+                    uri = FirebaseStorageWrapper().download(id!!, c)
+                    withContext(Dispatchers.Main) {
+                        if(uri != null)
+                            holder.photo.setImageURI(uri)
+                        progressDialog.dismiss()
+                    }
                 }
             }
         }
-
-
-
     }
 
     override fun getItemCount(): Int {

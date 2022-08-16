@@ -22,6 +22,7 @@ import com.example.myapplication.models.Request
 import com.example.myapplication.models.getGroupById
 import com.example.myapplication.models.getRequestsList
 import kotlinx.coroutines.*
+import java.io.File
 
 
 class CompletedListFragment : Fragment() {
@@ -49,7 +50,7 @@ class CompletedListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_completed_list, container, false)
         val context : Context = this.requireContext()
         recv = view.findViewById(R.id.mRecycler)
-        listAdapter = ListAdapter(context, ArrayList(), ArrayList(), groupName!!, false)
+        listAdapter = ListAdapter(context, ArrayList(), /*ArrayList(),*/ groupName!!, false)
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
@@ -60,23 +61,36 @@ class CompletedListFragment : Fragment() {
             withContext(Dispatchers.IO) {
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
                 val group = getGroupById(requireContext(), groupId!!)
+                /*
                 val photoList : ArrayList<Uri> = ArrayList()
+                var uri : Uri? = null
                 for(user in group.users!!){
-                    var uri : Uri? = FirebaseStorageWrapper().download(user)
+                    val dir: File = File(requireContext().getCacheDir().getAbsolutePath())
+                    var found = false
+                    if (dir.exists()) {
+                        for (f in dir.listFiles()) {
+                            if(f.name.toString().contains("image_${user}_")){
+                                uri = Uri.fromFile(f)
+                                found = true
+                                progressDialog.dismiss()
+                                break
+                            }
+                        }
+                    }
+                    if(!found)
+                        uri = FirebaseStorageWrapper().download(user, requireContext())
                     if(uri != null)
                         photoList.add(uri)
-
                 }
+
+                 */
                 withContext(Dispatchers.Main) {
                     requestsList = ArrayList(requestList)
                     var groupCompletedList : ArrayList<Request> = ArrayList()
-
-                    listAdapter = ListAdapter(requireContext(),groupCompletedList, photoList, groupName!!, false)
+                    listAdapter = ListAdapter(requireContext(),groupCompletedList, /*photoList,*/ groupName!!, false)
 
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
-
-
                     for (request in requestList){
                         if(request.isCompleted){
                             //groupActiveList.add(request.nameRequest)
@@ -84,6 +98,8 @@ class CompletedListFragment : Fragment() {
                             listAdapter.notifyDataSetChanged()
                         }
                     }
+
+
                     progressDialog.dismiss()
                 }
             }

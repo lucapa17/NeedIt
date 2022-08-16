@@ -28,6 +28,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -59,7 +60,7 @@ class ActiveListFragment : Fragment() {
         val context : Context = this.requireContext()
         recv = view.findViewById(R.id.mRecycler)
         addsBtn = view.findViewById(R.id.addingBtn)
-        listAdapter = ListAdapter(context, ArrayList(), ArrayList(), groupName!!, true)
+        listAdapter = ListAdapter(context, ArrayList(), /*ArrayList(),*/ groupName!!, true)
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
@@ -70,19 +71,37 @@ class ActiveListFragment : Fragment() {
             withContext(Dispatchers.IO) {
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
                 val group = getGroupById(requireContext(), groupId!!)
+                /*
                 val photoList : ArrayList<Uri> = ArrayList()
+                var uri : Uri? = null
                 for(user in group.users!!){
-                    var uri : Uri? = FirebaseStorageWrapper().download(user)
+                    val dir: File = File(requireContext().getCacheDir().getAbsolutePath())
+                    var found = false
+                    if (dir.exists()) {
+                        for (f in dir.listFiles()) {
+                            if(f.name.toString().contains("image_${user}_")){
+                                Log.d(TAG, "iii trovato "+f.name)
+                                uri = Uri.fromFile(f)
+                                found = true
+                                progressDialog.dismiss()
+                                break
+                            }
+                        }
+                    }
+                    if(!found){
+                        uri = FirebaseStorageWrapper().download(user, requireContext())
+                        Log.d(TAG, "iii non trovato"+uri)
+                    }
                     if(uri != null)
                         photoList.add(uri)
-
                 }
+
+                 */
                 withContext(Dispatchers.Main) {
                     requestsList = ArrayList(requestList)
                     var groupActiveList : ArrayList<Request> = ArrayList()
 
-                    listAdapter = ListAdapter(requireContext(),groupActiveList, photoList, groupName!!, true)
-
+                    listAdapter = ListAdapter(requireContext(),groupActiveList,/* photoList,*/ groupName!!, true)
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
 
@@ -93,6 +112,7 @@ class ActiveListFragment : Fragment() {
                             listAdapter.notifyDataSetChanged()
                         }
                     }
+
                     addsBtn.setOnClickListener { addInfo(groupActiveList) }
                     progressDialog.dismiss()
 

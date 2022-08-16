@@ -1,21 +1,24 @@
 package com.example.myapplication.adapter
 
-import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.net.toFile
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.models.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.io.File
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.Adapter<GroupsAdapter.UserViewHolder>() {
     inner class UserViewHolder(val v:View):RecyclerView.ViewHolder(v) {
@@ -51,16 +54,52 @@ class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.
         val newList = groupList[position]
         holder.nameGroup.text = newList.nameGroup
         var uri : Uri? = null
-        CoroutineScope(Dispatchers.Main + Job()).launch {
-            withContext(Dispatchers.IO) {
-                uri = FirebaseStorageWrapper().download(newList.groupId.toString())
-                withContext(Dispatchers.Main) {
-                    if(uri != null)
-                        holder.logoGroup.setImageURI(uri)
+        val dir: File = File(c.getCacheDir().getAbsolutePath())
+        var found = false
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                if(f.name.toString().contains("image_${newList.groupId}_")){
+                    Log.d(TAG, "dddddddd "+f)
+                    if(!(f.length() == 0L))
+                        holder.logoGroup.setImageURI(Uri.fromFile(f))
+                    found = true
                     progressDialog.dismiss()
+                    break
+                }
+
+            }
+
+        }
+        Log.d(TAG, "iiiiiiii"+ java.util.Calendar.getInstance().timeInMillis)
+        for (f in dir.listFiles()) {
+            val ciao : Long =  (java.util.Calendar.getInstance().timeInMillis - f.lastModified()) / (1000*60)
+            Log.d(TAG, "iiii "+f.name)
+            Log.d(TAG, "iiii "+f.lastModified())
+            Log.d(TAG, "iiii "+ciao)
+        }
+
+            /*
+            if(File(c.cacheDir, "images/${newList.groupId}_.jpg").exists())
+                Log.d(TAG, "iiii exist")
+            else
+                Log.d(TAG, "iiii NO exist")
+            */
+        if(!found){
+            CoroutineScope(Dispatchers.Main + Job()).launch {
+                withContext(Dispatchers.IO) {
+                    uri = FirebaseStorageWrapper().download(newList.groupId.toString(), c)
+                    Log.d(TAG, "iiii "+uri)
+                    withContext(Dispatchers.Main) {
+                        if(uri != null){
+                            holder.logoGroup.setImageURI(uri)
+                            //uri!!.toFile().delete()
+                        }
+                        progressDialog.dismiss()
+                    }
                 }
             }
         }
+
 
     }
 

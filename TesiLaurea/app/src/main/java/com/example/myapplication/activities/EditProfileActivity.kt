@@ -40,10 +40,24 @@ class EditProfileActivity : AppCompatActivity() {
         progressDialog.setCancelable(false)
         progressDialog.show()
 
+        val dir: File = File(this@EditProfileActivity.getCacheDir().getAbsolutePath())
+        var found = false
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                if(f.name.toString().contains("image_${id}_")){
+                    if(!(f.length() == 0L))
+                        image = Uri.fromFile(f)
+                    found = true
+                    break
+                }
+
+            }
+        }
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 user = getUser(this@EditProfileActivity)
-                image = FirebaseStorageWrapper().download(id)
+                if(!found)
+                    image = FirebaseStorageWrapper().download(id, this@EditProfileActivity)
                 Log.d(TAG, "aaa"+image)
                 withContext(Dispatchers.Main) {
                     name = user?.name.toString()
@@ -170,6 +184,16 @@ class EditProfileActivity : AppCompatActivity() {
             findViewById<ImageView>(R.id.profile_image).setImageURI(image)
             GlobalScope.launch{
                 //FirebaseStorageWrapper().delete(id)
+                val dir: File = File(this@EditProfileActivity.getCacheDir().getAbsolutePath())
+                var found = false
+                if (dir.exists()) {
+                    for (f in dir.listFiles()) {
+                        if(f.name.toString().contains("image_${id}_")){
+                            f.delete()
+                        }
+
+                    }
+                }
                 FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
             }
 
