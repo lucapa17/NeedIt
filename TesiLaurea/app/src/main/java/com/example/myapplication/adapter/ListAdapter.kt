@@ -21,7 +21,7 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 
 
-class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
+class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoList:ArrayList<Uri>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
 
 
@@ -235,8 +235,10 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                 holder.completedBy.text = "Completed by: ${completedByName}"
 
             }
+            progressDialog.dismiss()
         }
         var uri : Uri? = null
+        /*
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 uri = FirebaseStorageWrapper().download(newList.userId)
@@ -245,6 +247,13 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val groupNam
                         holder.photo.setImageURI(uri)
                     progressDialog.dismiss()
                 }
+            }
+        }
+         */
+        for(photo in photoList){
+            if(photo.toString().contains(newList.userId)){
+                holder.photo.setImageURI(photo)
+                break
             }
         }
 

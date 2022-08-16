@@ -3,6 +3,7 @@ package com.example.myapplication.fragments
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.adapter.ListAdapter
+import com.example.myapplication.models.FirebaseStorageWrapper
 import com.example.myapplication.models.Request
+import com.example.myapplication.models.getGroupById
 import com.example.myapplication.models.getRequestsList
 import kotlinx.coroutines.*
 
@@ -46,7 +49,7 @@ class CompletedListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_completed_list, container, false)
         val context : Context = this.requireContext()
         recv = view.findViewById(R.id.mRecycler)
-        listAdapter = ListAdapter(context, ArrayList(), groupName!!, false)
+        listAdapter = ListAdapter(context, ArrayList(), ArrayList(), groupName!!, false)
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
@@ -56,11 +59,19 @@ class CompletedListFragment : Fragment() {
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
+                val group = getGroupById(requireContext(), groupId!!)
+                val photoList : ArrayList<Uri> = ArrayList()
+                for(user in group.users!!){
+                    var uri : Uri? = FirebaseStorageWrapper().download(user)
+                    if(uri != null)
+                        photoList.add(uri)
+
+                }
                 withContext(Dispatchers.Main) {
                     requestsList = ArrayList(requestList)
                     var groupCompletedList : ArrayList<Request> = ArrayList()
 
-                    listAdapter = ListAdapter(requireContext(),groupCompletedList, groupName!!, false)
+                    listAdapter = ListAdapter(requireContext(),groupCompletedList, photoList, groupName!!, false)
 
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter

@@ -1,31 +1,27 @@
 package com.example.myapplication.models
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import com.example.myapplication.activities.EditProfileActivity
-import com.example.myapplication.activities.MainActivity
 import com.example.myapplication.activities.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -542,8 +538,17 @@ class FirebaseStorageWrapper {
     fun upload(image: Uri, id: String, context: Context) {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
+        var bmp: Bitmap? = null
+        try {
+            bmp = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val baos = ByteArrayOutputStream()
+        bmp!!.compress(Bitmap.CompressFormat.JPEG, 5, baos)
+        val fileInBytes: ByteArray = baos.toByteArray()
         GlobalScope.launch {
-            storage.child("images/${id}.jpg").putFile(image)
+            storage.child("images/${id}.jpg").putBytes(fileInBytes)
             lock.withLock {
                 condition.signal()
             }

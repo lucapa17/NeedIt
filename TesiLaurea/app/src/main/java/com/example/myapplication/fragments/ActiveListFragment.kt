@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -58,7 +59,7 @@ class ActiveListFragment : Fragment() {
         val context : Context = this.requireContext()
         recv = view.findViewById(R.id.mRecycler)
         addsBtn = view.findViewById(R.id.addingBtn)
-        listAdapter = ListAdapter(context, ArrayList(), groupName!!, true)
+        listAdapter = ListAdapter(context, ArrayList(), ArrayList(), groupName!!, true)
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
@@ -68,11 +69,19 @@ class ActiveListFragment : Fragment() {
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
+                val group = getGroupById(requireContext(), groupId!!)
+                val photoList : ArrayList<Uri> = ArrayList()
+                for(user in group.users!!){
+                    var uri : Uri? = FirebaseStorageWrapper().download(user)
+                    if(uri != null)
+                        photoList.add(uri)
+
+                }
                 withContext(Dispatchers.Main) {
                     requestsList = ArrayList(requestList)
                     var groupActiveList : ArrayList<Request> = ArrayList()
 
-                    listAdapter = ListAdapter(requireContext(),groupActiveList, groupName!!, true)
+                    listAdapter = ListAdapter(requireContext(),groupActiveList, photoList, groupName!!, true)
 
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter

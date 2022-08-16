@@ -39,7 +39,7 @@
                 </de.hdodenhof.circleimageview.CircleImageView>
                 <TextView
                     android:id="@+id/userName"
-                    android:text="UserName"
+                    android:text=""
                     android:textColor="#1C651F"
                     android:textSize="18dp"
                     android:textStyle="bold"
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/price"
-                android:text="Comment"
+                android:text="Price"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="15dp"
                 android:textStyle="bold"
