@@ -1,10 +1,12 @@
 package com.example.myapplication.fragments
 
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -59,30 +61,40 @@ class CompletedListFragment : Fragment() {
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
-                val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
                 val group = getGroupById(requireContext(), groupId!!)
-
                 val photoList : ArrayList<Uri> = ArrayList()
-                var uri : Uri? = null
+
+
                 for(user in group.users!!){
+                    var uri : Uri? = null
+                    Log.d(ContentValues.TAG, "vvv1 "+user)
+
                     val dir: File = File(requireContext().getCacheDir().getAbsolutePath())
                     var found = false
                     if (dir.exists()) {
                         for (f in dir.listFiles()) {
                             if(f.name.toString().contains("image_${user}_")){
-                                if(!(f.length() == 0L))
+                                Log.d(ContentValues.TAG, "vvv1 OOOOO  "+f.name.toString())
+                                Log.d(ContentValues.TAG, "vvv1 OOOOO  "+"image_${user}_")
+                                if(!(f.length() == 0L)){
                                     uri = Uri.fromFile(f)
-                                found = true
-                                progressDialog.dismiss()
+                                    found = true
+                                }
                                 break
                             }
                         }
                     }
+                    Log.d(ContentValues.TAG, "vvv1 found "+found)
                     if(!found)
                         uri = FirebaseStorageWrapper().download(user, requireContext())
+                    Log.d(ContentValues.TAG, "vvv1 "+uri)
                     if(uri != null)
                         photoList.add(uri)
                 }
+                val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
+
+
+
                 requestsList = ArrayList(requestList)
                 var groupCompletedList : ArrayList<Request> = ArrayList()
                 for (request in requestList){

@@ -69,34 +69,39 @@ class ActiveListFragment : Fragment() {
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
-                val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
                 val group = getGroupById(requireContext(), groupId!!)
-
                 val photoList : ArrayList<Uri> = ArrayList()
-                var uri : Uri? = null
                 for(user in group.users!!){
+                    var uri : Uri? = null
+                    Log.d(TAG, "vvv "+user)
+
                     val dir: File = File(requireContext().getCacheDir().getAbsolutePath())
                     var found = false
                     if (dir.exists()) {
                         for (f in dir.listFiles()) {
                             if(f.name.toString().contains("image_${user}_")){
-                                if(!(f.length() == 0L))
+                                Log.d(TAG, "vvv OOOOO  "+f.name.toString())
+                                Log.d(TAG, "vvv OOOOO  "+"image_${user}_")
+                                if(!(f.length() == 0L)){
                                     uri = Uri.fromFile(f)
-                                found = true
-                                progressDialog.dismiss()
+                                    found = true
+                                }
                                 break
                             }
                         }
                     }
+                    Log.d(TAG, "vvv found "+found)
+
                     if(!found){
                         uri = FirebaseStorageWrapper().download(user, requireContext())
                     }
+                    Log.d(TAG, "vvv "+uri)
                     if(uri != null)
                         photoList.add(uri)
                 }
+                val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
                 requestsList = ArrayList(requestList)
                 var groupActiveList : ArrayList<Request> = ArrayList()
-
 
 
                 for (request in requestList){

@@ -13,12 +13,17 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
+import com.example.myapplication.adapter.GroupsAdapter
 import com.example.myapplication.adapter.ViewPagerAdapter
 import com.example.myapplication.databinding.ActivityGroupBinding
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.FirebaseAuthWrapper
+import com.example.myapplication.models.Group
+import com.example.myapplication.models.getGroups
+import kotlinx.coroutines.*
 
 
 class GroupActivity : AppCompatActivity() {
@@ -40,13 +45,17 @@ class GroupActivity : AppCompatActivity() {
         //supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_pageview_24)
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val fragmentArrayList = ArrayList<Fragment>()
-
-        fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!, FirebaseAuthWrapper(this).getUid()!!, groupName!!))
-        fragmentArrayList.add(CompletedListFragment.newInstance(groupId!!,FirebaseAuthWrapper(this).getUid()!!, groupName!!))
-
-        val adapter = ViewPagerAdapter(this, supportFragmentManager, fragmentArrayList)
-        binding!!.viewPager.adapter = adapter
-        binding!!.tabs.setupWithViewPager(binding!!.viewPager)
+        CoroutineScope(Dispatchers.Main + Job()).launch {
+            withContext(Dispatchers.IO) {
+                fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!, FirebaseAuthWrapper(this@GroupActivity).getUid()!!, groupName!!))
+                fragmentArrayList.add(CompletedListFragment.newInstance(groupId!!,FirebaseAuthWrapper(this@GroupActivity).getUid()!!, groupName!!))
+                withContext(Dispatchers.Main) {
+                    val adapter = ViewPagerAdapter(this@GroupActivity, supportFragmentManager, fragmentArrayList)
+                    binding!!.viewPager.adapter = adapter
+                    binding!!.tabs.setupWithViewPager(binding!!.viewPager)
+                }
+            }
+        }
 
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
