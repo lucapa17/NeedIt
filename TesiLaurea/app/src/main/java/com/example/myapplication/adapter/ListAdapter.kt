@@ -150,17 +150,18 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
                                 position.isCompleted = true
                                 var price_value : String = input.text.toString()
                                 position.price = price_value
-                                position.completedById = FirebaseAuthWrapper(c).getUid()!!
-                                Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
+
                                 GlobalScope.launch {
+                                    val completedBy : User = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
+                                    position.completedBy = completedBy
+                                    Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
                                     val group : Group = getGroupById(c, position.groupId)
                                     val uid : String = FirebaseAuthWrapper(c).getUid()!!
-                                    val completedBy : String = getNicknameById(c,uid)
-                                    val sender : String = getNicknameById(c, position.userId)
+
                                     for(userId in group.users!!){
                                         if(userId != uid){
                                             val notificationId : Long = getNotificationId(c, userId)
-                                            val notification : Notification = Notification(userId, position, sender, completedBy, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
+                                            val notification : Notification = Notification(userId, position, position.user.nickname, completedBy.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
                                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                         }
                                     }
@@ -227,16 +228,13 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
         holder.date.text = day
         holder.time.text = time
 
-        GlobalScope.launch {
-            val userName : String = getNicknameById(c,newList.userId )
-            holder.userName.text = userName
-            if(newList.isCompleted) {
-                val completedByName : String = getNicknameById(c,newList.completedById )
-                holder.completedBy.text = "Completed by: ${completedByName}"
+        holder.userName.text = newList.user.nickname
+        if(newList.isCompleted) {
+            holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
 
-            }
-            progressDialog.dismiss()
         }
+        progressDialog.dismiss()
+
         var uri : Uri? = null
         /*
         CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -251,7 +249,7 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
         }
          */
         for(photo in photoList){
-            if(photo.toString().contains(newList.userId)){
+            if(photo.toString().contains(newList.user.id)){
                 holder.photo.setImageURI(photo)
                 break
             }

@@ -41,7 +41,8 @@ class FirebaseAuthWrapper(private val context: Context) {
     fun signUp(email: String, password: String, name : String, surname : String, nickname : String) {
         this.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val user = User(name, surname, email, nickname, mutableListOf())
+                    val uid = FirebaseAuthWrapper(context).getUid()
+                    val user = User(uid!!, name, surname, email, nickname, mutableListOf())
                     FirebaseDbWrapper(context).registerUser(user)
                 }
                 else {
@@ -472,7 +473,8 @@ fun getUserById (context: Context, id: String) : User {
 }
 
 class FirebaseDbWrapper(private val context: Context) {
-    private val uid = FirebaseAuthWrapper(context).getUid()
+    val uid = FirebaseAuthWrapper(context).getUid()
+
     fun registerUser(user: User) {
         Firebase.database.getReference("users").child(uid!!).setValue(user).addOnCompleteListener {
             if (it.isSuccessful) {
