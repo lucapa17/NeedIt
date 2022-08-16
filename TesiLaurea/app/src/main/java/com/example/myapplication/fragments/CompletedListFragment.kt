@@ -50,7 +50,7 @@ class CompletedListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_completed_list, container, false)
         val context : Context = this.requireContext()
         recv = view.findViewById(R.id.mRecycler)
-        listAdapter = ListAdapter(context, ArrayList(), /*ArrayList(),*/ groupName!!, false)
+        listAdapter = ListAdapter(context, ArrayList(), ArrayList(), groupName!!, false)
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
@@ -61,7 +61,7 @@ class CompletedListFragment : Fragment() {
             withContext(Dispatchers.IO) {
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
                 val group = getGroupById(requireContext(), groupId!!)
-                /*
+
                 val photoList : ArrayList<Uri> = ArrayList()
                 var uri : Uri? = null
                 for(user in group.users!!){
@@ -70,7 +70,8 @@ class CompletedListFragment : Fragment() {
                     if (dir.exists()) {
                         for (f in dir.listFiles()) {
                             if(f.name.toString().contains("image_${user}_")){
-                                uri = Uri.fromFile(f)
+                                if(!(f.length() == 0L))
+                                    uri = Uri.fromFile(f)
                                 found = true
                                 progressDialog.dismiss()
                                 break
@@ -82,23 +83,19 @@ class CompletedListFragment : Fragment() {
                     if(uri != null)
                         photoList.add(uri)
                 }
-
-                 */
+                requestsList = ArrayList(requestList)
+                var groupCompletedList : ArrayList<Request> = ArrayList()
+                for (request in requestList){
+                    if(request.isCompleted){
+                        //groupActiveList.add(request.nameRequest)
+                        groupCompletedList.add(request)
+                        listAdapter.notifyDataSetChanged()
+                    }
+                }
                 withContext(Dispatchers.Main) {
-                    requestsList = ArrayList(requestList)
-                    var groupCompletedList : ArrayList<Request> = ArrayList()
-                    listAdapter = ListAdapter(requireContext(),groupCompletedList, /*photoList,*/ groupName!!, false)
-
+                    listAdapter = ListAdapter(requireContext(),groupCompletedList, photoList, groupName!!, false)
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
-                    for (request in requestList){
-                        if(request.isCompleted){
-                            //groupActiveList.add(request.nameRequest)
-                            groupCompletedList.add(request)
-                            listAdapter.notifyDataSetChanged()
-                        }
-                    }
-
 
                     progressDialog.dismiss()
                 }

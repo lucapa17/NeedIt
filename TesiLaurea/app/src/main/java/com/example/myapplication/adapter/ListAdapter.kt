@@ -25,7 +25,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 
 
-class ListAdapter(val c:Context,val requestList:ArrayList<Request>, /*val photoList:ArrayList<Uri>,*/ val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
+class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoList:ArrayList<Uri>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
 
 
@@ -251,6 +251,8 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, /*val photoL
         }
          */
 
+
+        /*
         val dir: File = File(c.getCacheDir().getAbsolutePath())
         var found = false
         if (dir.exists()) {
@@ -278,7 +280,8 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, /*val photoL
             }
         }
 
-        /*
+         */
+
         for(photo in photoList){
             Log.d(TAG, "ccc "+photo.toString())
             if(photo.toString().contains("${newList.user.id}_")){
@@ -286,8 +289,10 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, /*val photoL
                 break
             }
         }
+        progressDialog.dismiss()
 
-         */
+
+
 
     }
 
