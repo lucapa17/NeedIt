@@ -620,7 +620,7 @@ class FirebaseStorageWrapper {
             e.printStackTrace()
         }
         val baos = ByteArrayOutputStream()
-        bmp!!.compress(Bitmap.CompressFormat.JPEG, 10, baos)
+        bmp!!.compress(Bitmap.CompressFormat.JPEG, 15, baos)
         val fileInBytes: ByteArray = baos.toByteArray()
         GlobalScope.launch {
             storage.child("images/${id}.jpg").putBytes(fileInBytes)
