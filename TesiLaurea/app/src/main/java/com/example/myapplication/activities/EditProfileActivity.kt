@@ -10,18 +10,17 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.models.*
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
+import java.util.*
 
 
 class EditProfileActivity : AppCompatActivity() {
@@ -220,17 +219,55 @@ class EditProfileActivity : AppCompatActivity() {
 
                 //builder.setView(v)
                 builder.setTitle("Delete Profile")
-                //builder.setIcon(R.drawable.ic_baseline_check_circle_24)
+                builder.setIcon(R.drawable.ic_baseline_cancel_24)
                 builder.setMessage("Do you want to delete your profile? To do that, you have to re-authenticate")
                 builder.setPositiveButton("Yes"){
                         dialog,_->
 
-                    
+                    val inflter = LayoutInflater.from(this)
+                    val v = inflter.inflate(R.layout.delete_login,null)
+                    /**set view*/
+                    val email = v.findViewById<EditText>(R.id.email)
+                    val password = v.findViewById<EditText>(R.id.password)
 
+                    val addDialog = AlertDialog.Builder(this)
 
-                    GlobalScope.launch {
-                        FirebaseAuthWrapper(this@EditProfileActivity).delete()
+                    addDialog.setView(v)
+                    addDialog.setPositiveButton("Ok"){
+                            dialog,_->
+                        val email = email.text.toString().trim()
+                        val password = password.text.toString().trim()
+
+                        if(email.isEmpty() || password.isEmpty()) {
+                            Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
+                        }
+                        else {
+                            Firebase.auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    GlobalScope.launch {
+                                        FirebaseAuthWrapper(this@EditProfileActivity).delete()
+                                    }
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Toast.makeText(this, task.exception!!.message, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                        dialog.dismiss()
+
                     }
+                    addDialog.setNegativeButton("Cancel"){
+                            dialog,_->
+                        dialog.dismiss()
+                        Toast.makeText(this,"Cancel",Toast.LENGTH_SHORT).show()
+
+                    }
+                    addDialog.create()
+                    addDialog.show()
+                    /*
+
+
+                     */
                 }
 
                 builder.setNegativeButton("No"){
@@ -239,13 +276,6 @@ class EditProfileActivity : AppCompatActivity() {
                 }
                 builder.create()
                 builder.show()
-
-
-
-
-
-
-
                 true
 
             }
