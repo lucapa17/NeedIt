@@ -250,7 +250,13 @@
             </LinearLayout>
 
         </LinearLayout>
-
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:text="Change password"
+            android:textSize="13dp"
+            android:id="@+id/button_change_password" />
         <Button
             android:layout_width="150dp"
             android:layout_height="60dp"

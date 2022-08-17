@@ -95,6 +95,8 @@ class EditProfileActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.name).setVisibility(View.GONE)
                 findViewById<EditText>(R.id.edit_name).setVisibility(View.VISIBLE)
                 findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
+                findViewById<Button>(R.id.button_change_password).setVisibility(View.GONE)
+
 
 
             }
@@ -105,6 +107,8 @@ class EditProfileActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.surname).setVisibility(View.GONE)
                 findViewById<EditText>(R.id.edit_surname).setVisibility(View.VISIBLE)
                 findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
+                findViewById<Button>(R.id.button_change_password).setVisibility(View.GONE)
+
 
 
             }
@@ -115,6 +119,8 @@ class EditProfileActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.nickname).setVisibility(View.GONE)
                 findViewById<EditText>(R.id.edit_nickname).setVisibility(View.VISIBLE)
                 findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
+                findViewById<Button>(R.id.button_change_password).setVisibility(View.GONE)
+
 
 
             }
@@ -128,6 +134,76 @@ class EditProfileActivity : AppCompatActivity() {
                 intent.action = Intent.ACTION_GET_CONTENT
                 startActivityForResult(intent, 100)
 
+
+
+            }
+        })
+
+        val button_change_password : Button = findViewById(R.id.button_change_password)
+        button_change_password.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v : View?) {
+                val inflater = LayoutInflater.from(this@EditProfileActivity)
+                val v = inflater.inflate(R.layout.change_password,null)
+                /**set view*/
+                val email = v.findViewById<EditText>(R.id.email)
+                val old_password = v.findViewById<EditText>(R.id.old_password)
+                val new_password = v.findViewById<EditText>(R.id.new_password)
+                val confirm_password = v.findViewById<EditText>(R.id.confirm_password)
+                val addDialog = AlertDialog.Builder(this@EditProfileActivity)
+
+                addDialog.setView(v)
+                addDialog.setPositiveButton("Ok"){
+                        dialog,_->
+                    val email = email.text.toString().trim()
+                    val old_password = old_password.text.toString().trim()
+                    val new_password = new_password.text.toString().trim()
+                    val confirm_password = confirm_password.text.toString().trim()
+
+
+                    if(email.isEmpty() || old_password.isEmpty() || new_password.isEmpty() || confirm_password.isEmpty()) {
+                        Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
+                    }
+                    else if(new_password != confirm_password) {
+                        //v.findViewById<EditText>(R.id.new_password).error = "Passwords mismatched"
+                        //v.findViewById<EditText>(R.id.confirm_password).error = "Passwords mismatched"
+                        Toast.makeText(v!!.context, "Passwords mismatched!", Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        Firebase.auth.signInWithEmailAndPassword(email, old_password).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                if(new_password == old_password)
+                                    Toast.makeText(this@EditProfileActivity, "new password is equal to old password!", Toast.LENGTH_SHORT).show()
+                                else{
+                                    Firebase.auth.currentUser!!.updatePassword(new_password).addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            Toast.makeText(v!!.context, "Passwords changed correctly!", Toast.LENGTH_SHORT).show()
+
+                                        }
+                                        else{
+                                            Toast.makeText(this@EditProfileActivity, it.exception!!.message, Toast.LENGTH_SHORT).show()
+
+                                        }
+                                    }
+                                }
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(this@EditProfileActivity, task.exception!!.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        dialog.dismiss()
+
+                    }
+
+
+                }
+                addDialog.setNegativeButton("Cancel"){
+                        dialog,_->
+                    dialog.dismiss()
+                    Toast.makeText(this@EditProfileActivity,"Cancel",Toast.LENGTH_SHORT).show()
+
+                }
+                addDialog.create()
+                addDialog.show()
 
 
             }
@@ -252,8 +328,10 @@ class EditProfileActivity : AppCompatActivity() {
                                     Toast.makeText(this, task.exception!!.message, Toast.LENGTH_SHORT).show()
                                 }
                             }
+                            dialog.dismiss()
+
                         }
-                        dialog.dismiss()
+
 
                     }
                     addDialog.setNegativeButton("Cancel"){
@@ -264,10 +342,6 @@ class EditProfileActivity : AppCompatActivity() {
                     }
                     addDialog.create()
                     addDialog.show()
-                    /*
-
-
-                     */
                 }
 
                 builder.setNegativeButton("No"){
@@ -277,9 +351,7 @@ class EditProfileActivity : AppCompatActivity() {
                 builder.create()
                 builder.show()
                 true
-
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }

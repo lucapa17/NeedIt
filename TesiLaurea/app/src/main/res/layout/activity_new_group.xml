@@ -12,6 +12,43 @@
         android:orientation="vertical"
         android:gravity="center">
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/group_image"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_groups_24"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="2dp">
+
+                </de.hdodenhof.circleimageview.CircleImageView>
+
+                <ImageView
+                    android:id="@+id/edit_group_photo"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="115dp"
+                    android:layout_marginTop="110dp"
+                    app:srcCompat="@drawable/ic_baseline_add_circle_24" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
 
         <EditText
             android:id="@+id/groupName"
