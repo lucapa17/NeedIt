@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -47,24 +48,25 @@ class NewGroupActivity : BaseActivity() {
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
                             groupId = getGroupId(this@NewGroupActivity)
-                            val group : Group = Group(groupId, groupName.text.toString(), mutableListOf(uid!!))
-                            createGroup(group, this@NewGroupActivity)
+                            val dir: File = File(this@NewGroupActivity.getCacheDir().getAbsolutePath())
+                            if (dir.exists()) {
+                                for (f in dir.listFiles()) {
+                                    if(f.name.toString().contains("image_${groupId}_")){
+                                        f.delete()
+                                    }
+                                }
+                            }
                             if(image != null)
                                 FirebaseStorageWrapper().upload(image!!, groupId.toString(), this@NewGroupActivity)
+                            val group : Group = Group(groupId, groupName.text.toString().trim(), mutableListOf(uid!!))
+                            createGroup(group, this@NewGroupActivity)
 
                             }
                             withContext(Dispatchers.Main) {
-                                Thread.sleep(1_000)
-                                val dir: File = File(this@NewGroupActivity.getCacheDir().getAbsolutePath())
-                                if (dir.exists()) {
-                                    for (f in dir.listFiles()) {
-                                        if(f.name.toString().contains("image_${groupId}_")){
-                                            f.delete()
-                                        }
-
-                                    }
-                                }
-                                val intent : Intent = Intent(this@NewGroupActivity, MainActivity::class.java)
+                                //Thread.sleep(1_000)
+                                val intent : Intent = Intent(this@NewGroupActivity, GroupActivity::class.java)
+                                intent.putExtra("groupId", groupId)
+                                intent.putExtra("groupName", groupName.text.toString().trim())
                                 this@NewGroupActivity.startActivity(intent)
                             }
                     }

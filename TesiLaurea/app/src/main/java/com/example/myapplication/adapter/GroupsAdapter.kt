@@ -59,7 +59,6 @@ class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.
         if (dir.exists()) {
             for (f in dir.listFiles()) {
                 if(f.name.toString().contains("image_${newList.groupId}_")){
-                    Log.d(TAG, "dddddddd "+f)
                     if(!(f.length() == 0L))
                         holder.logoGroup.setImageURI(Uri.fromFile(f))
                     found = true
@@ -70,12 +69,9 @@ class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.
             }
 
         }
-        Log.d(TAG, "iiiiiiii"+ java.util.Calendar.getInstance().timeInMillis)
         for (f in dir.listFiles()) {
             val ciao : Long =  (java.util.Calendar.getInstance().timeInMillis - f.lastModified()) / (1000*60)
             Log.d(TAG, "iiii "+f.name)
-            Log.d(TAG, "iiii "+f.lastModified())
-            Log.d(TAG, "iiii "+ciao)
         }
 
             /*
@@ -88,7 +84,6 @@ class GroupsAdapter (val c:Context,val groupList:ArrayList<Group>):RecyclerView.
             CoroutineScope(Dispatchers.Main + Job()).launch {
                 withContext(Dispatchers.IO) {
                     uri = FirebaseStorageWrapper().download(newList.groupId.toString(), c)
-                    Log.d(TAG, "iiii "+uri)
                     withContext(Dispatchers.Main) {
                         if(uri != null){
                             holder.logoGroup.setImageURI(uri)
