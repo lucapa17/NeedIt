@@ -84,12 +84,14 @@ class FirebaseAuthWrapper(private val context: Context) {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {
-
+            /*
             val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
             for(notification in notificationList){
                 Firebase.database.getReference("notifications").child(uid).removeValue()
             }
-            FirebaseStorageWrapper().delete(uid)
+
+             */
+            FirebaseStorageWrapper().delete(uid!!)
             var groupList : MutableList<Group> = getGroups(context)
             for(group in groupList){
 
@@ -681,7 +683,7 @@ class FirebaseStorageWrapper {
                     condition.signal()
                 }
             }.addOnFailureListener {
-                Log.d(TAG, "${it.message}")
+                Log.d(TAG, "error: ${it.message}")
                 lock.withLock {
                     condition.signal()
                 }
