@@ -676,10 +676,17 @@ class FirebaseStorageWrapper {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {
-            storage.child("images/${id}.jpg").delete()
-            lock.withLock {
-                condition.signal()
+            storage.child("images/${id}.jpg").delete().addOnSuccessListener {
+                lock.withLock {
+                    condition.signal()
+                }
+            }.addOnFailureListener {
+                Log.d(TAG, "${it.message}")
+                lock.withLock {
+                    condition.signal()
+                }
             }
+
         }
         lock.withLock {
             condition.await()

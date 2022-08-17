@@ -314,6 +314,7 @@ class EditProfileActivity : AppCompatActivity() {
                 builder.setPositiveButton("Yes"){
                         dialog,_->
 
+
                     val inflter = LayoutInflater.from(this)
                     val v = inflter.inflate(R.layout.delete_login,null)
                     /**set view*/
@@ -325,10 +326,15 @@ class EditProfileActivity : AppCompatActivity() {
                     addDialog.setView(v)
                     addDialog.setPositiveButton("Ok"){
                             dialog,_->
+                        val progressDialog = ProgressDialog(this@EditProfileActivity)
+                        progressDialog.setMessage("Fetching...")
+                        progressDialog.setCancelable(false)
+                        progressDialog.show()
                         //val email = email.text.toString().trim()
                         val password = password.text.toString().trim()
 
                         if(/*email.isEmpty() ||*/ password.isEmpty()) {
+                            progressDialog.dismiss()
                             Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
                         }
                         else {
@@ -336,9 +342,11 @@ class EditProfileActivity : AppCompatActivity() {
                                 if (task.isSuccessful) {
                                     GlobalScope.launch {
                                         FirebaseAuthWrapper(this@EditProfileActivity).delete()
+                                        progressDialog.dismiss()
                                     }
                                 } else {
                                     // If sign in fails, display a message to the user.
+                                    progressDialog.dismiss()
                                     Toast.makeText(this, task.exception!!.message, Toast.LENGTH_SHORT).show()
                                 }
                             }
