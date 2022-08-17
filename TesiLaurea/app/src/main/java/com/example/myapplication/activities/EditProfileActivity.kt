@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -212,9 +213,39 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             com.example.myapplication.R.id.nav_delete -> {
-                GlobalScope.launch {
-                    FirebaseAuthWrapper(this@EditProfileActivity).delete()
+
+
+                val builder = AlertDialog.Builder(this)
+
+
+                //builder.setView(v)
+                builder.setTitle("Delete Profile")
+                //builder.setIcon(R.drawable.ic_baseline_check_circle_24)
+                builder.setMessage("Do you want to delete your profile? To do that, you have to re-authenticate")
+                builder.setPositiveButton("Yes"){
+                        dialog,_->
+
+                    
+
+
+                    GlobalScope.launch {
+                        FirebaseAuthWrapper(this@EditProfileActivity).delete()
+                    }
                 }
+
+                builder.setNegativeButton("No"){
+                        dialog,_->
+                    dialog.dismiss()
+                }
+                builder.create()
+                builder.show()
+
+
+
+
+
+
+
                 true
 
             }
