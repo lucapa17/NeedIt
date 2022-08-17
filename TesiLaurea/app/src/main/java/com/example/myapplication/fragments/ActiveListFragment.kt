@@ -41,6 +41,7 @@ class ActiveListFragment : Fragment() {
     private lateinit var listAdapter:ListAdapter
     private var uid : String? = null
     private var groupName : String? = null
+    private var photoList : ArrayList<String>? = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +49,7 @@ class ActiveListFragment : Fragment() {
             groupId = it.getLong("groupId")
             uid = it.getString("uid")
             groupName = it.getString("groupName")
+            photoList = it.getStringArrayList("photoList")
 
         }
     }
@@ -69,7 +71,8 @@ class ActiveListFragment : Fragment() {
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
-                val group = getGroupById(requireContext(), groupId!!)
+                //val group = getGroupById(requireContext(), groupId!!)
+                /*
                 val photoList : ArrayList<Uri> = ArrayList()
                 for(user in group.users!!){
                     var uri : Uri? = null
@@ -99,6 +102,8 @@ class ActiveListFragment : Fragment() {
                     if(uri != null)
                         photoList.add(uri)
                 }
+
+                 */
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
                 requestsList = ArrayList(requestList)
                 var groupActiveList : ArrayList<Request> = ArrayList()
@@ -113,7 +118,7 @@ class ActiveListFragment : Fragment() {
                 }
                 withContext(Dispatchers.Main) {
 
-                    listAdapter = ListAdapter(requireContext(), groupActiveList, photoList, groupName!!, true)
+                    listAdapter = ListAdapter(requireContext(), groupActiveList, photoList!!, groupName!!, true)
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
                     addsBtn.setOnClickListener { addInfo(groupActiveList) }
@@ -168,8 +173,8 @@ class ActiveListFragment : Fragment() {
                     val user : User = getUser(requireContext())
                     request = Request(requestId, groupId!!, user, namerequest, false, comment, null, currentDate, null)
                     Firebase.database.getReference("requests").child(request.Id.toString()).setValue(request)
-                    val group : Group = getGroupById(requireContext(), groupId!!)
-                    for(userId in group.users!!){
+                    val group : Group? = getGroupById(requireContext(), groupId!!)
+                    for(userId in group!!.users!!){
                         if(userId != uid){
                             val notificationId : Long = getNotificationId(requireContext(), userId)
                             val notification : Notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, request.date, request.groupId, Notification.Type.NewRequest)
@@ -212,12 +217,13 @@ class ActiveListFragment : Fragment() {
     companion object {
 
         @JvmStatic
-        fun newInstance(groupId: Long, uid: String, groupName: String) =
+        fun newInstance(groupId: Long, uid: String, groupName: String, photoList : ArrayList<String>) =
             ActiveListFragment().apply {
                 arguments = Bundle().apply {
                     putLong("groupId", groupId)
                     putString("uid", uid)
                     putString("groupName", groupName)
+                    putStringArrayList("photoList", photoList)
                 }
             }
     }

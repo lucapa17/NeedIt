@@ -1,10 +1,15 @@
 package com.example.myapplication.activities
 
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +18,8 @@ import com.example.myapplication.R
 import com.example.myapplication.adapter.GroupsAdapter
 import com.example.myapplication.adapter.MembersAdapter
 import com.example.myapplication.models.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -21,6 +28,7 @@ class InfoGroupActivity: AppCompatActivity() {
     private lateinit var membersAdapter: MembersAdapter
     var image: Uri? = null
     var groupId : Long? = null
+    var group : Group? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +49,7 @@ class InfoGroupActivity: AppCompatActivity() {
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
-                val group : Group = getGroupById(this@InfoGroupActivity, groupId!!)
+                group = getGroupById(this@InfoGroupActivity, groupId!!)
                 val dir: File = File(this@InfoGroupActivity.getCacheDir().getAbsolutePath())
                 var found = false
                 if (dir.exists()) {
@@ -58,9 +66,9 @@ class InfoGroupActivity: AppCompatActivity() {
                 if(!found)
                     uri = FirebaseStorageWrapper().download(groupId.toString(), this@InfoGroupActivity)
                 val groupMembersList : MutableList<User> = mutableListOf()
-                for (user in group.users!!){
-                    val user : User = getUserById(this@InfoGroupActivity, user)
-                    groupMembersList.add(user)
+                for (user in group!!.users!!){
+                    val user : User? = getUserById(this@InfoGroupActivity, user)
+                    groupMembersList.add(user!!)
                 }
                 withContext(Dispatchers.Main) {
                     if(uri != null)
@@ -108,6 +116,41 @@ class InfoGroupActivity: AppCompatActivity() {
                 FirebaseStorageWrapper().upload(image!!, groupId.toString(), this@InfoGroupActivity)
             }
 
+        }
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(com.example.myapplication.R.menu.nav_menu_infogroup, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            com.example.myapplication.R.id.nav_leave -> {
+                GlobalScope.launch {
+                    val uid = FirebaseAuthWrapper(this@InfoGroupActivity).getUid()
+                    val requestList : MutableList<Request> = getRequestsList(this@InfoGroupActivity, group!!.groupId)
+                    for(request in requestList){
+                        if(request.user.id == uid){
+                            Firebase.database.getReference("requests").child(request.Id.toString()).removeValue()
+                        }
+                    }
+                    group!!.users!!.remove(uid)
+                    if(group!!.users!!.isEmpty()){
+                        FirebaseStorageWrapper().delete(group!!.groupId.toString())
+                        Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
+                    }
+                    else{
+                        Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
+                    }
+                    val intent : Intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
+                    this@InfoGroupActivity.startActivity(intent)
+                }
+                true
+
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

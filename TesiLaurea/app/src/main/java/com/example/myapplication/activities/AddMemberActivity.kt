@@ -65,7 +65,7 @@ class AddMemberActivity : AppCompatActivity() {
                 else {
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
-                            val group : Group = getGroupById(this@AddMemberActivity, groupId)
+                            val group : Group? = getGroupById(this@AddMemberActivity, groupId)
                             val id : String? = getUserIdByNickname(this@AddMemberActivity, nicknameEditText.text.toString().trim())
                             val user : User = getUserByNickname(this@AddMemberActivity, nicknameEditText.text.toString().trim())
                             var notificationId : Long? = null
@@ -75,7 +75,7 @@ class AddMemberActivity : AppCompatActivity() {
                             withContext(Dispatchers.Main) {
                                 if(id == null)
                                     nicknameEditText.error = "user with this nickname does not exist"
-                                else if (group.users!!.contains(id))
+                                else if (group!!.users!!.contains(id))
                                     nicknameEditText.error = "user is already a member of the group"
                                 else {
                                     group.users!!.add(id)

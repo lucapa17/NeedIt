@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -25,7 +26,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 
 
-class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoList:ArrayList<Uri>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
+class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoList:ArrayList<String>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
 
 
@@ -155,16 +156,16 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
                                 position.price = price_value
 
                                 GlobalScope.launch {
-                                    val completedBy : User = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
+                                    val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
                                     position.completedBy = completedBy
                                     Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
-                                    val group : Group = getGroupById(c, position.groupId)
+                                    val group : Group? = getGroupById(c, position.groupId)
                                     val uid : String = FirebaseAuthWrapper(c).getUid()!!
 
-                                    for(userId in group.users!!){
+                                    for(userId in group!!.users!!){
                                         if(userId != uid){
                                             val notificationId : Long = getNotificationId(c, userId)
-                                            val notification : Notification = Notification(userId, position, position.user.nickname, completedBy.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
+                                            val notification : Notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
                                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                         }
                                     }
@@ -284,8 +285,8 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
 
         for(photo in photoList){
             Log.d(TAG, "ccc "+photo.toString())
-            if(photo.toString().contains("${newList.user.id}_")){
-                holder.photo.setImageURI(photo)
+            if(photo.contains("${newList.user.id}_")){
+                holder.photo.setImageURI(photo.toUri())
                 break
             }
         }

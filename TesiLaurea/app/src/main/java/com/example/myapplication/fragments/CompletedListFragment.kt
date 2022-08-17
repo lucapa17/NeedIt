@@ -35,6 +35,8 @@ class CompletedListFragment : Fragment() {
     private lateinit var recv: RecyclerView
     private lateinit var requestsList:ArrayList<Request>
     private lateinit var listAdapter: ListAdapter
+    private var photoList : ArrayList<String>? = ArrayList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,8 @@ class CompletedListFragment : Fragment() {
             groupId = it.getLong("groupId")
             uid = it.getString("uid")
             groupName = it.getString("groupName")
+            photoList = it.getStringArrayList("photoList")
+
         }
     }
 
@@ -61,6 +65,7 @@ class CompletedListFragment : Fragment() {
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
+                /*
                 val group = getGroupById(requireContext(), groupId!!)
                 val photoList : ArrayList<Uri> = ArrayList()
 
@@ -91,6 +96,8 @@ class CompletedListFragment : Fragment() {
                     if(uri != null)
                         photoList.add(uri)
                 }
+
+                 */
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
 
 
@@ -101,11 +108,11 @@ class CompletedListFragment : Fragment() {
                     if(request.isCompleted){
                         //groupActiveList.add(request.nameRequest)
                         groupCompletedList.add(request)
-                        listAdapter.notifyDataSetChanged()
+                        //listAdapter.notifyDataSetChanged()
                     }
                 }
                 withContext(Dispatchers.Main) {
-                    listAdapter = ListAdapter(requireContext(),groupCompletedList, photoList, groupName!!, false)
+                    listAdapter = ListAdapter(requireContext(),groupCompletedList, photoList!!, groupName!!, false)
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
 
@@ -128,12 +135,14 @@ class CompletedListFragment : Fragment() {
     companion object {
 
         @JvmStatic
-        fun newInstance(groupId: Long, uid: String, groupName: String) =
+        fun newInstance(groupId: Long, uid: String, groupName: String, photoList : ArrayList<String>) =
             CompletedListFragment().apply {
                 arguments = Bundle().apply {
                     putLong("groupId", groupId)
                     putString("uid", uid)
                     putString("groupName", groupName)
+                    putStringArrayList("photoList", photoList)
+
                 }
             }
     }

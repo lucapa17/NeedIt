@@ -9,6 +9,9 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -197,6 +200,26 @@ class EditProfileActivity : AppCompatActivity() {
                 FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
             }
 
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(com.example.myapplication.R.menu.nav_menu_profile, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            com.example.myapplication.R.id.nav_delete -> {
+                GlobalScope.launch {
+                    FirebaseAuthWrapper(this@EditProfileActivity).delete()
+                }
+                true
+
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
     override fun onBackPressed() {

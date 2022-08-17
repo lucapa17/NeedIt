@@ -1,5 +1,6 @@
 package com.example.myapplication.models
 
+import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import com.example.myapplication.activities.LoginActivity
 import com.example.myapplication.activities.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -70,6 +72,81 @@ class FirebaseAuthWrapper(private val context: Context) {
         auth.signOut()
         val intent : Intent = Intent(this.context, SplashActivity::class.java)
         context.startActivity(intent)
+    }
+    fun delete(){
+        /*val progressDialog = ProgressDialog(context)
+        progressDialog.setMessage("Fetching...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+         */
+        val uid = getUid()
+        val lock = ReentrantLock()
+        val condition = lock.newCondition()
+        GlobalScope.launch {
+
+            val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
+            for(notification in notificationList){
+                Firebase.database.getReference("notifications").child(uid).removeValue()
+            }
+            FirebaseStorageWrapper().delete(uid)
+            var groupList : MutableList<Group> = getGroups(context)
+            for(group in groupList){
+
+                val requestList : MutableList<Request> = getRequestsList(context, group.groupId)
+                for(request in requestList){
+                    if(request.user.id == uid){
+                        Firebase.database.getReference("requests").child(request.Id.toString()).removeValue()
+                    }
+                }
+                Log.d(TAG, "yyy "+group.users)
+                group.users!!.remove(uid)
+                Log.d(TAG, "yyyy "+group.users)
+                if(group.users!!.isEmpty()){
+                    FirebaseStorageWrapper().delete(group.groupId.toString())
+                    Firebase.database.getReference("groups").child(group.groupId.toString()).removeValue()
+                }
+                else{
+                    Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
+                }
+            }
+            Firebase.database.getReference("users").child(uid!!).removeValue()
+
+
+
+            //progressDialog.dismiss()
+            Log.d(TAG, "yyy is auth")
+
+            auth.currentUser!!.delete().addOnCompleteListener { task ->
+                Log.d(TAG, "yyy addoncomplete")
+
+                if (task.isSuccessful) {
+                    Log.d(TAG, "yyy is succesful")
+                    //auth.signOut()
+                    //Log.d(TAG, "yyy signout")
+                    lock.withLock {
+                        condition.signal()
+                    }
+
+                } else {
+                    // If sign in fails, display a message to the user.
+                    //progressDialog.dismiss()
+                    Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
+                    /*lock.withLock {
+                        condition.signal()
+                    }
+
+                     */
+                }
+            }
+        }
+        lock.withLock {
+            condition.await()
+        }
+        val intent : Intent = Intent(context, LoginActivity::class.java)
+        context.startActivity(intent)
+        Log.d(TAG, "yyy intent")
+
     }
 }
 
@@ -328,20 +405,15 @@ fun getNotificationList (context: Context, userId : String) : MutableList<Notifi
 }
 
 
-fun getGroupById (context: Context, groupId : Long) : Group {
-    Log.d(TAG, "AAA 6")
+fun getGroupById (context: Context, groupId : Long) : Group? {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var group : Group = Group()
+    var group : Group? = Group()
     GlobalScope.launch {
-        Log.d(TAG, "AAA 7")
         FirebaseDbWrapper(context).readDbGroup(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                Log.d(TAG, "AAA 8")
-                group = snapshot.child(groupId.toString()).getValue(Group::class.java)!!
-                Log.d(TAG, "AAA 9")
-                Log.d(TAG, "problem: " + snapshot.child(groupId.toString()).getValue(Group::class.java)!!.nameGroup)
+                group = snapshot.child(groupId.toString()).getValue(Group::class.java)
                 lock.withLock {
                     condition.signal()
                 }
@@ -448,15 +520,15 @@ fun getNicknameById (context: Context, id: String ) : String {
     return nickname
 }
 
-fun getUserById (context: Context, id: String) : User {
+fun getUserById (context: Context, id: String) : User? {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var user : User = User()
+    var user : User? = User()
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbData(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                user = snapshot.child(id).getValue(User::class.java)!!
+                user = snapshot.child(id).getValue(User::class.java)
                 lock.withLock {
                     condition.signal()
                 }
