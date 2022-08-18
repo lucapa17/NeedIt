@@ -5,48 +5,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.LoginActivity">
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        tools:ignore="MissingConstraints"
+        android:fillViewport="true">
 
-
-        <EditText
-            android:id="@+id/userEmail"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:ems="10"
-            android:hint="insert email...."
-            android:inputType="textEmailAddress" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="7dp"
+            android:gravity="center">
 
-        <EditText
-            android:id="@+id/userPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:ems="10"
-            android:hint="insert password...."
-            android:inputType="textPassword" />
 
-        <Button
-            android:id="@+id/buttonLogin"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Login" />
+            <EditText
+                android:id="@+id/userEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:ems="10"
+                android:hint="insert email...."
+                android:inputType="textEmailAddress" />
 
-        <TextView
-            android:id="@+id/switchToRegistration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:ems="10"
-            android:text="@string/login"
-            android:textColor="#317825"
-            android:textAlignment="center"/>
+            <EditText
+                android:id="@+id/userPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:ems="10"
+                android:hint="insert password...."
+                android:inputType="textPassword" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/buttonLogin"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:text="Login" />
+
+            <TextView
+                android:id="@+id/switchToRegistration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:ems="10"
+                android:text="@string/login"
+                android:textColor="#317825"
+                android:textAlignment="center"/>
+
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

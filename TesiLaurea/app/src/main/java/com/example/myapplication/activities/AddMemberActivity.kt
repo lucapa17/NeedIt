@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -36,6 +37,8 @@ class AddMemberActivity : AppCompatActivity() {
         membersAdapter = NewMembersAdapter(this, memberList)
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = membersAdapter
+
+
 
         val intent : Intent = getIntent()
         val groupId : Long = intent.getLongExtra("groupId", 0L)
