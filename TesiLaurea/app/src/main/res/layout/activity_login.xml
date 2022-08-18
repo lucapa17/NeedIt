@@ -44,7 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:ems="10"
-            android:text="Aren't you registered yet? Sign up!"
+            android:text="@string/login"
+            android:textColor="#317825"
             android:textAlignment="center"/>
 
     </LinearLayout>

@@ -359,7 +359,9 @@ fun getRequestsList (context: Context, groupId : Long) : MutableList<Request> {
                 for(child in children){
                     if(child.getValue(Request::class.java)!!.groupId.equals(groupId))
                         list.add(child.getValue(Request::class.java)!!)
+
                 }
+                list.reverse()
                 lock.withLock {
                     condition.signal()
                 }
