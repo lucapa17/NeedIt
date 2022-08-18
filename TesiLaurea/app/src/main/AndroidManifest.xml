@@ -38,9 +38,6 @@
             android:name=".activities.NewGroupActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ProfileActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.RegistrationActivity"
             android:exported="false" />
         <activity

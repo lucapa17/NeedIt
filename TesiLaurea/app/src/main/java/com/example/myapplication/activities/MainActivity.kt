@@ -7,7 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.ListView
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -15,6 +17,7 @@ import com.example.myapplication.adapter.GroupsAdapter
 import com.example.myapplication.adapter.ListAdapter
 import com.example.myapplication.models.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.database.core.view.View
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -36,18 +39,33 @@ class MainActivity : BaseActivity() {
         progressDialog.setMessage("Fetching...")
         progressDialog.setCancelable(false)
         progressDialog.show()
-        CoroutineScope(Dispatchers.Main + Job()).launch {
+        val layoutNoGroup = this.findViewById<LinearLayout>(R.id.noGroup)
 
+        CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 var groupList : MutableList<Group> = getGroups(this@MainActivity)
                 withContext(Dispatchers.Main) {
-                    groupsAdapter = GroupsAdapter(this@MainActivity, ArrayList(groupList))
-                    recv.layoutManager = LinearLayoutManager(this@MainActivity)
-                    recv.adapter = groupsAdapter
-                    progressDialog.dismiss()
+                    if(groupList.isEmpty()){
+                        progressDialog.dismiss()
+                        layoutNoGroup.setVisibility(android.view.View.VISIBLE)
+                    }
+                    else {
+                        groupsAdapter = GroupsAdapter(this@MainActivity, ArrayList(groupList))
+                        recv.layoutManager = LinearLayoutManager(this@MainActivity)
+                        recv.adapter = groupsAdapter
+                        progressDialog.dismiss()
+                    }
+
                 }
             }
         }
+        val link = this.findViewById<TextView>(R.id.newGroup)
+        link.setOnClickListener(object : android.view.View.OnClickListener{
+            override fun onClick(v : android.view.View?) {
+                val intent = Intent(v!!.context, NewGroupActivity::class.java)
+                v.context.startActivity(intent)
+            }
+        })
 
 
     }

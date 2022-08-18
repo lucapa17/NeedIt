@@ -9,6 +9,47 @@
     tools:context=".activities.MainActivity">
 
     <LinearLayout
+        android:id="@+id/noGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginHorizontal="100dp"
+            android:src="@drawable/inbox">
+
+        </ImageView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="sans-serif-thin"
+            android:text="You haven't joined any group yet"
+            android:textAlignment="center"
+            android:textColor="#317825"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/newGroup"
+            android:fontFamily="sans-serif-thin"
+            android:text="@string/newGroup"
+            android:textAlignment="center"
+            android:textColor="#317825"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -17,4 +58,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
+
 </RelativeLayout>
