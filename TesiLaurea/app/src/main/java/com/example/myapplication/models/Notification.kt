@@ -30,5 +30,4 @@ class Notification() {
         CompletedRequest,
         NewGroup
     }
-
 }
