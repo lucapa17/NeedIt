@@ -189,7 +189,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val progressDialog = ProgressDialog(c)
-        progressDialog.setMessage("Fetching...")
+        progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
         progressDialog.show()
         val newList = requestList[position]

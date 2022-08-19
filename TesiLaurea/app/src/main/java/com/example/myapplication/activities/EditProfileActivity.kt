@@ -32,7 +32,7 @@ class EditProfileActivity : AppCompatActivity() {
         var nickname : String
 
         val progressDialog = ProgressDialog(this@EditProfileActivity)
-        progressDialog.setMessage("Fetching...")
+        progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
         progressDialog.show()
 
@@ -186,7 +186,7 @@ class EditProfileActivity : AppCompatActivity() {
                     addDialog.setPositiveButton("Ok"){
                             dialog1,_->
                         val progressDialog = ProgressDialog(this@EditProfileActivity)
-                        progressDialog.setMessage("Fetching...")
+                        progressDialog.setMessage("Wait...")
                         progressDialog.setCancelable(false)
                         progressDialog.show()
                         val password2 = password.text.toString().trim()
@@ -239,7 +239,7 @@ class EditProfileActivity : AppCompatActivity() {
 
                         dialog, _ ->
                     val progressDialog1 = ProgressDialog(this@EditProfileActivity)
-                    progressDialog1.setMessage("Fetching...")
+                    progressDialog1.setMessage("Wait...")
                     progressDialog1.setCancelable(false)
                     progressDialog1.show()
                     val oldPassword1 = oldPassword.text.toString().trim()

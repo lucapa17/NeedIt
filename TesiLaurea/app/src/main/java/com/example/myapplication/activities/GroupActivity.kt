@@ -34,7 +34,7 @@ class GroupActivity : AppCompatActivity() {
         val fragmentArrayList = ArrayList<Fragment>()
         val progressDialog = ProgressDialog(this)
 
-        progressDialog.setMessage("Fetching...")
+        progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {

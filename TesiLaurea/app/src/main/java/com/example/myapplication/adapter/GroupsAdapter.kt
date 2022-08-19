@@ -40,7 +40,7 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
 
     override fun onBindViewHolder(holder: GroupsAdapter.UserViewHolder, position: Int) {
         val progressDialog = ProgressDialog(c)
-        progressDialog.setMessage("Fetching...")
+        progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
         progressDialog.show()
         val newList = groupList[position]

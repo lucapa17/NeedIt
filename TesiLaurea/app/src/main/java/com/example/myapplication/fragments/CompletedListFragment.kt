@@ -48,7 +48,7 @@ class CompletedListFragment : Fragment() {
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
-        progressDialog.setMessage("Fetching...")
+        progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {

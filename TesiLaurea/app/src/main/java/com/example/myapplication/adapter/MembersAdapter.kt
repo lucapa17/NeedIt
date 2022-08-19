@@ -35,7 +35,7 @@ class MembersAdapter (private val c: Context, private val memberList:ArrayList<U
         holder.username.text = newList.nickname
         holder.name.text = "${newList.name} ${newList.surname}"
         val progressDialog = ProgressDialog(c)
-        progressDialog.setMessage("Fetching...")
+        progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
         progressDialog.show()
         val dir = File(c.cacheDir.absolutePath)
