@@ -32,7 +32,6 @@ class MainActivity : BaseActivity() {
         progressDialog.setCancelable(false)
         progressDialog.show()
         val layoutNoGroup = this.findViewById<LinearLayout>(R.id.noGroup)
-
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val groupList : MutableList<Group> = getGroups(this@MainActivity)
@@ -47,7 +46,6 @@ class MainActivity : BaseActivity() {
                         recv.adapter = groupsAdapter
                         progressDialog.dismiss()
                     }
-
                 }
             }
         }
@@ -56,12 +54,9 @@ class MainActivity : BaseActivity() {
             val intent = Intent(v!!.context, NewGroupActivity::class.java)
             v.context.startActivity(intent)
         }
-
-
     }
     override fun onBackPressed() {
         finishAffinity()
-        //startActivity(Intent(this, MainActivity::class.java))
     }
     private fun deleteCache(){
         val dir = File(this.cacheDir.absolutePath)

@@ -25,7 +25,6 @@ import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class ActiveListFragment : Fragment() {
     private var groupId: Long? = null
     private lateinit var addsBtn: FloatingActionButton
@@ -35,7 +34,6 @@ class ActiveListFragment : Fragment() {
     private var uid : String? = null
     private var groupName : String? = null
     private var photoList : ArrayList<String>? = ArrayList()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -43,7 +41,6 @@ class ActiveListFragment : Fragment() {
             uid = it.getString("uid")
             groupName = it.getString("groupName")
             photoList = it.getStringArrayList("photoList")
-
         }
     }
 
@@ -73,13 +70,11 @@ class ActiveListFragment : Fragment() {
                     }
                 }
                 withContext(Dispatchers.Main) {
-
                     listAdapter = ListAdapter(requireContext(), groupActiveList, photoList!!, groupName!!, true)
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
                     addsBtn.setOnClickListener { addInfo() }
                     progressDialog.dismiss()
-
                 }
             }
         }
@@ -92,9 +87,7 @@ class ActiveListFragment : Fragment() {
             requireContext().startActivity(intent)
         }
         return view
-
     }
-
     private fun addInfo() {
         val inflter = LayoutInflater.from(requireContext())
         val v = inflter.inflate(R.layout.add_request,null)
@@ -111,7 +104,6 @@ class ActiveListFragment : Fragment() {
                 Toast.makeText(requireContext(),"Empty Request",Toast.LENGTH_SHORT).show()
             }
             else {
-
                 var request: Request
                 GlobalScope.launch {
                     val requestId : Long = getRequestId(requireContext())
@@ -131,25 +123,19 @@ class ActiveListFragment : Fragment() {
                     intent.putExtra("groupId", groupId)
                     intent.putExtra("groupName", groupName)
                     requireContext().startActivity(intent)
-
                 }
             }
         dialog.dismiss()
-
         }
         addDialog.setNegativeButton("Cancel"){
                 dialog,_->
             dialog.dismiss()
             Toast.makeText(requireContext(),"Cancel",Toast.LENGTH_SHORT).show()
-
         }
         addDialog.create()
         addDialog.show()
     }
-
-
     companion object {
-
         @JvmStatic
         fun newInstance(groupId: Long, uid: String, groupName: String, photoList : ArrayList<String>) =
             ActiveListFragment().apply {

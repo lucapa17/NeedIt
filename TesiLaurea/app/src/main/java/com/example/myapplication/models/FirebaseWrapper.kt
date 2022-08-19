@@ -26,7 +26,6 @@ import java.io.IOException
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-
 class FirebaseAuthWrapper(private val context: Context) {
     private var auth: FirebaseAuth = Firebase.auth
 
@@ -46,7 +45,6 @@ class FirebaseAuthWrapper(private val context: Context) {
                     FirebaseDbWrapper(context).registerUser(user)
                 }
                 else {
-                    // If sign in fails, display a message to the user.
                     Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -59,7 +57,6 @@ class FirebaseAuthWrapper(private val context: Context) {
                 val intent  = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
             } else {
-                // If sign in fails, display a message to the user.
                 Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -71,27 +68,13 @@ class FirebaseAuthWrapper(private val context: Context) {
         context.startActivity(intent)
     }
     fun delete(){
-        /*val progressDialog = ProgressDialog(context)
-        progressDialog.setMessage("Fetching...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
-
-         */
         val uid = getUid()
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {
-            /*
-            val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
-            for(notification in notificationList){
-                Firebase.database.getReference("notifications").child(uid).removeValue()
-            }
-
-             */
             FirebaseStorageWrapper().delete(uid!!)
             val groupList : MutableList<Group> = getGroups(context)
             for(group in groupList){
-
                 val requestList : MutableList<Request> = getRequestsList(context, group.groupId)
                 for(request in requestList){
                     if(request.user.id == uid){
@@ -110,32 +93,15 @@ class FirebaseAuthWrapper(private val context: Context) {
                 }
             }
             Firebase.database.getReference("users").child(uid).removeValue()
-
-
-
-            //progressDialog.dismiss()
-            Log.d(TAG, "yyy is auth")
-
             auth.currentUser!!.delete().addOnCompleteListener { task ->
-                Log.d(TAG, "yyy addoncomplete")
 
                 if (task.isSuccessful) {
-                    Log.d(TAG, "yyy is succesful")
-                    //auth.signOut()
-                    //Log.d(TAG, "yyy signout")
                     lock.withLock {
                         condition.signal()
                     }
 
                 } else {
-                    // If sign in fails, display a message to the user.
-                    //progressDialog.dismiss()
                     Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
-                    /*lock.withLock {
-                        condition.signal()
-                    }
-
-                     */
                 }
             }
         }
@@ -145,10 +111,8 @@ class FirebaseAuthWrapper(private val context: Context) {
         val intent = Intent(context, LoginActivity::class.java)
         context.startActivity(intent)
         Log.d(TAG, "yyy intent")
-
     }
 }
-
 
 fun nicknameIsAlreadyUsed(context: Context, nickname: String) : Boolean{
     val lock = ReentrantLock()
@@ -164,7 +128,6 @@ fun nicknameIsAlreadyUsed(context: Context, nickname: String) : Boolean{
                         used = true
                         break
                     }
-
                 }
                 lock.withLock {
                     condition.signal()
@@ -172,7 +135,6 @@ fun nicknameIsAlreadyUsed(context: Context, nickname: String) : Boolean{
             }
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -196,16 +158,13 @@ fun getUser(context: Context): User {
             }
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
         condition.await()
     }
-
     return user!!
 }
-
 
 fun getGroupId (context: Context) : Long {
     val lock = ReentrantLock()
@@ -225,10 +184,8 @@ fun getGroupId (context: Context) : Long {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -256,10 +213,8 @@ fun getRequestId (context: Context) : Long {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -268,7 +223,6 @@ fun getRequestId (context: Context) : Long {
     requestId++
     return requestId
 }
-
 
 fun getNotificationId (context: Context, userId : String) : Long {
     val lock = ReentrantLock()
@@ -288,10 +242,8 @@ fun getNotificationId (context: Context, userId : String) : Long {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -300,7 +252,6 @@ fun getNotificationId (context: Context, userId : String) : Long {
     notificationId++
     return notificationId
 }
-
 
 fun getGroups (context: Context) : MutableList<Group> {
     val lock = ReentrantLock()
@@ -320,10 +271,8 @@ fun getGroups (context: Context) : MutableList<Group> {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -344,17 +293,14 @@ fun getRequestsList (context: Context, groupId : Long) : MutableList<Request> {
                 for(child in children){
                     if(child.getValue(Request::class.java)!!.groupId == groupId)
                         list.add(child.getValue(Request::class.java)!!)
-
                 }
                 list.reverse()
                 lock.withLock {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -381,10 +327,8 @@ fun getNotificationList (context: Context, userId : String) : MutableList<Notifi
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -392,7 +336,6 @@ fun getNotificationList (context: Context, userId : String) : MutableList<Notifi
     }
     return list
 }
-
 
 fun getGroupById (context: Context, groupId : Long) : Group? {
     val lock = ReentrantLock()
@@ -407,10 +350,8 @@ fun getGroupById (context: Context, groupId : Long) : Group? {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -433,16 +374,13 @@ fun getUserIdByNickname (context: Context, nickname: String ) : String? {
                         id = child.key.toString()
                         break
                     }
-
                 }
                 lock.withLock {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -465,16 +403,13 @@ fun getUserByNickname (context: Context, nickname: String ) : User {
                         user = child.getValue(User::class.java)!!
                         break
                     }
-
                 }
                 lock.withLock {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -496,10 +431,8 @@ fun getUserById (context: Context, id: String) : User? {
                     condition.signal()
                 }
             }
-
             override fun onCancelledCallback(error: DatabaseError) {
             }
-
         })
     }
     lock.withLock {
@@ -520,7 +453,6 @@ class FirebaseDbWrapper(private val context: Context) {
                 Toast.makeText(context, it.exception!!.message, Toast.LENGTH_SHORT).show()
         }
     }
-
 
     fun readDbUser(callback: FirebaseReadCallback) {
         val ref = Firebase.database.getReference("users").child(uid!!)
@@ -546,9 +478,7 @@ class FirebaseDbWrapper(private val context: Context) {
     fun readDbData(callback: FirebaseReadCallback) {
         val ref = Firebase.database.getReference("users")
         ref.addValueEventListener(FirebaseReadListener(callback))
-
     }
-
 
     companion object {
         class FirebaseReadListener(private val callback: FirebaseReadCallback) : ValueEventListener {
@@ -571,7 +501,6 @@ class FirebaseDbWrapper(private val context: Context) {
 class FirebaseStorageWrapper {
     private val storage = FirebaseStorage.getInstance().reference
 
-
     fun upload(image: Uri, id: String, context: Context) {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
@@ -590,23 +519,15 @@ class FirebaseStorageWrapper {
                 condition.signal()
             }
         }
-        /*storage.child("images/${id}.jpg").putFile(image).addOnSuccessListener {
 
-        }
-
-         */
         lock.withLock {
             condition.await()
         }
-        //val intent = Intent(context, EditProfileActivity::class.java)
-        //context.startActivity(intent)
     }
 
     fun download(id: String, context: Context): Uri? {
-        //val tmp = File.createTempFile("image_${id}_", "jpg")
         val tmp = File.createTempFile("image_${id}_", null, context.cacheDir)
         tmp.deleteOnExit()
-        //var bitmap: Bitmap? = null
         var image : Uri? = null
 
         val lock = ReentrantLock()
@@ -616,17 +537,14 @@ class FirebaseStorageWrapper {
                 storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
                     image = Uri.fromFile(tmp)
                     Log.d(TAG, "AAA success listener")
-                    //bitmap = BitmapFactory.decodeFile(tmp.absolutePath)
                     lock.withLock {
                         condition.signal()
                     }
-
                 }.addOnFailureListener {
                     lock.withLock {
                         condition.signal()
                     }
                 }
-
         }
         lock.withLock {
             condition.await()
@@ -648,15 +566,11 @@ class FirebaseStorageWrapper {
                     condition.signal()
                 }
             }
-
         }
         lock.withLock {
             condition.await()
         }
-
-
     }
-
 }
 
 

@@ -1,13 +1,11 @@
 package com.example.myapplication.activities
 
-
 import android.content.Intent
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.models.FirebaseAuthWrapper
-
 
 open class BaseActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -38,8 +36,6 @@ open class BaseActivity : AppCompatActivity() {
                 firebaseWrapper.logOut()
                 true
             }
-
-
             else -> super.onOptionsItemSelected(item)
         }
     }

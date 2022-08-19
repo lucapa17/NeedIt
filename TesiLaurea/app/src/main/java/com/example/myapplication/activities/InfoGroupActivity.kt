@@ -29,7 +29,6 @@ class InfoGroupActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info_group)
-
         val intent : Intent = intent
         groupId = intent.getLongExtra("groupId", 0L)
 
@@ -56,7 +55,6 @@ class InfoGroupActivity: AppCompatActivity() {
                             found = true
                             break
                         }
-
                     }
                 }
                 if(!found)
@@ -73,7 +71,6 @@ class InfoGroupActivity: AppCompatActivity() {
                     recv.layoutManager = LinearLayoutManager(this@InfoGroupActivity)
                     recv.adapter = membersAdapter
                     progressDialog.dismiss()
-
                 }
             }
         }
@@ -85,12 +82,9 @@ class InfoGroupActivity: AppCompatActivity() {
             i.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(i, 100)
         }
-
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if(requestCode == 100 && resultCode == RESULT_OK){
             image = data?.data!!
             findViewById<ImageView>(R.id.group_image).setImageURI(image)
@@ -102,12 +96,10 @@ class InfoGroupActivity: AppCompatActivity() {
                         if(f.name.toString().contains("image_${groupId}_")){
                             f.delete()
                         }
-
                     }
                 }
                 FirebaseStorageWrapper().upload(image!!, groupId.toString(), this@InfoGroupActivity)
             }
-
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -129,7 +121,6 @@ class InfoGroupActivity: AppCompatActivity() {
                     }
                     user.groups!!.remove(groupId)
                     Firebase.database.getReference("users").child(user.id).setValue(user)
-
                     group!!.users!!.remove(user.id)
                     if(group!!.users!!.isEmpty()){
                         FirebaseStorageWrapper().delete(group!!.groupId.toString())
@@ -142,11 +133,8 @@ class InfoGroupActivity: AppCompatActivity() {
                     this@InfoGroupActivity.startActivity(intent)
                 }
                 true
-
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 }

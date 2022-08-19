@@ -19,12 +19,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 
-
 class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val photoList:ArrayList<String>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
-
-
-
     inner class UserViewHolder(v:View):RecyclerView.ViewHolder(v){
         var nameRequest:TextView
         var userName:TextView
@@ -37,8 +33,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var photo: ImageView
         private var card : CardView
 
-
-
         init {
             nameRequest = v.findViewById(R.id.nameRequest)
             completedBy = v.findViewById(R.id.completedBy)
@@ -49,7 +43,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             time = v.findViewById(R.id.Time)
             photo = v.findViewById(R.id.photo)
             card = v.findViewById(R.id.card)
-
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
         }
@@ -61,7 +54,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                 popupMenus.inflate(R.menu.options_menu)
             else
                 popupMenus.inflate(R.menu.options_complete_menu)
-
             popupMenus.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.editText->{
@@ -98,11 +90,9 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             .setNegativeButton("Cancel"){
                                     dialog,_->
                                 dialog.dismiss()
-
                             }
                             .create()
                             .show()
-
                         true
                     }
                     R.id.delete->{
@@ -119,7 +109,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 //Log.d(ContentValues.TAG,"www: "+groupName)
                                 intent.putExtra("groupName", groupName)
                                 c.startActivity(intent)
-
                             }
                             .setNegativeButton("No"){
                                     dialog,_->
@@ -127,18 +116,12 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             }
                             .create()
                             .show()
-
                         true
                     }
                     R.id.complete->{
                         val v1 = LayoutInflater.from(c).inflate(R.layout.set_price,null)
                         val input = v1.findViewById<EditText>(R.id.price)
-
-
-                        /**set delete*/
                         val builder = AlertDialog.Builder(c)
-
-
                         builder.setView(v1)
                             builder.setTitle("Complete")
                             builder.setIcon(R.drawable.ic_baseline_check_circle_24)
@@ -148,7 +131,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 position.isCompleted = true
                                 val priceValue : String = input.text.toString()
                                 position.price = priceValue
-
                                 GlobalScope.launch {
                                     val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
                                     position.completedBy = completedBy
@@ -168,22 +150,18 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                     //Log.d(ContentValues.TAG,"www: "+groupName)
                                     intent.putExtra("groupName", groupName)
                                     c.startActivity(intent)
-
                                 }
                             }
-
                             builder.setNegativeButton("No"){
                                     dialog,_->
                                 dialog.dismiss()
                             }
                             builder.create()
                             builder.show()
-
                         true
                     }
                     else-> true
                 }
-
             }
             popupMenus.show()
             val popup = PopupMenu::class.java.getDeclaredField("mPopup")
@@ -206,7 +184,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         progressDialog.setCancelable(false)
         progressDialog.show()
         val newList = requestList[position]
-
         if(newList.price!!.isEmpty())
             holder.price.visibility = View.GONE
         else
@@ -218,64 +195,17 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         holder.nameRequest.text = newList.nameRequest
         if(!newList.isCompleted)
             holder.completedBy.visibility = View.GONE
-
         val sdf = SimpleDateFormat("dd/MM/yy")
         val day = sdf.format(newList.date)
         val sdf2 = SimpleDateFormat("HH:mm")
         val time = sdf2.format(newList.date)
         holder.date.text = day
         holder.time.text = time
-
         holder.userName.text = newList.user.nickname
+
         if(newList.isCompleted) {
             holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
-
         }
-
-        /*
-        CoroutineScope(Dispatchers.Main + Job()).launch {
-            withContext(Dispatchers.IO) {
-                uri = FirebaseStorageWrapper().download(newList.userId)
-                withContext(Dispatchers.Main) {
-                    if(uri != null)
-                        holder.photo.setImageURI(uri)
-                    progressDialog.dismiss()
-                }
-            }
-        }
-         */
-
-
-        /*
-        val dir: File = File(c.getCacheDir().getAbsolutePath())
-        var found = false
-        if (dir.exists()) {
-            for (f in dir.listFiles()) {
-                if (f.name.toString().contains("image_${newList.user.id}_")) {
-                    uri = Uri.fromFile(f)
-                    found = true
-                    if(!(f.length() == 0L))
-                        holder.photo.setImageURI(uri)
-                    progressDialog.dismiss()
-                    break
-                }
-            }
-        }
-        if(!found){
-            CoroutineScope(Dispatchers.Main + Job()).launch {
-                withContext(Dispatchers.IO) {
-                    uri = FirebaseStorageWrapper().download(newList.user.id, c)
-                }
-                withContext(Dispatchers.Main) {
-                    if(uri != null)
-                        holder.photo.setImageURI(uri)
-                    progressDialog.dismiss()
-                }
-            }
-        }
-
-         */
-
         for(photo in photoList){
             if(photo.contains("${newList.user.id}_")){
                 holder.photo.setImageURI(photo.toUri())
@@ -283,12 +213,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             }
         }
         progressDialog.dismiss()
-
-
-
-
     }
-
     override fun getItemCount(): Int {
         return  requestList.size
     }

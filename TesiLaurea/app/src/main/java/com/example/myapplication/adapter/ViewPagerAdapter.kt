@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 class ViewPagerAdapter(fm: FragmentManager?, private val list: ArrayList<Fragment>) :
     FragmentPagerAdapter(fm!!) {
     override fun getCount(): Int {
-        //return 2
         return list.size
     }
 
@@ -22,5 +21,4 @@ class ViewPagerAdapter(fm: FragmentManager?, private val list: ArrayList<Fragmen
     companion object{
         val TAB_TITLES = arrayOf("Active List", "Completed List")
     }
-
 }

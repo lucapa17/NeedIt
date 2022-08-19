@@ -17,7 +17,6 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
 
-
 class EditProfileActivity : AppCompatActivity() {
     private var image: Uri? = null
     val id : String = FirebaseAuthWrapper(this@EditProfileActivity).getUid()!!
@@ -32,7 +31,6 @@ class EditProfileActivity : AppCompatActivity() {
         var surname : String
         var email : String
         var nickname : String
-
 
         val progressDialog = ProgressDialog(this@EditProfileActivity)
         progressDialog.setMessage("Fetching...")
@@ -74,14 +72,9 @@ class EditProfileActivity : AppCompatActivity() {
                         findViewById<ImageView>(R.id.profile_image).setImageURI(image)
                     }
                     progressDialog.dismiss()
-
                 }
             }
         }
-
-
-
-
 
         val modifyName : ImageView = findViewById(R.id.modify_name)
         modifyName.setOnClickListener {
@@ -139,7 +132,6 @@ class EditProfileActivity : AppCompatActivity() {
                 val newPassword1 = newPassword.text.toString().trim()
                 val confirmPassword1 = confirmPassword.text.toString().trim()
 
-
                 if (/*email.isEmpty() || */ oldPassword1.isEmpty() || newPassword1.isEmpty() || confirmPassword1.isEmpty()) {
                     progressDialog1.dismiss()
                     Toast.makeText(view!!.context, "Fill all the fields!", Toast.LENGTH_SHORT)
@@ -172,7 +164,6 @@ class EditProfileActivity : AppCompatActivity() {
                                                     "Passwords changed correctly!",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
-
                                             } else {
                                                 progressDialog1.dismiss()
                                                 Toast.makeText(
@@ -180,7 +171,6 @@ class EditProfileActivity : AppCompatActivity() {
                                                     it.exception!!.message,
                                                     Toast.LENGTH_SHORT
                                                 ).show()
-
                                             }
                                         }
                                 }
@@ -195,15 +185,11 @@ class EditProfileActivity : AppCompatActivity() {
                             }
                         }
                     dialog.dismiss()
-
                 }
-
-
             }
             addDialog.setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
                 Toast.makeText(this@EditProfileActivity, "Cancel", Toast.LENGTH_SHORT).show()
-
             }
             addDialog.create()
             addDialog.show()
@@ -219,7 +205,6 @@ class EditProfileActivity : AppCompatActivity() {
             if (tName.isEmpty() || tSurname.isEmpty() || tNickname.isEmpty()) {
                 Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
             } else {
-
                 CoroutineScope(Dispatchers.Main + Job()).launch {
                     withContext(Dispatchers.IO) {
                         val nicknameAlreadyUsed: Boolean =
@@ -233,13 +218,6 @@ class EditProfileActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             else {
-                                /*
-                                        if(image != null) {
-                                            FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
-                                        }
-
-                                         */
-
                                 user!!.name = tName
                                 user!!.surname = tSurname
                                 user!!.nickname = tNickname
@@ -253,15 +231,12 @@ class EditProfileActivity : AppCompatActivity() {
                         }
                     }
                 }
-
-
             }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if(requestCode == 100 && resultCode == RESULT_OK){
             image = data?.data!!
             findViewById<ImageView>(R.id.profile_image).setImageURI(image)
@@ -273,12 +248,10 @@ class EditProfileActivity : AppCompatActivity() {
                         if(f.name.toString().contains("image_${id}_")){
                             f.delete()
                         }
-
                     }
                 }
                 FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
             }
-
         }
     }
 
@@ -304,7 +277,6 @@ class EditProfileActivity : AppCompatActivity() {
                     /**set view*/
                     //val email = v.findViewById<EditText>(R.id.email)
                     val password = v.findViewById<EditText>(R.id.password)
-
                     val addDialog = AlertDialog.Builder(this)
 
                     addDialog.setView(v)

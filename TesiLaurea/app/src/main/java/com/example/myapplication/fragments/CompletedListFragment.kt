@@ -18,7 +18,6 @@ import com.example.myapplication.models.Request
 import com.example.myapplication.models.getRequestsList
 import kotlinx.coroutines.*
 
-
 class CompletedListFragment : Fragment() {
 
     private var groupId: Long? = null
@@ -29,7 +28,6 @@ class CompletedListFragment : Fragment() {
     private lateinit var listAdapter: ListAdapter
     private var photoList : ArrayList<String>? = ArrayList()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -37,16 +35,14 @@ class CompletedListFragment : Fragment() {
             uid = it.getString("uid")
             groupName = it.getString("groupName")
             photoList = it.getStringArrayList("photoList")
-
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_completed_list, container, false)
-        val context : Context = this.requireContext()
+        val context: Context = this.requireContext()
         recv = view.findViewById(R.id.mRecycler)
         listAdapter = ListAdapter(context, ArrayList(), ArrayList(), groupName!!, false)
         recv.layoutManager = LinearLayoutManager(context)
@@ -57,24 +53,28 @@ class CompletedListFragment : Fragment() {
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
-                val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
+                val requestList: MutableList<Request> = getRequestsList(context, groupId!!)
                 requestsList = ArrayList(requestList)
-                val groupCompletedList : ArrayList<Request> = ArrayList()
-                for (request in requestList){
-                    if(request.isCompleted){
+                val groupCompletedList: ArrayList<Request> = ArrayList()
+                for (request in requestList) {
+                    if (request.isCompleted) {
                         groupCompletedList.add(request)
                     }
                 }
                 withContext(Dispatchers.Main) {
-                    listAdapter = ListAdapter(requireContext(),groupCompletedList, photoList!!, groupName!!, false)
+                    listAdapter = ListAdapter(
+                        requireContext(),
+                        groupCompletedList,
+                        photoList!!,
+                        groupName!!,
+                        false
+                    )
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
-
                     progressDialog.dismiss()
                 }
             }
         }
-
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
             val intent = Intent(requireContext(), GroupActivity::class.java)
@@ -83,11 +83,9 @@ class CompletedListFragment : Fragment() {
             requireContext().startActivity(intent)
         }
         return view
-
     }
 
     companion object {
-
         @JvmStatic
         fun newInstance(groupId: Long, uid: String, groupName: String, photoList : ArrayList<String>) =
             CompletedListFragment().apply {
@@ -96,7 +94,6 @@ class CompletedListFragment : Fragment() {
                     putString("uid", uid)
                     putString("groupName", groupName)
                     putStringArrayList("photoList", photoList)
-
                 }
             }
     }

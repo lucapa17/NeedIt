@@ -30,17 +30,13 @@ class NewGroupActivity : BaseActivity() {
             myUser = getUser(this@NewGroupActivity)
         }
         val memberList : ArrayList<User> = ArrayList()
-
         recv = this.findViewById(R.id.mRecycler)
         membersAdapter = NewMembersAdapter(this, memberList)
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = membersAdapter
-
         val nicknameEditText: EditText = findViewById(R.id.memberNickname)
         val addUser: ImageView = findViewById(R.id.addUser)
-
         var userExists: Boolean
-
         nicknameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -64,7 +60,6 @@ class NewGroupActivity : BaseActivity() {
                                 nicknameEditText.error = "this is your nickname"
                                 addUser.visibility = View.GONE
                             }
-
                             else{
                                 var found = false
 
@@ -77,18 +72,13 @@ class NewGroupActivity : BaseActivity() {
                                 }
                                 if(!found)
                                     addUser.visibility = View.VISIBLE
-
                             }
                         }
                     }
                 }
-
-
             }
-
             override fun afterTextChanged(s: Editable?) {
             }
-
         })
 
         addUser.setOnClickListener {
@@ -110,7 +100,6 @@ class NewGroupActivity : BaseActivity() {
                     withContext(Dispatchers.Main) {
                         membersAdapter.notifyDataSetChanged()
                         nicknameEditText.setText("")
-
                     }
                 }
             }
@@ -147,12 +136,9 @@ class NewGroupActivity : BaseActivity() {
                                 groupId.toString(),
                                 this@NewGroupActivity
                             )
-
-
                         val membersId: MutableList<String> = mutableListOf(myUser!!.id)
                         myUser!!.groups!!.add(groupId)
                         Firebase.database.getReference("users").child(myUser!!.id).setValue(myUser)
-
                         for (member in memberList) {
                             membersId.add(member.id)
                             member.groups!!.add(groupId)
@@ -173,14 +159,11 @@ class NewGroupActivity : BaseActivity() {
                             )
                             Firebase.database.getReference("notifications").child(member.id)
                                 .child(notificationId.toString()).setValue(notification)
-
                         }
                         val group =
                             Group(groupId, groupName.text.toString().trim(), membersId)
                         Firebase.database.getReference("groups").child(group.groupId.toString())
                             .setValue(group)
-
-
                     }
                     withContext(Dispatchers.Main) {
                         //Thread.sleep(1_000)
@@ -193,17 +176,12 @@ class NewGroupActivity : BaseActivity() {
                 }
             }
         }
-
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if(requestCode == 100 && resultCode == RESULT_OK){
             image = data?.data!!
             findViewById<ImageView>(R.id.group_image).setImageURI(image)
-
         }
     }
-
-
 }

@@ -12,7 +12,6 @@ import android.widget.Toast
 import com.example.myapplication.models.*
 import kotlinx.coroutines.*
 
-
 class RegistrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +45,6 @@ class RegistrationActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             else {
-
                                 if (password.text.toString().trim() == confirm.text.toString()
                                         .trim()
                                 ) {
@@ -65,15 +63,12 @@ class RegistrationActivity : AppCompatActivity() {
                                         "Passwords mismatched",
                                         Toast.LENGTH_SHORT
                                     ).show()
-
                             }
                         }
                     }
                 }
-
             }
         }
-
         val link : TextView = findViewById(R.id.switchToLogin)
         link.setOnClickListener { v ->
             val intent = Intent(v!!.context, LoginActivity::class.java)
@@ -83,7 +78,5 @@ class RegistrationActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         finishAffinity()
-        //startActivity(Intent(this, MainActivity::class.java))
     }
-
 }

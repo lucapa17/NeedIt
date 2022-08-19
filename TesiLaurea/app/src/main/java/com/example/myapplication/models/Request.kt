@@ -24,6 +24,5 @@ class Request() {
         this.comment = comment
         this.date = date
         this.price = price
-
     }
 }

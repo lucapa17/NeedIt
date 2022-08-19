@@ -49,7 +49,6 @@ class MembersAdapter (private val c: Context, private val memberList:ArrayList<U
                     progressDialog.dismiss()
                     break
                 }
-
             }
         }
         if(!found){

@@ -27,7 +27,6 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
                 val intent = Intent(v!!.context, GroupActivity::class.java)
                 intent.putExtra("groupId", position.groupId)
                 intent.putExtra("groupName", position.nameGroup)
-
                 v.context.startActivity(intent)
             }
         }
@@ -60,9 +59,8 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
                 }
             }
         }
-        for (f in dir.listFiles()) {
+        for (f in dir.listFiles())
             (java.util.Calendar.getInstance().timeInMillis - f.lastModified()) / (1000*60)
-        }
         if(!found){
             CoroutineScope(Dispatchers.Main + Job()).launch {
                 withContext(Dispatchers.IO) {
@@ -70,7 +68,6 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
                     withContext(Dispatchers.Main) {
                         if(uri != null){
                             holder.logoGroup.setImageURI(uri)
-                            //uri!!.toFile().delete()
                         }
                         progressDialog.dismiss()
                     }

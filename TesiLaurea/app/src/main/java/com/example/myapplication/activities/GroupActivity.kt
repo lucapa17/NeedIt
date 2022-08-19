@@ -2,7 +2,6 @@ package com.example.myapplication.activities
 
 import android.app.ProgressDialog
 import android.content.Intent
-
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -18,9 +17,7 @@ import com.example.myapplication.models.*
 import kotlinx.coroutines.*
 import java.io.File
 
-
 class GroupActivity : AppCompatActivity() {
-
     private var binding : ActivityGroupBinding? = null
     private var groupId : Long? = null
     private var groupName : String? = null
@@ -34,12 +31,9 @@ class GroupActivity : AppCompatActivity() {
         groupName = intent.getStringExtra("groupName")
         supportActionBar?.title = groupName
 
-
-        //supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_pageview_24)
-        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val fragmentArrayList = ArrayList<Fragment>()
-
         val progressDialog = ProgressDialog(this)
+
         progressDialog.setMessage("Fetching...")
         progressDialog.setCancelable(false)
         progressDialog.show()
@@ -113,6 +107,4 @@ class GroupActivity : AppCompatActivity() {
     override fun onBackPressed() {
         startActivity(Intent(this, MainActivity::class.java))
     }
-
-
 }

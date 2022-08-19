@@ -75,8 +75,6 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     val intent = Intent(context, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }
-                    //intent.putExtra("groupId", notification.groupId)
-                    //intent.putExtra("groupName", notification.groupName)
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
 
                     val builder = NotificationCompat.Builder(context, "NOTIFICATION")

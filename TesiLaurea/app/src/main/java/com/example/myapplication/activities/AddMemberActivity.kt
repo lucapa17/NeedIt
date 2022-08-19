@@ -33,8 +33,6 @@ class AddMemberActivity : AppCompatActivity() {
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = membersAdapter
 
-
-
         val intent : Intent = intent
         val groupId : Long = intent.getLongExtra("groupId", 0L)
         var myNickname: String? = null
@@ -46,7 +44,6 @@ class AddMemberActivity : AppCompatActivity() {
         }
         val nicknameEditText: EditText = findViewById(R.id.memberNickname)
         val addUser: ImageView = findViewById(R.id.addUser)
-
 
         nicknameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -94,20 +91,14 @@ class AddMemberActivity : AppCompatActivity() {
                                 }
                                 if(!found)
                                     addUser.visibility = View.VISIBLE
-
                             }
                         }
                     }
                 }
-
-
             }
-
             override fun afterTextChanged(s: Editable?) {
             }
-
         })
-
 
         addUser.setOnClickListener {
             CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -134,7 +125,6 @@ class AddMemberActivity : AppCompatActivity() {
             }
         }
 
-
         val button : Button = findViewById(R.id.buttonAddNewMember)
         button.setOnClickListener {
             if (memberList.isEmpty())
@@ -160,20 +150,15 @@ class AddMemberActivity : AppCompatActivity() {
                         )
                         Firebase.database.getReference("notifications").child(member.id)
                             .child(notificationId.toString()).setValue(notification)
-
                     }
                     Firebase.database.getReference("groups").child(groupId.toString())
                         .setValue(group)
                     val i = Intent(this@AddMemberActivity, GroupActivity::class.java)
                     i.putExtra("groupId", groupId)
                     i.putExtra("groupName", group!!.nameGroup)
-
                     this@AddMemberActivity.startActivity(i)
                 }
-
             }
         }
     }
-
-
 }
