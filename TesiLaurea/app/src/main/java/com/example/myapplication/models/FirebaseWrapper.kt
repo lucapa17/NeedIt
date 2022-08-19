@@ -217,8 +217,7 @@ fun createGroup(group : Group, context: Context) {
     } else {
         user.groups!!.add(group.groupId)
     }
-    val uid = FirebaseAuthWrapper(context).getUid()
-    Firebase.database.getReference("users").child(uid!!).setValue(user)
+    //Firebase.database.getReference("users").child(uid!!).setValue(user)
     Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
 }
 

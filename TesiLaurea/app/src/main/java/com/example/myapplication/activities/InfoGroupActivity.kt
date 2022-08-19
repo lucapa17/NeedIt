@@ -128,14 +128,17 @@ class InfoGroupActivity: AppCompatActivity() {
         return when (item.itemId) {
             com.example.myapplication.R.id.nav_leave -> {
                 GlobalScope.launch {
-                    val uid = FirebaseAuthWrapper(this@InfoGroupActivity).getUid()
+                    val user : User = getUser(this@InfoGroupActivity)
                     val requestList : MutableList<Request> = getRequestsList(this@InfoGroupActivity, group!!.groupId)
                     for(request in requestList){
-                        if(request.user.id == uid){
+                        if(request.user.id == user.id){
                             Firebase.database.getReference("requests").child(request.Id.toString()).removeValue()
                         }
                     }
-                    group!!.users!!.remove(uid)
+                    user.groups!!.remove(groupId)
+                    Firebase.database.getReference("users").child(user.id).setValue(user)
+
+                    group!!.users!!.remove(user.id)
                     if(group!!.users!!.isEmpty()){
                         FirebaseStorageWrapper().delete(group!!.groupId.toString())
                         Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
