@@ -1,23 +1,15 @@
 package com.example.myapplication.activities
 
 import android.app.ProgressDialog
-import android.content.ContentValues.TAG
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import android.widget.ListView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.adapter.GroupsAdapter
-import com.example.myapplication.adapter.ListAdapter
 import com.example.myapplication.models.*
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.core.view.View
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -29,7 +21,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        delete_cache()
+        deleteCache()
         recv = this.findViewById(R.id.mRecycler)
         groupsAdapter = GroupsAdapter(this, ArrayList())
         recv.layoutManager = LinearLayoutManager(this)
@@ -43,11 +35,11 @@ class MainActivity : BaseActivity() {
 
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
-                var groupList : MutableList<Group> = getGroups(this@MainActivity)
+                val groupList : MutableList<Group> = getGroups(this@MainActivity)
                 withContext(Dispatchers.Main) {
                     if(groupList.isEmpty()){
                         progressDialog.dismiss()
-                        layoutNoGroup.setVisibility(android.view.View.VISIBLE)
+                        layoutNoGroup.visibility = android.view.View.VISIBLE
                     }
                     else {
                         groupsAdapter = GroupsAdapter(this@MainActivity, ArrayList(groupList))
@@ -60,12 +52,10 @@ class MainActivity : BaseActivity() {
             }
         }
         val link = this.findViewById<TextView>(R.id.newGroup)
-        link.setOnClickListener(object : android.view.View.OnClickListener{
-            override fun onClick(v : android.view.View?) {
-                val intent = Intent(v!!.context, NewGroupActivity::class.java)
-                v.context.startActivity(intent)
-            }
-        })
+        link.setOnClickListener { v ->
+            val intent = Intent(v!!.context, NewGroupActivity::class.java)
+            v.context.startActivity(intent)
+        }
 
 
     }
@@ -73,8 +63,8 @@ class MainActivity : BaseActivity() {
         finishAffinity()
         //startActivity(Intent(this, MainActivity::class.java))
     }
-    fun delete_cache(){
-        val dir: File = File(this.getCacheDir().getAbsolutePath())
+    private fun deleteCache(){
+        val dir = File(this.cacheDir.absolutePath)
         for (f in dir.listFiles()) {
             val minutes : Long =  (java.util.Calendar.getInstance().timeInMillis - f.lastModified()) / (1000*60)
             if(minutes >= 5)

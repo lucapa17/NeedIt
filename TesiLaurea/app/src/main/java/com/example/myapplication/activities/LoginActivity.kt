@@ -16,35 +16,31 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         val button : Button = findViewById(R.id.buttonLogin)
-        button.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val email : EditText = findViewById(R.id.userEmail)
-                val password : EditText = findViewById(R.id.userPassword)
-                if(email.text.toString().trim().isEmpty() || password.text.toString().trim().isEmpty()) {
-                    Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
-                }
-                else {
-                    val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(v!!.context)
-                    firebaseWrapper.signIn(email.text.toString().trim(), password.text.toString().trim())
-                }
+        button.setOnClickListener { v ->
+            val email: EditText = findViewById(R.id.userEmail)
+            val password: EditText = findViewById(R.id.userPassword)
+            if (email.text.toString().trim().isEmpty() || password.text.toString().trim()
+                    .isEmpty()
+            ) {
+                Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
+            } else {
+                val firebaseWrapper = FirebaseAuthWrapper(v!!.context)
+                firebaseWrapper.signIn(
+                    email.text.toString().trim(),
+                    password.text.toString().trim()
+                )
             }
-        })
+        }
 
         val link : TextView = findViewById(R.id.switchToRegistration)
-        link.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val intent = Intent(v!!.context, RegistrationActivity::class.java)
-                v.context.startActivity(intent)
-            }
-        })
+        link.setOnClickListener { v ->
+            val intent = Intent(v!!.context, RegistrationActivity::class.java)
+            v.context.startActivity(intent)
+        }
     }
 
     override fun onBackPressed() {
         finishAffinity()
-        //startActivity(Intent(this, MainActivity::class.java))
     }
-
-
-
 }
 

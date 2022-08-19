@@ -1,31 +1,24 @@
 package com.example.myapplication.activities
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.adapter.MembersAdapter
 import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.models.*
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
 
 class NewGroupActivity : BaseActivity() {
-    var image: Uri? = null
+    private var image: Uri? = null
     private lateinit var recv: RecyclerView
     private lateinit var membersAdapter: NewMembersAdapter
 
@@ -36,7 +29,6 @@ class NewGroupActivity : BaseActivity() {
         GlobalScope.launch {
             myUser = getUser(this@NewGroupActivity)
         }
-        val uid = FirebaseAuthWrapper(this).getUid()
         val memberList : ArrayList<User> = ArrayList()
 
         recv = this.findViewById(R.id.mRecycler)
@@ -47,7 +39,7 @@ class NewGroupActivity : BaseActivity() {
         val nicknameEditText: EditText = findViewById(R.id.memberNickname)
         val addUser: ImageView = findViewById(R.id.addUser)
 
-        var userExists = false
+        var userExists: Boolean
 
         nicknameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -63,10 +55,10 @@ class NewGroupActivity : BaseActivity() {
                             user = getUserByNickname(this@NewGroupActivity, nicknameEditText.text.toString().trim())
                         withContext(Dispatchers.Main) {
                             if (!userExists) {
-                                if(!nicknameEditText.text.isEmpty()){
+                                if(nicknameEditText.text.isNotEmpty()){
                                     nicknameEditText.error = "user with this nickname does not exist"
                                 }
-                                addUser.setVisibility(View.GONE)
+                                addUser.visibility = View.GONE
                             }
                             else if(nicknameEditText.text.toString().trim()==myUser!!.nickname){
                                 nicknameEditText.error = "this is your nickname"
@@ -74,7 +66,7 @@ class NewGroupActivity : BaseActivity() {
                             }
 
                             else{
-                                var found : Boolean = false
+                                var found = false
 
                                 for(member in memberList){
                                     if(member.id == user!!.id){
@@ -99,101 +91,108 @@ class NewGroupActivity : BaseActivity() {
 
         })
 
-        addUser.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                CoroutineScope(Dispatchers.Main + Job()).launch {
-                    withContext(Dispatchers.IO) {
-                        val user : User = getUserByNickname(this@NewGroupActivity, nicknameEditText.text.toString().trim())
-                        var found : Boolean = false
-                        for(member in memberList){
-                            if(member.id == user.id){
-                                found = true
-                                break
-                            }
+        addUser.setOnClickListener {
+            CoroutineScope(Dispatchers.Main + Job()).launch {
+                withContext(Dispatchers.IO) {
+                    val user: User = getUserByNickname(
+                        this@NewGroupActivity,
+                        nicknameEditText.text.toString().trim()
+                    )
+                    var found = false
+                    for (member in memberList) {
+                        if (member.id == user.id) {
+                            found = true
+                            break
                         }
-                        if(!found)
-                            memberList.add(user)
-                        withContext(Dispatchers.Main) {
-                            membersAdapter.notifyDataSetChanged()
-                            nicknameEditText.setText("")
+                    }
+                    if (!found)
+                        memberList.add(user)
+                    withContext(Dispatchers.Main) {
+                        membersAdapter.notifyDataSetChanged()
+                        nicknameEditText.setText("")
 
-                        }
                     }
                 }
             }
-        })
+        }
 
         val edit_photo : ImageView = findViewById(R.id.edit_group_photo)
-        edit_photo.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(intent, 100)
-
-            }
-        })
+        edit_photo.setOnClickListener {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(intent, 100)
+        }
         val button : Button = findViewById(R.id.buttonCreateGroup)
-        button.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val groupName : EditText = findViewById(R.id.groupName)
-                if(groupName.text.toString().trim().isEmpty()) {
-                    groupName.error = "Insert the group name!"
-                }
-                else{
-                    var groupId : Long = -1
-                    CoroutineScope(Dispatchers.Main + Job()).launch {
-                        withContext(Dispatchers.IO) {
-                            groupId = getGroupId(this@NewGroupActivity)
-                            val dir: File = File(this@NewGroupActivity.getCacheDir().getAbsolutePath())
-                            if (dir.exists()) {
-                                for (f in dir.listFiles()) {
-                                    if(f.name.toString().contains("image_${groupId}_")){
-                                        f.delete()
-                                    }
+        button.setOnClickListener {
+            val groupName: EditText = findViewById(R.id.groupName)
+            if (groupName.text.toString().trim().isEmpty()) {
+                groupName.error = "Insert the group name!"
+            } else {
+                var groupId: Long = -1
+                CoroutineScope(Dispatchers.Main + Job()).launch {
+                    withContext(Dispatchers.IO) {
+                        groupId = getGroupId(this@NewGroupActivity)
+                        val dir: File = File(this@NewGroupActivity.getCacheDir().getAbsolutePath())
+                        if (dir.exists()) {
+                            for (f in dir.listFiles()) {
+                                if (f.name.toString().contains("image_${groupId}_")) {
+                                    f.delete()
                                 }
                             }
-                            if(image != null)
-                                FirebaseStorageWrapper().upload(image!!, groupId.toString(), this@NewGroupActivity)
+                        }
+                        if (image != null)
+                            FirebaseStorageWrapper().upload(
+                                image!!,
+                                groupId.toString(),
+                                this@NewGroupActivity
+                            )
 
 
+                        val membersId: MutableList<String> = mutableListOf(myUser!!.id)
+                        myUser!!.groups!!.add(groupId)
+                        Firebase.database.getReference("users").child(myUser!!.id).setValue(myUser)
 
-
-                            val membersId : MutableList<String> = mutableListOf(myUser!!.id)
-                            myUser!!.groups!!.add(groupId)
-                            Firebase.database.getReference("users").child(myUser!!.id).setValue(myUser)
-
-                            for(member in memberList){
-                                membersId.add(member.id)
-                                member.groups!!.add(groupId)
-                                Firebase.database.getReference("users").child(member.id).setValue(member)
-                                val notificationId : Long = getNotificationId(this@NewGroupActivity, member.id)
-                                val notification : Notification = Notification(member.id, null, myUser!!.nickname, null, groupName.text.toString().trim(), notificationId, java.util.Calendar.getInstance().time, groupId, Notification.Type.NewGroup)
-                                Firebase.database.getReference("notifications").child(member.id).child(notificationId.toString()).setValue(notification)
-
-                            }
-                            val group : Group = Group(groupId, groupName.text.toString().trim(), membersId)
-                            Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
-
-
-
-
+                        for (member in memberList) {
+                            membersId.add(member.id)
+                            member.groups!!.add(groupId)
+                            Firebase.database.getReference("users").child(member.id)
+                                .setValue(member)
+                            val notificationId: Long =
+                                getNotificationId(this@NewGroupActivity, member.id)
+                            val notification: Notification = Notification(
+                                member.id,
+                                null,
+                                myUser!!.nickname,
+                                null,
+                                groupName.text.toString().trim(),
+                                notificationId,
+                                java.util.Calendar.getInstance().time,
+                                groupId,
+                                Notification.Type.NewGroup
+                            )
+                            Firebase.database.getReference("notifications").child(member.id)
+                                .child(notificationId.toString()).setValue(notification)
 
                         }
-                            withContext(Dispatchers.Main) {
-                                //Thread.sleep(1_000)
-                                val intent : Intent = Intent(this@NewGroupActivity, GroupActivity::class.java)
-                                intent.putExtra("groupId", groupId)
-                                intent.putExtra("groupName", groupName.text.toString().trim())
-                                this@NewGroupActivity.startActivity(intent)
-                            }
+                        val group: Group =
+                            Group(groupId, groupName.text.toString().trim(), membersId)
+                        Firebase.database.getReference("groups").child(group.groupId.toString())
+                            .setValue(group)
+
+
+                    }
+                    withContext(Dispatchers.Main) {
+                        //Thread.sleep(1_000)
+                        val intent: Intent =
+                            Intent(this@NewGroupActivity, GroupActivity::class.java)
+                        intent.putExtra("groupId", groupId)
+                        intent.putExtra("groupName", groupName.text.toString().trim())
+                        this@NewGroupActivity.startActivity(intent)
                     }
                 }
-
-
             }
-
-        })
+        }
 
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
