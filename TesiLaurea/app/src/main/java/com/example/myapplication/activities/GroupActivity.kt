@@ -1,13 +1,8 @@
 package com.example.myapplication.activities
 
-import android.R.drawable
 import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -15,9 +10,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.R
-import com.example.myapplication.adapter.GroupsAdapter
 import com.example.myapplication.adapter.ViewPagerAdapter
 import com.example.myapplication.databinding.ActivityGroupBinding
 import com.example.myapplication.fragments.ActiveListFragment
@@ -37,10 +29,10 @@ class GroupActivity : AppCompatActivity() {
         binding = ActivityGroupBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
-        val intent : Intent = getIntent()
+        val intent : Intent = intent
         groupId = intent.getLongExtra("groupId", 0L)
         groupName = intent.getStringExtra("groupName")
-        supportActionBar?.setTitle(groupName)
+        supportActionBar?.title = groupName
 
 
         //supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_pageview_24)
@@ -57,12 +49,12 @@ class GroupActivity : AppCompatActivity() {
                 val photoList : ArrayList<String> = ArrayList()
                 for(user in group!!.users!!){
                     var uri : Uri? = null
-                    val dir: File = File(this@GroupActivity.getCacheDir().getAbsolutePath())
+                    val dir = File(this@GroupActivity.cacheDir.absolutePath)
                     var found = false
                     if (dir.exists()) {
                         for (f in dir.listFiles()) {
                             if(f.name.toString().contains("image_${user}_")){
-                                if(!(f.length() == 0L)){
+                                if(f.length() != 0L){
                                     uri = Uri.fromFile(f)
                                 }
                                 found = true
@@ -97,19 +89,19 @@ class GroupActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             com.example.myapplication.R.id.nav_home -> {
-                val intent : Intent = Intent(this, MainActivity::class.java)
+                val intent  = Intent(this, MainActivity::class.java)
                 this.startActivity(intent)
                 true
             }
             com.example.myapplication.R.id.nav_add_member -> {
-                val intent : Intent = Intent(this, AddMemberActivity::class.java)
+                val intent  = Intent(this, AddMemberActivity::class.java)
                 intent.putExtra("groupId", groupId)
 
                 this.startActivity(intent)
                 true
             }
             com.example.myapplication.R.id.nav_show_members -> {
-                val intent : Intent = Intent(this, InfoGroupActivity::class.java)
+                val intent  = Intent(this, InfoGroupActivity::class.java)
                 intent.putExtra("groupId", groupId)
                 this.startActivity(intent)
                 true

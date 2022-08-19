@@ -1,15 +1,11 @@
 package com.example.myapplication.activities
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.ContentValues.TAG
 import android.content.Intent
-import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -20,23 +16,22 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
-import java.util.*
 
 
 class EditProfileActivity : AppCompatActivity() {
-    private var profileImage: ImageView? = null
-    var image: Uri? = null
+    private var image: Uri? = null
     val id : String = FirebaseAuthWrapper(this@EditProfileActivity).getUid()!!
     var user : User? = null
     //var new_image : Uri? = null
+    @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
 
-        var name : String = ""
-        var surname : String = ""
-        var email : String = ""
-        var nickname : String = ""
+        var name: String
+        var surname : String
+        var email : String
+        var nickname : String
 
 
         val progressDialog = ProgressDialog(this@EditProfileActivity)
@@ -44,12 +39,12 @@ class EditProfileActivity : AppCompatActivity() {
         progressDialog.setCancelable(false)
         progressDialog.show()
 
-        val dir: File = File(this@EditProfileActivity.getCacheDir().getAbsolutePath())
+        val dir = File(this@EditProfileActivity.cacheDir.absolutePath)
         var found = false
         if (dir.exists()) {
             for (f in dir.listFiles()) {
                 if(f.name.toString().contains("image_${id}_")){
-                    if(!(f.length() == 0L))
+                    if(f.length() != 0L)
                         image = Uri.fromFile(f)
                     found = true
                     break
@@ -62,24 +57,22 @@ class EditProfileActivity : AppCompatActivity() {
                 user = getUser(this@EditProfileActivity)
                 if(!found)
                     image = FirebaseStorageWrapper().download(id, this@EditProfileActivity)
-                Log.d(TAG, "aaa"+image)
                 withContext(Dispatchers.Main) {
                     name = user?.name.toString()
                     surname = user?.surname.toString()
                     email = user?.email.toString()
                     nickname = user?.nickname.toString()
 
-                    findViewById<TextView>(R.id.name).setText(name)
-                    findViewById<TextView>(R.id.surname).setText(surname)
-                    findViewById<TextView>(R.id.email).setText(email)
-                    findViewById<TextView>(R.id.nickname).setText(nickname)
+                    findViewById<TextView>(R.id.name).text = name
+                    findViewById<TextView>(R.id.surname).text = surname
+                    findViewById<TextView>(R.id.email).text = email
+                    findViewById<TextView>(R.id.nickname).text = nickname
                     findViewById<EditText>(R.id.edit_nickname).setText(nickname)
                     findViewById<EditText>(R.id.edit_name).setText(name)
                     findViewById<EditText>(R.id.edit_surname).setText(surname)
                     if (image != null) {
                         findViewById<ImageView>(R.id.profile_image).setImageURI(image)
                     }
-                    Log.d(TAG, "bello")
                     progressDialog.dismiss()
 
                 }
@@ -90,183 +83,180 @@ class EditProfileActivity : AppCompatActivity() {
 
 
 
-        val modify_name : ImageView = findViewById(R.id.modify_name)
-        modify_name.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                findViewById<TextView>(R.id.name).setVisibility(View.GONE)
-                findViewById<EditText>(R.id.edit_name).setVisibility(View.VISIBLE)
-                findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
-                findViewById<Button>(R.id.button_change_password).setVisibility(View.GONE)
+        val modifyName : ImageView = findViewById(R.id.modify_name)
+        modifyName.setOnClickListener {
+            findViewById<TextView>(R.id.name).visibility = View.GONE
+            findViewById<EditText>(R.id.edit_name).visibility = View.VISIBLE
+            findViewById<Button>(R.id.edit_button).visibility = View.VISIBLE
+            findViewById<Button>(R.id.button_change_password).visibility = View.GONE
+        }
+        val modifySurname : ImageView = findViewById(R.id.modify_surname)
+        modifySurname.setOnClickListener {
+            findViewById<TextView>(R.id.surname).visibility = View.GONE
+            findViewById<EditText>(R.id.edit_surname).visibility = View.VISIBLE
+            findViewById<Button>(R.id.edit_button).visibility = View.VISIBLE
+            findViewById<Button>(R.id.button_change_password).visibility = View.GONE
+        }
+        val modifyNickname : ImageView = findViewById(R.id.modify_nickname)
+        modifyNickname.setOnClickListener {
+            findViewById<TextView>(R.id.nickname).visibility = View.GONE
+            findViewById<EditText>(R.id.edit_nickname).visibility = View.VISIBLE
+            findViewById<Button>(R.id.edit_button).visibility = View.VISIBLE
+            findViewById<Button>(R.id.button_change_password).visibility = View.GONE
+        }
+
+        val editPhoto : ImageView = findViewById(R.id.edit_photo)
+        editPhoto.setOnClickListener {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(intent, 100)
+        }
+
+        val buttonChangePassword : Button = findViewById(R.id.button_change_password)
+        buttonChangePassword.setOnClickListener {
+            val inflater = LayoutInflater.from(this@EditProfileActivity)
+            val view = inflater.inflate(R.layout.change_password, null)
+            /**set view*/
+            /**set view*/
+
+            //val email = v.findViewById<EditText>(R.id.email)
+            val oldPassword = view.findViewById<EditText>(R.id.old_password)
+            val newPassword = view.findViewById<EditText>(R.id.new_password)
+            val confirmPassword = view.findViewById<EditText>(R.id.confirm_password)
+            val addDialog = AlertDialog.Builder(this@EditProfileActivity)
+
+            addDialog.setView(view)
+            addDialog.setPositiveButton("Ok") {
+
+                    dialog, _ ->
+                val progressDialog1 = ProgressDialog(this@EditProfileActivity)
+                progressDialog1.setMessage("Fetching...")
+                progressDialog1.setCancelable(false)
+                progressDialog1.show()
+                //val email = email.text.toString().trim()
+                val oldPassword1 = oldPassword.text.toString().trim()
+                val newPassword1 = newPassword.text.toString().trim()
+                val confirmPassword1 = confirmPassword.text.toString().trim()
 
 
+                if (/*email.isEmpty() || */ oldPassword1.isEmpty() || newPassword1.isEmpty() || confirmPassword1.isEmpty()) {
+                    progressDialog1.dismiss()
+                    Toast.makeText(view!!.context, "Fill all the fields!", Toast.LENGTH_SHORT)
+                        .show()
 
-            }
-        })
-        val modify_surname : ImageView = findViewById(R.id.modify_surname)
-        modify_surname.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                findViewById<TextView>(R.id.surname).setVisibility(View.GONE)
-                findViewById<EditText>(R.id.edit_surname).setVisibility(View.VISIBLE)
-                findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
-                findViewById<Button>(R.id.button_change_password).setVisibility(View.GONE)
-
-
-
-            }
-        })
-        val modify_nickname : ImageView = findViewById(R.id.modify_nickname)
-        modify_nickname.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                findViewById<TextView>(R.id.nickname).setVisibility(View.GONE)
-                findViewById<EditText>(R.id.edit_nickname).setVisibility(View.VISIBLE)
-                findViewById<Button>(R.id.edit_button).setVisibility(View.VISIBLE)
-                findViewById<Button>(R.id.button_change_password).setVisibility(View.GONE)
-
-
-
-            }
-        })
-
-        val edit_photo : ImageView = findViewById(R.id.edit_photo)
-        edit_photo.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(intent, 100)
-
-
-
-            }
-        })
-
-        val button_change_password : Button = findViewById(R.id.button_change_password)
-        button_change_password.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val inflater = LayoutInflater.from(this@EditProfileActivity)
-                val v = inflater.inflate(R.layout.change_password,null)
-                /**set view*/
-                //val email = v.findViewById<EditText>(R.id.email)
-                val old_password = v.findViewById<EditText>(R.id.old_password)
-                val new_password = v.findViewById<EditText>(R.id.new_password)
-                val confirm_password = v.findViewById<EditText>(R.id.confirm_password)
-                val addDialog = AlertDialog.Builder(this@EditProfileActivity)
-
-                addDialog.setView(v)
-                addDialog.setPositiveButton("Ok"){
-
-                        dialog,_->
-                    val progressDialog = ProgressDialog(this@EditProfileActivity)
-                    progressDialog.setMessage("Fetching...")
-                    progressDialog.setCancelable(false)
-                    progressDialog.show()
-                    //val email = email.text.toString().trim()
-                    val old_password = old_password.text.toString().trim()
-                    val new_password = new_password.text.toString().trim()
-                    val confirm_password = confirm_password.text.toString().trim()
-
-
-                    if(/*email.isEmpty() || */ old_password.isEmpty() || new_password.isEmpty() || confirm_password.isEmpty()) {
-                        progressDialog.dismiss()
-                        Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
-
-                    }
-                    else if(new_password != confirm_password) {
-                        //v.findViewById<EditText>(R.id.new_password).error = "Passwords mismatched"
-                        //v.findViewById<EditText>(R.id.confirm_password).error = "Passwords mismatched"
-                        progressDialog.dismiss()
-                        Toast.makeText(v!!.context, "Passwords mismatched!", Toast.LENGTH_SHORT).show()
-                    }
-                    else {
-                        Firebase.auth.signInWithEmailAndPassword(user!!.email, old_password).addOnCompleteListener { task ->
+                } else if (newPassword1 != confirmPassword1) {
+                    //v.findViewById<EditText>(R.id.new_password).error = "Passwords mismatched"
+                    //v.findViewById<EditText>(R.id.confirm_password).error = "Passwords mismatched"
+                    progressDialog1.dismiss()
+                    Toast.makeText(view!!.context, "Passwords mismatched!", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    Firebase.auth.signInWithEmailAndPassword(user!!.email, oldPassword1)
+                        .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                if(new_password == old_password){
-                                    progressDialog.dismiss()
-                                    Toast.makeText(this@EditProfileActivity, "new password is equal to old password!", Toast.LENGTH_SHORT).show()
-                                }
-                                else{
-                                    Firebase.auth.currentUser!!.updatePassword(new_password).addOnCompleteListener {
-                                        if (it.isSuccessful) {
-                                            progressDialog.dismiss()
-                                            Toast.makeText(v!!.context, "Passwords changed correctly!", Toast.LENGTH_SHORT).show()
+                                if (newPassword1 == oldPassword1) {
+                                    progressDialog1.dismiss()
+                                    Toast.makeText(
+                                        this@EditProfileActivity,
+                                        "new password is equal to old password!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Firebase.auth.currentUser!!.updatePassword(newPassword1)
+                                        .addOnCompleteListener {
+                                            if (it.isSuccessful) {
+                                                progressDialog1.dismiss()
+                                                Toast.makeText(
+                                                    view!!.context,
+                                                    "Passwords changed correctly!",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
 
-                                        }
-                                        else{
-                                            progressDialog.dismiss()
-                                            Toast.makeText(this@EditProfileActivity, it.exception!!.message, Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                progressDialog1.dismiss()
+                                                Toast.makeText(
+                                                    this@EditProfileActivity,
+                                                    it.exception!!.message,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
 
+                                            }
                                         }
-                                    }
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
-                                progressDialog.dismiss()
-                                Toast.makeText(this@EditProfileActivity, task.exception!!.message, Toast.LENGTH_SHORT).show()
+                                progressDialog1.dismiss()
+                                Toast.makeText(
+                                    this@EditProfileActivity,
+                                    task.exception!!.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
-                        dialog.dismiss()
-
-                    }
-
-
-                }
-                addDialog.setNegativeButton("Cancel"){
-                        dialog,_->
                     dialog.dismiss()
-                    Toast.makeText(this@EditProfileActivity,"Cancel",Toast.LENGTH_SHORT).show()
 
                 }
-                addDialog.create()
-                addDialog.show()
 
 
             }
-        })
+            addDialog.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                Toast.makeText(this@EditProfileActivity, "Cancel", Toast.LENGTH_SHORT).show()
+
+            }
+            addDialog.create()
+            addDialog.show()
+        }
 
         val button : Button = findViewById(R.id.edit_button)
-        button.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val t_name : String = findViewById<EditText>(R.id.edit_name).text.toString().trim()
-                val t_surname : String = findViewById<EditText>(R.id.edit_surname).text.toString().trim()
-                val t_nickname : String = findViewById<EditText>(R.id.edit_nickname).text.toString().trim()
+        button.setOnClickListener { v ->
+            val tName: String = findViewById<EditText>(R.id.edit_name).text.toString().trim()
+            val tSurname: String = findViewById<EditText>(R.id.edit_surname).text.toString().trim()
+            val tNickname: String =
+                findViewById<EditText>(R.id.edit_nickname).text.toString().trim()
 
-                if(t_name.isEmpty() || t_surname.isEmpty() || t_nickname.isEmpty()) {
-                    Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
-                }
+            if (tName.isEmpty() || tSurname.isEmpty() || tNickname.isEmpty()) {
+                Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
+            } else {
 
-                else {
+                CoroutineScope(Dispatchers.Main + Job()).launch {
+                    withContext(Dispatchers.IO) {
+                        val nicknameAlreadyUsed: Boolean =
+                            nicknameIsAlreadyUsed(v!!.context, tNickname)
+                        user = getUser(this@EditProfileActivity)
+                        withContext(Dispatchers.Main) {
+                            if (tNickname != findViewById<TextView>(R.id.nickname).text && nicknameAlreadyUsed)
+                                Toast.makeText(
+                                    v.context,
+                                    "Nickname is already used",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            else {
+                                /*
+                                        if(image != null) {
+                                            FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
+                                        }
 
-                    CoroutineScope(Dispatchers.Main + Job()).launch {
-                        withContext(Dispatchers.IO) {
-                            val nicknameAlreadyUsed : Boolean = nicknameIsAlreadyUsed(v!!.context, t_nickname)
-                            user= getUser(this@EditProfileActivity)
-                            withContext(Dispatchers.Main) {
-                                if(t_nickname != findViewById<TextView>(R.id.nickname).text && nicknameAlreadyUsed)
-                                    Toast.makeText(v.context, "Nickname is already used", Toast.LENGTH_SHORT).show()
-                                else{
-                                    /*
-                                    if(image != null) {
-                                        FirebaseStorageWrapper().upload(image!!, id, this@EditProfileActivity)
-                                    }
+                                         */
 
-                                     */
-
-                                    user!!.name = t_name
-                                    user!!.surname = t_surname
-                                    user!!.nickname = t_nickname
-                                    Firebase.database.getReference("users").child(id).setValue(user)
-                                    val intent : Intent = Intent(this@EditProfileActivity, EditProfileActivity::class.java)
-                                    this@EditProfileActivity.startActivity(intent)
-                                }
+                                user!!.name = tName
+                                user!!.surname = tSurname
+                                user!!.nickname = tNickname
+                                Firebase.database.getReference("users").child(id).setValue(user)
+                                val intent = Intent(
+                                    this@EditProfileActivity,
+                                    EditProfileActivity::class.java
+                                )
+                                this@EditProfileActivity.startActivity(intent)
                             }
                         }
                     }
-
-
                 }
 
+
             }
-        })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -277,8 +267,7 @@ class EditProfileActivity : AppCompatActivity() {
             findViewById<ImageView>(R.id.profile_image).setImageURI(image)
             GlobalScope.launch{
                 //FirebaseStorageWrapper().delete(id)
-                val dir: File = File(this@EditProfileActivity.getCacheDir().getAbsolutePath())
-                var found = false
+                val dir = File(this@EditProfileActivity.cacheDir.absolutePath)
                 if (dir.exists()) {
                     for (f in dir.listFiles()) {
                         if(f.name.toString().contains("image_${id}_")){
@@ -295,25 +284,20 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
-        inflater.inflate(com.example.myapplication.R.menu.nav_menu_profile, menu)
+        inflater.inflate(R.menu.nav_menu_profile, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            com.example.myapplication.R.id.nav_delete -> {
-
-
+            R.id.nav_delete -> {
                 val builder = AlertDialog.Builder(this)
-
-
                 //builder.setView(v)
                 builder.setTitle("Delete Profile")
                 builder.setIcon(R.drawable.ic_baseline_cancel_24)
                 builder.setMessage("Do you want to delete your profile? To do that, you have insert your password")
                 builder.setPositiveButton("Yes"){
                         dialog,_->
-
 
                     val inflter = LayoutInflater.from(this)
                     val v = inflter.inflate(R.layout.delete_login,null)
@@ -325,47 +309,40 @@ class EditProfileActivity : AppCompatActivity() {
 
                     addDialog.setView(v)
                     addDialog.setPositiveButton("Ok"){
-                            dialog,_->
+                            dialog1,_->
                         val progressDialog = ProgressDialog(this@EditProfileActivity)
                         progressDialog.setMessage("Fetching...")
                         progressDialog.setCancelable(false)
                         progressDialog.show()
                         //val email = email.text.toString().trim()
-                        val password = password.text.toString().trim()
-
-                        if(/*email.isEmpty() ||*/ password.isEmpty()) {
+                        val password2 = password.text.toString().trim()
+                        if(/*email.isEmpty() ||*/ password2.isEmpty()) {
                             progressDialog.dismiss()
                             Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
                         }
                         else {
-                            Firebase.auth.signInWithEmailAndPassword(user!!.email, password).addOnCompleteListener { task ->
+                            Firebase.auth.signInWithEmailAndPassword(user!!.email, password2).addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     GlobalScope.launch {
                                         FirebaseAuthWrapper(this@EditProfileActivity).delete()
                                         progressDialog.dismiss()
                                     }
                                 } else {
-                                    // If sign in fails, display a message to the user.
                                     progressDialog.dismiss()
                                     Toast.makeText(this, task.exception!!.message, Toast.LENGTH_SHORT).show()
                                 }
                             }
-                            dialog.dismiss()
-
+                            dialog1.dismiss()
                         }
-
-
                     }
                     addDialog.setNegativeButton("Cancel"){
                             dialog,_->
                         dialog.dismiss()
                         Toast.makeText(this,"Cancel",Toast.LENGTH_SHORT).show()
-
                     }
                     addDialog.create()
                     addDialog.show()
                 }
-
                 builder.setNegativeButton("No"){
                         dialog,_->
                     dialog.dismiss()
