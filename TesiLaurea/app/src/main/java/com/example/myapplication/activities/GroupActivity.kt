@@ -71,7 +71,7 @@ class GroupActivity : AppCompatActivity() {
                 fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!, FirebaseAuthWrapper(this@GroupActivity).getUid()!!, groupName!!, photoList))
                 fragmentArrayList.add(CompletedListFragment.newInstance(groupId!!,FirebaseAuthWrapper(this@GroupActivity).getUid()!!, groupName!!, photoList))
                 withContext(Dispatchers.Main) {
-                    val adapter = ViewPagerAdapter(this@GroupActivity, supportFragmentManager, fragmentArrayList)
+                    val adapter = ViewPagerAdapter(supportFragmentManager, fragmentArrayList)
                     binding!!.viewPager.adapter = adapter
                     binding!!.tabs.setupWithViewPager(binding!!.viewPager)
                     progressDialog.dismiss()

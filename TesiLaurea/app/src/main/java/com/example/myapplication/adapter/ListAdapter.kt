@@ -1,20 +1,15 @@
 package com.example.myapplication.adapter
 
-import android.app.ActionBar
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
@@ -22,39 +17,38 @@ import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-import java.io.File
 import java.text.SimpleDateFormat
 
 
-class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoList:ArrayList<String>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
+class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val photoList:ArrayList<String>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
 
 
 
-    inner class UserViewHolder(val v:View):RecyclerView.ViewHolder(v){
+    inner class UserViewHolder(v:View):RecyclerView.ViewHolder(v){
         var nameRequest:TextView
         var userName:TextView
         var commentRequest:TextView
-        var optionsMenu:ImageView
+        private var optionsMenu:ImageView
         var completedBy:TextView
         var date:TextView
         var time:TextView
         var price: TextView
         var photo: ImageView
-        var card : CardView
+        private var card : CardView
 
 
 
         init {
-            nameRequest = v.findViewById<TextView>(R.id.nameRequest)
-            completedBy = v.findViewById<TextView>(R.id.completedBy)
-            userName = v.findViewById<TextView>(R.id.userName)
-            commentRequest = v.findViewById<TextView>(R.id.commentRequest)
-            date = v.findViewById<TextView>(R.id.Date)
-            price = v.findViewById<TextView>(R.id.price)
-            time = v.findViewById<TextView>(R.id.Time)
-            photo = v.findViewById<ImageView>(R.id.photo)
-            card = v.findViewById<CardView>(R.id.card)
+            nameRequest = v.findViewById(R.id.nameRequest)
+            completedBy = v.findViewById(R.id.completedBy)
+            userName = v.findViewById(R.id.userName)
+            v.findViewById<TextView>(R.id.commentRequest).also { commentRequest = it }
+            date = v.findViewById(R.id.Date)
+            price = v.findViewById(R.id.price)
+            time = v.findViewById(R.id.Time)
+            photo = v.findViewById(R.id.photo)
+            card = v.findViewById(R.id.card)
 
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
@@ -71,29 +65,29 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
             popupMenus.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.editText->{
-                        val v = LayoutInflater.from(c).inflate(R.layout.add_request,null)
-                        val title = v.findViewById<TextView>(R.id.Title)
-                        val name = v.findViewById<EditText>(R.id.nameRequest)
-                        val comment = v.findViewById<EditText>(R.id.commentRequest)
+                        val view = LayoutInflater.from(c).inflate(R.layout.add_request,null)
+                        val title = view.findViewById<TextView>(R.id.Title)
+                        val name = view.findViewById<EditText>(R.id.nameRequest)
+                        val comment = view.findViewById<EditText>(R.id.commentRequest)
 
-                        title.setText("Edit Request")
+                        title.text = "Edit Request"
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
                         AlertDialog.Builder(c)
-                            .setView(v)
+                            .setView(view)
                             .setPositiveButton("Ok"){
                                     dialog,_->
                                 if(name.text.toString().trim().isEmpty()){
                                     Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
                                 }
-                                else if (name.text.toString().trim().equals(position.nameRequest) && comment.text.toString().trim().equals(position.comment)){
+                                else if (name.text.toString().trim() == position.nameRequest && comment.text.toString().trim() == position.comment){
                                     Toast.makeText(c,"You changed nothing",Toast.LENGTH_SHORT).show()
                                 }
                                 else {
                                     position.nameRequest = name.text.toString()
                                     position.comment = comment.text.toString()
-                                    Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
-                                    val intent : Intent = Intent(c, GroupActivity::class.java)
+                                    Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
+                                    val intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
                                     //Log.d(ContentValues.TAG,"www: "+groupName)
                                     intent.putExtra("groupName", groupName)
@@ -119,8 +113,8 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
                             .setMessage("Are you sure delete this Request?")
                             .setPositiveButton("Yes"){
                                     dialog,_->
-                                Firebase.database.getReference("requests").child(position.Id.toString()).removeValue()
-                                val intent : Intent = Intent(c, GroupActivity::class.java)
+                                Firebase.database.getReference("requests").child(position.id.toString()).removeValue()
+                                val intent = Intent(c, GroupActivity::class.java)
                                 intent.putExtra("groupId", position.groupId)
                                 //Log.d(ContentValues.TAG,"www: "+groupName)
                                 intent.putExtra("groupName", groupName)
@@ -137,39 +131,39 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
                         true
                     }
                     R.id.complete->{
-                        val v = LayoutInflater.from(c).inflate(R.layout.set_price,null)
-                        val input = v.findViewById<EditText>(R.id.price)
+                        val v1 = LayoutInflater.from(c).inflate(R.layout.set_price,null)
+                        val input = v1.findViewById<EditText>(R.id.price)
 
 
                         /**set delete*/
                         val builder = AlertDialog.Builder(c)
 
 
-                        builder.setView(v)
+                        builder.setView(v1)
                             builder.setTitle("Complete")
                             builder.setIcon(R.drawable.ic_baseline_check_circle_24)
                             builder.setMessage("Do you want to complete this request?")
                             builder.setPositiveButton("Yes"){
                                     dialog,_->
                                 position.isCompleted = true
-                                var price_value : String = input.text.toString()
-                                position.price = price_value
+                                val priceValue : String = input.text.toString()
+                                position.price = priceValue
 
                                 GlobalScope.launch {
                                     val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
                                     position.completedBy = completedBy
-                                    Firebase.database.getReference("requests").child(position.Id.toString()).setValue(position)
+                                    Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
                                     val group : Group? = getGroupById(c, position.groupId)
                                     val uid : String = FirebaseAuthWrapper(c).getUid()!!
 
                                     for(userId in group!!.users!!){
                                         if(userId != uid){
                                             val notificationId : Long = getNotificationId(c, userId)
-                                            val notification : Notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
+                                            val notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
                                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                         }
                                     }
-                                    val intent : Intent = Intent(c, GroupActivity::class.java)
+                                    val intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
                                     //Log.d(ContentValues.TAG,"www: "+groupName)
                                     intent.putExtra("groupName", groupName)
@@ -214,16 +208,16 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
         val newList = requestList[position]
 
         if(newList.price!!.isEmpty())
-            holder.price.setVisibility(View.GONE)
+            holder.price.visibility = View.GONE
         else
             holder.price.text = "Bought for: ${newList.price} €"
         if(newList.comment!!.isEmpty())
-            holder.commentRequest.setVisibility(View.GONE)
+            holder.commentRequest.visibility = View.GONE
         else
             holder.commentRequest.text = "Comment: ${newList.comment}"
         holder.nameRequest.text = newList.nameRequest
         if(!newList.isCompleted)
-            holder.completedBy.setVisibility(View.GONE)
+            holder.completedBy.visibility = View.GONE
 
         val sdf = SimpleDateFormat("dd/MM/yy")
         val day = sdf.format(newList.date)
@@ -238,7 +232,6 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
 
         }
 
-        var uri : Uri? = null
         /*
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
@@ -284,7 +277,6 @@ class ListAdapter(val c:Context,val requestList:ArrayList<Request>, val photoLis
          */
 
         for(photo in photoList){
-            Log.d(TAG, "ccc "+photo.toString())
             if(photo.contains("${newList.user.id}_")){
                 holder.photo.setImageURI(photo.toUri())
                 break

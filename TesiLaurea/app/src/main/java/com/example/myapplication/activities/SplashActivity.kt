@@ -10,7 +10,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        val firebaseWrapper : FirebaseAuthWrapper = FirebaseAuthWrapper(this)
+        val firebaseWrapper = FirebaseAuthWrapper(this)
         if (!firebaseWrapper.isAuthenticated()) {
             //redirect to login/register activity
             val intent = Intent(this, LoginActivity::class.java)

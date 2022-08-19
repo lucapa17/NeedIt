@@ -19,57 +19,66 @@ class RegistrationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_registration)
 
         val button : Button = findViewById(R.id.buttonRegistration)
-        button.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val name : EditText = findViewById(R.id.userName)
-                val surname : EditText = findViewById(R.id.userSurname)
-                val nickname : EditText = findViewById(R.id.userNickname)
-                val email : EditText = findViewById(R.id.userEmail)
-                val password : EditText = findViewById(R.id.userPassword)
-                val confirm : EditText = findViewById(R.id.userPassword2)
+        button.setOnClickListener { v ->
+            val name: EditText = findViewById(R.id.userName)
+            val surname: EditText = findViewById(R.id.userSurname)
+            val nickname: EditText = findViewById(R.id.userNickname)
+            val email: EditText = findViewById(R.id.userEmail)
+            val password: EditText = findViewById(R.id.userPassword)
+            val confirm: EditText = findViewById(R.id.userPassword2)
 
-                if(email.text.toString().trim().isEmpty() || password.text.toString().trim().isEmpty() || name.text.toString().trim().isEmpty() || nickname.text.toString().trim().isEmpty() || surname.text.toString().trim().isEmpty() || confirm.text.toString().trim().isEmpty()) {
-                    Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
-                }
-                else{
-                    CoroutineScope(Dispatchers.Main + Job()).launch {
-                        withContext(Dispatchers.IO) {
-                            val nicknameAlreadyUsed : Boolean = nicknameIsAlreadyUsed(v!!.context, nickname.text.toString().trim())
-                            withContext(Dispatchers.Main) {
-                                if(nicknameAlreadyUsed)
-                                    Toast.makeText(v!!.context, "Nickname is already used", Toast.LENGTH_SHORT).show()
-                                else {
+            if (email.text.toString().trim().isEmpty() || password.text.toString().trim()
+                    .isEmpty() || name.text.toString().trim().isEmpty() || nickname.text.toString()
+                    .trim().isEmpty() || surname.text.toString().trim()
+                    .isEmpty() || confirm.text.toString().trim().isEmpty()
+            ) {
+                Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
+            } else {
+                CoroutineScope(Dispatchers.Main + Job()).launch {
+                    withContext(Dispatchers.IO) {
+                        val nicknameAlreadyUsed: Boolean =
+                            nicknameIsAlreadyUsed(v!!.context, nickname.text.toString().trim())
+                        withContext(Dispatchers.Main) {
+                            if (nicknameAlreadyUsed)
+                                Toast.makeText(
+                                    v.context,
+                                    "Nickname is already used",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            else {
 
-                                    if (password.text.toString().trim() == confirm.text.toString().trim()) {
-                                        val firebaseWrapper: FirebaseAuthWrapper =
-                                            FirebaseAuthWrapper(v!!.context)
-                                        firebaseWrapper.signUp(
-                                            email.text.toString().trim(),
-                                            password.text.toString().trim(),
-                                            name.text.toString().trim(),
-                                            surname.text.toString().trim(),
-                                            nickname.text.toString().trim()
-                                        )
-                                    } else
-                                        Toast.makeText(v!!.context, "Passwords mismatched", Toast.LENGTH_SHORT).show()
+                                if (password.text.toString().trim() == confirm.text.toString()
+                                        .trim()
+                                ) {
+                                    val firebaseWrapper =
+                                        FirebaseAuthWrapper(v.context)
+                                    firebaseWrapper.signUp(
+                                        email.text.toString().trim(),
+                                        password.text.toString().trim(),
+                                        name.text.toString().trim(),
+                                        surname.text.toString().trim(),
+                                        nickname.text.toString().trim()
+                                    )
+                                } else
+                                    Toast.makeText(
+                                        v.context,
+                                        "Passwords mismatched",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                                }
                             }
                         }
                     }
-
                 }
-            }
 
-        })
+            }
+        }
 
         val link : TextView = findViewById(R.id.switchToLogin)
-        link.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v : View?) {
-                val intent = Intent(v!!.context, LoginActivity::class.java)
-                v.context.startActivity(intent)
-            }
-        })
+        link.setOnClickListener { v ->
+            val intent = Intent(v!!.context, LoginActivity::class.java)
+            v.context.startActivity(intent)
+        }
     }
 
     override fun onBackPressed() {

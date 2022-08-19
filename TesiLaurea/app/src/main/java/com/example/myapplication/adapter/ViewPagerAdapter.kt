@@ -1,11 +1,10 @@
 package com.example.myapplication.adapter
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
-class ViewPagerAdapter(private val context : Context, fm : FragmentManager?, val list : ArrayList<Fragment>) :
+class ViewPagerAdapter(fm: FragmentManager?, private val list: ArrayList<Fragment>) :
     FragmentPagerAdapter(fm!!) {
     override fun getCount(): Int {
         //return 2
@@ -16,7 +15,7 @@ class ViewPagerAdapter(private val context : Context, fm : FragmentManager?, val
         return list[position]
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
         return TAB_TITLES[position]
     }
 

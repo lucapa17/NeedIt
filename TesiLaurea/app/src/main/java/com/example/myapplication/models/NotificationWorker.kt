@@ -3,21 +3,14 @@ package com.example.myapplication.models
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.*
-import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS
-import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.example.myapplication.R
-import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.activities.MainActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -63,20 +56,21 @@ fun startPeriodicWorker(context: Context) {
 
 class RequestNotificationWorker(val context: Context, params: WorkerParameters) :
     Worker(context, params) {
-    val uid = FirebaseAuthWrapper(context).getUid()
-    val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
+    private val uid = FirebaseAuthWrapper(context).getUid()
+    private val notificationList : MutableList<Notification> = getNotificationList(context, uid!!)
     override fun doWork(): Result {
             if(notificationList.isNotEmpty()){
                 for(notification in notificationList){
-                    var notificationText : String = ""
-                    if(notification.type.equals(Notification.Type.NewRequest)){
-                        notificationText = "${notification.sender} sent a new request :  \n ${notification.request!!.nameRequest} "
-                    }
-                    else if(notification.type.equals(Notification.Type.CompletedRequest)){
-                        notificationText = "${notification.completedBy} has completed the following request of ${notification.sender} :  \n ${notification.request!!.nameRequest} "
-                    }
-                    else if(notification.type.equals(Notification.Type.NewGroup)){
-                        notificationText = "${notification.sender} added you "
+                    val notificationText: String = when (notification.type) {
+                        Notification.Type.NewRequest -> {
+                            "${notification.sender} sent a new request :  \n ${notification.request!!.nameRequest} "
+                        }
+                        Notification.Type.CompletedRequest -> {
+                            "${notification.completedBy} has completed the following request of ${notification.sender} :  \n ${notification.request!!.nameRequest} "
+                        }
+                        Notification.Type.NewGroup -> {
+                            "${notification.sender} added you "
+                        }
                     }
                     val intent = Intent(context, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

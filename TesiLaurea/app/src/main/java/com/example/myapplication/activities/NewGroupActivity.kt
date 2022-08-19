@@ -62,7 +62,7 @@ class NewGroupActivity : BaseActivity() {
                             }
                             else if(nicknameEditText.text.toString().trim()==myUser!!.nickname){
                                 nicknameEditText.error = "this is your nickname"
-                                addUser.setVisibility(View.GONE)
+                                addUser.visibility = View.GONE
                             }
 
                             else{
@@ -76,7 +76,7 @@ class NewGroupActivity : BaseActivity() {
                                     }
                                 }
                                 if(!found)
-                                    addUser.setVisibility(View.VISIBLE)
+                                    addUser.visibility = View.VISIBLE
 
                             }
                         }
@@ -116,8 +116,8 @@ class NewGroupActivity : BaseActivity() {
             }
         }
 
-        val edit_photo : ImageView = findViewById(R.id.edit_group_photo)
-        edit_photo.setOnClickListener {
+        val editPhoto : ImageView = findViewById(R.id.edit_group_photo)
+        editPhoto.setOnClickListener {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
@@ -129,11 +129,11 @@ class NewGroupActivity : BaseActivity() {
             if (groupName.text.toString().trim().isEmpty()) {
                 groupName.error = "Insert the group name!"
             } else {
-                var groupId: Long = -1
+                var groupId: Long
                 CoroutineScope(Dispatchers.Main + Job()).launch {
                     withContext(Dispatchers.IO) {
                         groupId = getGroupId(this@NewGroupActivity)
-                        val dir: File = File(this@NewGroupActivity.getCacheDir().getAbsolutePath())
+                        val dir = File(this@NewGroupActivity.cacheDir.absolutePath)
                         if (dir.exists()) {
                             for (f in dir.listFiles()) {
                                 if (f.name.toString().contains("image_${groupId}_")) {
@@ -160,7 +160,7 @@ class NewGroupActivity : BaseActivity() {
                                 .setValue(member)
                             val notificationId: Long =
                                 getNotificationId(this@NewGroupActivity, member.id)
-                            val notification: Notification = Notification(
+                            val notification = Notification(
                                 member.id,
                                 null,
                                 myUser!!.nickname,
@@ -175,7 +175,7 @@ class NewGroupActivity : BaseActivity() {
                                 .child(notificationId.toString()).setValue(notification)
 
                         }
-                        val group: Group =
+                        val group =
                             Group(groupId, groupName.text.toString().trim(), membersId)
                         Firebase.database.getReference("groups").child(group.groupId.toString())
                             .setValue(group)
@@ -184,7 +184,7 @@ class NewGroupActivity : BaseActivity() {
                     }
                     withContext(Dispatchers.Main) {
                         //Thread.sleep(1_000)
-                        val intent: Intent =
+                        val intent =
                             Intent(this@NewGroupActivity, GroupActivity::class.java)
                         intent.putExtra("groupId", groupId)
                         intent.putExtra("groupName", groupName.text.toString().trim())

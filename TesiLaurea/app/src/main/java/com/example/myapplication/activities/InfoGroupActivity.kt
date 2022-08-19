@@ -124,7 +124,7 @@ class InfoGroupActivity: AppCompatActivity() {
                     val requestList : MutableList<Request> = getRequestsList(this@InfoGroupActivity, group!!.groupId)
                     for(request in requestList){
                         if(request.user.id == user.id){
-                            Firebase.database.getReference("requests").child(request.Id.toString()).removeValue()
+                            Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
                         }
                     }
                     user.groups!!.remove(groupId)

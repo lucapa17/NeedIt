@@ -1,6 +1,5 @@
 package com.example.myapplication.models
 
-import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -19,13 +18,11 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -59,7 +56,7 @@ class FirebaseAuthWrapper(private val context: Context) {
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val intent : Intent = Intent(this.context, SplashActivity::class.java)
+                val intent  = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
             } else {
                 // If sign in fails, display a message to the user.
@@ -70,7 +67,7 @@ class FirebaseAuthWrapper(private val context: Context) {
 
     fun logOut(){
         auth.signOut()
-        val intent : Intent = Intent(this.context, SplashActivity::class.java)
+        val intent = Intent(this.context, SplashActivity::class.java)
         context.startActivity(intent)
     }
     fun delete(){
@@ -92,13 +89,13 @@ class FirebaseAuthWrapper(private val context: Context) {
 
              */
             FirebaseStorageWrapper().delete(uid!!)
-            var groupList : MutableList<Group> = getGroups(context)
+            val groupList : MutableList<Group> = getGroups(context)
             for(group in groupList){
 
                 val requestList : MutableList<Request> = getRequestsList(context, group.groupId)
                 for(request in requestList){
                     if(request.user.id == uid){
-                        Firebase.database.getReference("requests").child(request.Id.toString()).removeValue()
+                        Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
                     }
                 }
                 Log.d(TAG, "yyy "+group.users)
@@ -112,7 +109,7 @@ class FirebaseAuthWrapper(private val context: Context) {
                     Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
                 }
             }
-            Firebase.database.getReference("users").child(uid!!).removeValue()
+            Firebase.database.getReference("users").child(uid).removeValue()
 
 
 
@@ -145,7 +142,7 @@ class FirebaseAuthWrapper(private val context: Context) {
         lock.withLock {
             condition.await()
         }
-        val intent : Intent = Intent(context, LoginActivity::class.java)
+        val intent = Intent(context, LoginActivity::class.java)
         context.startActivity(intent)
         Log.d(TAG, "yyy intent")
 
@@ -156,12 +153,12 @@ class FirebaseAuthWrapper(private val context: Context) {
 fun nicknameIsAlreadyUsed(context: Context, nickname: String) : Boolean{
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var used: Boolean = false
+    var used = false
     GlobalScope.launch{
         FirebaseDbWrapper(context).readDbData(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                var children = snapshot.children
+                val children = snapshot.children
                 for(child in children) {
                     if (child.child("nickname").getValue(String::class.java).equals(nickname)) {
                         used = true
@@ -209,17 +206,6 @@ fun getUser(context: Context): User {
     return user!!
 }
 
-
-fun createGroup(group : Group, context: Context) {
-    val user : User = getUser(context)
-    if (user.groups == null) {
-        user.groups = mutableListOf(group.groupId)
-    } else {
-        user.groups!!.add(group.groupId)
-    }
-    //Firebase.database.getReference("users").child(uid!!).setValue(user)
-    Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
-}
 
 fun getGroupId (context: Context) : Long {
     val lock = ReentrantLock()
@@ -319,7 +305,7 @@ fun getNotificationId (context: Context, userId : String) : Long {
 fun getGroups (context: Context) : MutableList<Group> {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var list : MutableList<Group> = mutableListOf()
+    val list : MutableList<Group> = mutableListOf()
     GlobalScope.launch {
         val uid = FirebaseAuthWrapper(context).getUid()
         FirebaseDbWrapper(context).readDbGroup(object :
@@ -349,14 +335,14 @@ fun getGroups (context: Context) : MutableList<Group> {
 fun getRequestsList (context: Context, groupId : Long) : MutableList<Request> {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var list : MutableList<Request> = mutableListOf()
+    val list : MutableList<Request> = mutableListOf()
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbRequest(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
                 val children = snapshot.children
                 for(child in children){
-                    if(child.getValue(Request::class.java)!!.groupId.equals(groupId))
+                    if(child.getValue(Request::class.java)!!.groupId == groupId)
                         list.add(child.getValue(Request::class.java)!!)
 
                 }
@@ -380,7 +366,7 @@ fun getRequestsList (context: Context, groupId : Long) : MutableList<Request> {
 fun getNotificationList (context: Context, userId : String) : MutableList<Notification> {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var list : MutableList<Notification> = mutableListOf()
+    val list : MutableList<Notification> = mutableListOf()
     val uid = FirebaseAuthWrapper(context).getUid()
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbNotification(object :
@@ -388,7 +374,7 @@ fun getNotificationList (context: Context, userId : String) : MutableList<Notifi
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
                 val children = snapshot.child(uid!!).children
                 for(child in children){
-                    if(child.getValue(Notification::class.java)!!.userId.equals(userId))
+                    if(child.getValue(Notification::class.java)!!.userId == userId)
                         list.add(child.getValue(Notification::class.java)!!)
                 }
                 lock.withLock {
@@ -441,7 +427,7 @@ fun getUserIdByNickname (context: Context, nickname: String ) : String? {
         FirebaseDbWrapper(context).readDbData(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                var children = snapshot.children
+                val children = snapshot.children
                 for(child in children) {
                     if (child.child("nickname").getValue(String::class.java).equals(nickname)) {
                         id = child.key.toString()
@@ -468,12 +454,12 @@ fun getUserIdByNickname (context: Context, nickname: String ) : String? {
 fun getUserByNickname (context: Context, nickname: String ) : User {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var user : User = User()
+    var user = User()
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbData(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                var children = snapshot.children
+                val children = snapshot.children
                 for(child in children) {
                     if (child.child("nickname").getValue(String::class.java).equals(nickname)) {
                         user = child.getValue(User::class.java)!!
@@ -495,32 +481,6 @@ fun getUserByNickname (context: Context, nickname: String ) : User {
         condition.await()
     }
     return user
-}
-
-
-fun getNicknameById (context: Context, id: String ) : String {
-    val lock = ReentrantLock()
-    val condition = lock.newCondition()
-    var nickname : String = ""
-    GlobalScope.launch {
-        FirebaseDbWrapper(context).readDbData(object :
-            FirebaseDbWrapper.Companion.FirebaseReadCallback {
-            override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                nickname = snapshot.child(id).child("nickname").getValue(String::class.java)!!
-                lock.withLock {
-                    condition.signal()
-                }
-            }
-
-            override fun onCancelledCallback(error: DatabaseError) {
-            }
-
-        })
-    }
-    lock.withLock {
-        condition.await()
-    }
-    return nickname
 }
 
 fun getUserById (context: Context, id: String) : User? {
@@ -549,13 +509,12 @@ fun getUserById (context: Context, id: String) : User? {
 }
 
 class FirebaseDbWrapper(private val context: Context) {
-    val uid = FirebaseAuthWrapper(context).getUid()
+    private val uid = FirebaseAuthWrapper(context).getUid()
 
     fun registerUser(user: User) {
         Firebase.database.getReference("users").child(uid!!).setValue(user).addOnCompleteListener {
             if (it.isSuccessful) {
-                //FirebaseStorage.getInstance().reference.child("images/${uid}").putFile("drawable/goku")
-                val intent: Intent = Intent(this.context, SplashActivity::class.java)
+                val intent = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
             } else
                 Toast.makeText(context, it.exception!!.message, Toast.LENGTH_SHORT).show()
@@ -592,7 +551,7 @@ class FirebaseDbWrapper(private val context: Context) {
 
 
     companion object {
-        class FirebaseReadListener(val callback: FirebaseReadCallback) : ValueEventListener {
+        class FirebaseReadListener(private val callback: FirebaseReadCallback) : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 callback.onDataChangeCallback(snapshot)
             }
