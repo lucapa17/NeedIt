@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,8 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var time:TextView
         var price: TextView
         var photo: ImageView
-        private var card : CardView
+        var card : CardView
+
 
         init {
             nameRequest = v.findViewById(R.id.nameRequest)
@@ -119,45 +121,52 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         true
                     }
                     R.id.complete->{
-                        val v1 = LayoutInflater.from(c).inflate(R.layout.set_price,null)
-                        val input = v1.findViewById<EditText>(R.id.price)
                         val builder = AlertDialog.Builder(c)
-                        builder.setView(v1)
-                            builder.setTitle("Complete")
-                            builder.setIcon(R.drawable.ic_baseline_check_circle_24)
-                            builder.setMessage("Do you want to complete this request?")
-                            builder.setPositiveButton("Yes"){
-                                    dialog,_->
-                                position.isCompleted = true
-                                val priceValue : String = input.text.toString()
-                                position.price = priceValue
-                                GlobalScope.launch {
-                                    val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
-                                    position.completedBy = completedBy
-                                    Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
-                                    val group : Group? = getGroupById(c, position.groupId)
-                                    val uid : String = FirebaseAuthWrapper(c).getUid()!!
+                        var toDo = true
+                        var input : EditText? = null
+                        if(position.type == Request.Type.ToBuy){
+                            toDo = false
+                            val v1 = LayoutInflater.from(c).inflate(R.layout.set_price,null)
+                            input = v1.findViewById(R.id.price)
+                            builder.setView(v1)
 
-                                    for(userId in group!!.users!!){
-                                        if(userId != uid){
-                                            val notificationId : Long = getNotificationId(c, userId)
-                                            val notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
-                                            Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
-                                        }
+                        }
+                        builder.setTitle("Complete")
+                        builder.setIcon(R.drawable.ic_baseline_check_circle_24)
+                        builder.setMessage("Do you want to complete this request?")
+                        builder.setPositiveButton("Yes"){
+                                dialog,_->
+                            position.isCompleted = true
+                            if(!toDo){
+                                val priceValue : String = input!!.text.toString()
+                                position.price = priceValue
+                            }
+                            GlobalScope.launch {
+                                val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
+                                position.completedBy = completedBy
+                                Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
+                                val group : Group? = getGroupById(c, position.groupId)
+                                val uid : String = FirebaseAuthWrapper(c).getUid()!!
+
+                                for(userId in group!!.users!!){
+                                    if(userId != uid){
+                                        val notificationId : Long = getNotificationId(c, userId)
+                                        val notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
+                                        Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                     }
-                                    val intent = Intent(c, GroupActivity::class.java)
-                                    intent.putExtra("groupId", position.groupId)
-                                    //Log.d(ContentValues.TAG,"www: "+groupName)
-                                    intent.putExtra("groupName", groupName)
-                                    c.startActivity(intent)
                                 }
+                                val intent = Intent(c, GroupActivity::class.java)
+                                intent.putExtra("groupId", position.groupId)
+                                intent.putExtra("groupName", groupName)
+                                c.startActivity(intent)
                             }
-                            builder.setNegativeButton("No"){
-                                    dialog,_->
-                                dialog.dismiss()
-                            }
-                            builder.create()
-                            builder.show()
+                        }
+                        builder.setNegativeButton("No"){
+                                dialog,_->
+                            dialog.dismiss()
+                        }
+                        builder.create()
+                        builder.show()
                         true
                     }
                     else-> true
@@ -184,6 +193,8 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         progressDialog.setCancelable(false)
         progressDialog.show()
         val newList = requestList[position]
+        if(newList.user.id != FirebaseAuthWrapper(c).getUid())
+            holder.card.setCardBackgroundColor(Color.WHITE)
         if(newList.price!!.isEmpty())
             holder.price.visibility = View.GONE
         else

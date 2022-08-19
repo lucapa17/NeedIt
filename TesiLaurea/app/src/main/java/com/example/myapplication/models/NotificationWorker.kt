@@ -78,7 +78,7 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
 
                     val builder = NotificationCompat.Builder(context, "NOTIFICATION")
-                        .setSmallIcon(R.drawable.ic_baseline_adb_24)
+                        .setSmallIcon(R.drawable.logo_notifica_2)
                         .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.logo_notifica_2))
                         .setContentTitle(notification.groupName)
                         .setWhen(notification.date!!.time)

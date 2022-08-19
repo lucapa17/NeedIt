@@ -13,8 +13,9 @@ class Request() {
     var comment : String? = null
     var date : Date? = null
     var price : String? = ""
+    lateinit var type : Type
 
-    constructor(id : Long, groupId : Long,  user : User, nameRequest : String, isCompleted : Boolean, comment : String?, completedBy : User?, date : Date, price : String?) : this() {
+    constructor(id : Long, groupId : Long,  user : User, nameRequest : String, isCompleted : Boolean, comment : String?, completedBy : User?, date : Date, price : String?, type : Type) : this() {
         this.groupId = groupId
         this.completedBy = completedBy
         this.id = id
@@ -24,5 +25,10 @@ class Request() {
         this.comment = comment
         this.date = date
         this.price = price
+        this.type = type
+    }
+    enum class Type {
+        ToDo,
+        ToBuy
     }
 }

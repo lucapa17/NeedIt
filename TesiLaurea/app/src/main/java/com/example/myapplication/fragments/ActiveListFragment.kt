@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -93,6 +94,7 @@ class ActiveListFragment : Fragment() {
         val v = inflter.inflate(R.layout.add_request,null)
         val nameRequest = v.findViewById<EditText>(R.id.nameRequest)
         val comment = v.findViewById<EditText>(R.id.commentRequest)
+        val toDo = v.findViewById<RadioButton>(R.id.toDo)
         val addDialog = AlertDialog.Builder(requireContext())
 
         addDialog.setView(v)
@@ -109,7 +111,12 @@ class ActiveListFragment : Fragment() {
                     val requestId : Long = getRequestId(requireContext())
                     val currentDate : Date =  Calendar.getInstance().time
                     val user : User = getUser(requireContext())
-                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null)
+                    val type : Request.Type
+                    if(toDo.isChecked)
+                        type = Request.Type.ToDo
+                    else
+                        type = Request.Type.ToBuy
+                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type)
                     Firebase.database.getReference("requests").child(request.id.toString()).setValue(request)
                     val group : Group? = getGroupById(requireContext(), groupId!!)
                     for(userId in group!!.users!!){
