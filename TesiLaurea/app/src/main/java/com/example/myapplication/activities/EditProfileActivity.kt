@@ -21,7 +21,6 @@ class EditProfileActivity : AppCompatActivity() {
     private var image: Uri? = null
     val id : String = FirebaseAuthWrapper(this@EditProfileActivity).getUid()!!
     var user : User? = null
-    //var new_image : Uri? = null
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,21 +80,18 @@ class EditProfileActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.name).visibility = View.GONE
             findViewById<EditText>(R.id.edit_name).visibility = View.VISIBLE
             findViewById<Button>(R.id.edit_button).visibility = View.VISIBLE
-            findViewById<Button>(R.id.button_change_password).visibility = View.GONE
         }
         val modifySurname : ImageView = findViewById(R.id.modify_surname)
         modifySurname.setOnClickListener {
             findViewById<TextView>(R.id.surname).visibility = View.GONE
             findViewById<EditText>(R.id.edit_surname).visibility = View.VISIBLE
             findViewById<Button>(R.id.edit_button).visibility = View.VISIBLE
-            findViewById<Button>(R.id.button_change_password).visibility = View.GONE
         }
         val modifyNickname : ImageView = findViewById(R.id.modify_nickname)
         modifyNickname.setOnClickListener {
             findViewById<TextView>(R.id.nickname).visibility = View.GONE
             findViewById<EditText>(R.id.edit_nickname).visibility = View.VISIBLE
             findViewById<Button>(R.id.edit_button).visibility = View.VISIBLE
-            findViewById<Button>(R.id.button_change_password).visibility = View.GONE
         }
 
         val editPhoto : ImageView = findViewById(R.id.edit_photo)
@@ -105,96 +101,6 @@ class EditProfileActivity : AppCompatActivity() {
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(intent, 100)
         }
-
-        val buttonChangePassword : Button = findViewById(R.id.button_change_password)
-        buttonChangePassword.setOnClickListener {
-            val inflater = LayoutInflater.from(this@EditProfileActivity)
-            val view = inflater.inflate(R.layout.change_password, null)
-            /**set view*/
-            /**set view*/
-
-            //val email = v.findViewById<EditText>(R.id.email)
-            val oldPassword = view.findViewById<EditText>(R.id.old_password)
-            val newPassword = view.findViewById<EditText>(R.id.new_password)
-            val confirmPassword = view.findViewById<EditText>(R.id.confirm_password)
-            val addDialog = AlertDialog.Builder(this@EditProfileActivity)
-
-            addDialog.setView(view)
-            addDialog.setPositiveButton("Ok") {
-
-                    dialog, _ ->
-                val progressDialog1 = ProgressDialog(this@EditProfileActivity)
-                progressDialog1.setMessage("Fetching...")
-                progressDialog1.setCancelable(false)
-                progressDialog1.show()
-                //val email = email.text.toString().trim()
-                val oldPassword1 = oldPassword.text.toString().trim()
-                val newPassword1 = newPassword.text.toString().trim()
-                val confirmPassword1 = confirmPassword.text.toString().trim()
-
-                if (/*email.isEmpty() || */ oldPassword1.isEmpty() || newPassword1.isEmpty() || confirmPassword1.isEmpty()) {
-                    progressDialog1.dismiss()
-                    Toast.makeText(view!!.context, "Fill all the fields!", Toast.LENGTH_SHORT)
-                        .show()
-
-                } else if (newPassword1 != confirmPassword1) {
-                    //v.findViewById<EditText>(R.id.new_password).error = "Passwords mismatched"
-                    //v.findViewById<EditText>(R.id.confirm_password).error = "Passwords mismatched"
-                    progressDialog1.dismiss()
-                    Toast.makeText(view!!.context, "Passwords mismatched!", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Firebase.auth.signInWithEmailAndPassword(user!!.email, oldPassword1)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                if (newPassword1 == oldPassword1) {
-                                    progressDialog1.dismiss()
-                                    Toast.makeText(
-                                        this@EditProfileActivity,
-                                        "new password is equal to old password!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Firebase.auth.currentUser!!.updatePassword(newPassword1)
-                                        .addOnCompleteListener {
-                                            if (it.isSuccessful) {
-                                                progressDialog1.dismiss()
-                                                Toast.makeText(
-                                                    view!!.context,
-                                                    "Passwords changed correctly!",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                progressDialog1.dismiss()
-                                                Toast.makeText(
-                                                    this@EditProfileActivity,
-                                                    it.exception!!.message,
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        }
-                                }
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                progressDialog1.dismiss()
-                                Toast.makeText(
-                                    this@EditProfileActivity,
-                                    task.exception!!.message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    dialog.dismiss()
-                }
-            }
-            addDialog.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-                Toast.makeText(this@EditProfileActivity, "Cancel", Toast.LENGTH_SHORT).show()
-            }
-            addDialog.create()
-            addDialog.show()
-        }
-
         val button : Button = findViewById(R.id.edit_button)
         button.setOnClickListener { v ->
             val tName: String = findViewById<EditText>(R.id.edit_name).text.toString().trim()
@@ -265,17 +171,14 @@ class EditProfileActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.nav_delete -> {
                 val builder = AlertDialog.Builder(this)
-                //builder.setView(v)
                 builder.setTitle("Delete Profile")
-                builder.setIcon(R.drawable.ic_baseline_cancel_24)
+                builder.setIcon(R.drawable.ic_baseline_cancel)
                 builder.setMessage("Do you want to delete your profile? To do that, you have insert your password")
                 builder.setPositiveButton("Yes"){
                         dialog,_->
 
                     val inflter = LayoutInflater.from(this)
                     val v = inflter.inflate(R.layout.delete_login,null)
-                    /**set view*/
-                    //val email = v.findViewById<EditText>(R.id.email)
                     val password = v.findViewById<EditText>(R.id.password)
                     val addDialog = AlertDialog.Builder(this)
 
@@ -286,9 +189,8 @@ class EditProfileActivity : AppCompatActivity() {
                         progressDialog.setMessage("Fetching...")
                         progressDialog.setCancelable(false)
                         progressDialog.show()
-                        //val email = email.text.toString().trim()
                         val password2 = password.text.toString().trim()
-                        if(/*email.isEmpty() ||*/ password2.isEmpty()) {
+                        if(password2.isEmpty()) {
                             progressDialog.dismiss()
                             Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
                         }
@@ -321,6 +223,87 @@ class EditProfileActivity : AppCompatActivity() {
                 }
                 builder.create()
                 builder.show()
+                true
+            }
+            R.id.nav_change_password -> {
+                val inflater = LayoutInflater.from(this@EditProfileActivity)
+                val view = inflater.inflate(R.layout.change_password, null)
+
+                val oldPassword = view.findViewById<EditText>(R.id.old_password)
+                val newPassword = view.findViewById<EditText>(R.id.new_password)
+                val confirmPassword = view.findViewById<EditText>(R.id.confirm_password)
+                val addDialog = AlertDialog.Builder(this@EditProfileActivity)
+
+                addDialog.setView(view)
+                addDialog.setPositiveButton("Ok") {
+
+                        dialog, _ ->
+                    val progressDialog1 = ProgressDialog(this@EditProfileActivity)
+                    progressDialog1.setMessage("Fetching...")
+                    progressDialog1.setCancelable(false)
+                    progressDialog1.show()
+                    val oldPassword1 = oldPassword.text.toString().trim()
+                    val newPassword1 = newPassword.text.toString().trim()
+                    val confirmPassword1 = confirmPassword.text.toString().trim()
+
+                    if (oldPassword1.isEmpty() || newPassword1.isEmpty() || confirmPassword1.isEmpty()) {
+                        progressDialog1.dismiss()
+                        Toast.makeText(view!!.context, "Fill all the fields!", Toast.LENGTH_SHORT)
+                            .show()
+
+                    } else if (newPassword1 != confirmPassword1) {
+                        progressDialog1.dismiss()
+                        Toast.makeText(view!!.context, "Passwords mismatched!", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        Firebase.auth.signInWithEmailAndPassword(user!!.email, oldPassword1)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    if (newPassword1 == oldPassword1) {
+                                        progressDialog1.dismiss()
+                                        Toast.makeText(
+                                            this@EditProfileActivity,
+                                            "new password is equal to old password!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Firebase.auth.currentUser!!.updatePassword(newPassword1)
+                                            .addOnCompleteListener {
+                                                if (it.isSuccessful) {
+                                                    progressDialog1.dismiss()
+                                                    Toast.makeText(
+                                                        view!!.context,
+                                                        "Passwords changed correctly!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } else {
+                                                    progressDialog1.dismiss()
+                                                    Toast.makeText(
+                                                        this@EditProfileActivity,
+                                                        it.exception!!.message,
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
+                                    }
+                                } else {
+                                    progressDialog1.dismiss()
+                                    Toast.makeText(
+                                        this@EditProfileActivity,
+                                        task.exception!!.message,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        dialog.dismiss()
+                    }
+                }
+                addDialog.setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                    Toast.makeText(this@EditProfileActivity, "Cancel", Toast.LENGTH_SHORT).show()
+                }
+                addDialog.create()
+                addDialog.show()
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -1,10 +1,12 @@
 package com.example.myapplication.activities
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.adapter.MembersAdapter
 import com.example.myapplication.models.*
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
@@ -111,27 +114,44 @@ class InfoGroupActivity: AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_leave -> {
-                GlobalScope.launch {
-                    val user : User = getUser(this@InfoGroupActivity)
-                    val requestList : MutableList<Request> = getRequestsList(this@InfoGroupActivity, group!!.groupId)
-                    for(request in requestList){
-                        if(request.user.id == user.id){
-                            Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
+
+
+                val builder = AlertDialog.Builder(this)
+                //builder.setView(v)
+                builder.setTitle("Exit Group")
+                builder.setIcon(R.drawable.ic_baseline_exit_to_app_24)
+                builder.setMessage("Do you want to leave this group?")
+                builder.setPositiveButton("Yes"){
+                        dialog,_->
+                    GlobalScope.launch {
+                        val user : User = getUser(this@InfoGroupActivity)
+                        val requestList : MutableList<Request> = getRequestsList(this@InfoGroupActivity, group!!.groupId)
+                        for(request in requestList){
+                            if(request.user.id == user.id){
+                                Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
+                            }
                         }
+                        user.groups!!.remove(groupId)
+                        Firebase.database.getReference("users").child(user.id).setValue(user)
+                        group!!.users!!.remove(user.id)
+                        if(group!!.users!!.isEmpty()){
+                            FirebaseStorageWrapper().delete(group!!.groupId.toString())
+                            Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
+                        }
+                        else{
+                            Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
+                        }
+                        val intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
+                        this@InfoGroupActivity.startActivity(intent)
                     }
-                    user.groups!!.remove(groupId)
-                    Firebase.database.getReference("users").child(user.id).setValue(user)
-                    group!!.users!!.remove(user.id)
-                    if(group!!.users!!.isEmpty()){
-                        FirebaseStorageWrapper().delete(group!!.groupId.toString())
-                        Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
-                    }
-                    else{
-                        Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
-                    }
-                    val intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
-                    this@InfoGroupActivity.startActivity(intent)
+
                 }
+                builder.setNegativeButton("No"){
+                        dialog,_->
+                    dialog.dismiss()
+                }
+                builder.create()
+                builder.show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
