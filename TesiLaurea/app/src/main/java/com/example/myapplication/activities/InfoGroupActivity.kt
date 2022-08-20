@@ -1,15 +1,13 @@
 package com.example.myapplication.activities
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +27,7 @@ class InfoGroupActivity: AppCompatActivity() {
     var groupId : Long? = null
     var group : Group? = null
 
+    @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info_group)
@@ -68,6 +67,14 @@ class InfoGroupActivity: AppCompatActivity() {
                     groupMembersList.add(user!!)
                 }
                 withContext(Dispatchers.Main) {
+                    findViewById<TextView>(R.id.nameGroup).text = group!!.nameGroup
+                    findViewById<EditText>(R.id.edit_nameGroup).setText(group!!.nameGroup)
+                    if (groupMembersList.size >1 )
+                        findViewById<TextView>(R.id.numberMembers).text = "${groupMembersList.size} members:"
+                    else
+                        findViewById<TextView>(R.id.numberMembers).text = "1 member:"
+
+
                     if(uri != null)
                         findViewById<ImageView>(R.id.group_image).setImageURI(uri)
                     membersAdapter = MembersAdapter(this@InfoGroupActivity, ArrayList(groupMembersList))
@@ -84,6 +91,42 @@ class InfoGroupActivity: AppCompatActivity() {
             i.type = "image/*"
             i.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(i, 100)
+        }
+
+        val modifyNameGroup : ImageView = findViewById(R.id.modify_nameGroup)
+        modifyNameGroup.setOnClickListener {
+            findViewById<TextView>(R.id.nameGroup).visibility = View.GONE
+            findViewById<EditText>(R.id.edit_nameGroup).visibility = View.VISIBLE
+            findViewById<Button>(R.id.edit_button).visibility = View.VISIBLE
+        }
+
+        val button : Button = findViewById(R.id.edit_button)
+        button.setOnClickListener { v ->
+
+            val newNameGroup: String = findViewById<EditText>(R.id.edit_nameGroup).text.toString().trim()
+            if (newNameGroup.isEmpty()) {
+                findViewById<EditText>(R.id.edit_nameGroup).error = "Empty!"
+
+            } else {
+                val progressDialog1 = ProgressDialog(this)
+                progressDialog1.setMessage("Wait...")
+                progressDialog1.setCancelable(false)
+                progressDialog1.show()
+                CoroutineScope(Dispatchers.Main + Job()).launch {
+                    withContext(Dispatchers.IO) {
+                        group!!.nameGroup = newNameGroup
+                        Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
+                        withContext(Dispatchers.Main) {
+                            findViewById<TextView>(R.id.nameGroup).text = newNameGroup
+                            findViewById<TextView>(R.id.nameGroup).visibility = View.VISIBLE
+                            findViewById<EditText>(R.id.edit_nameGroup).visibility = View.GONE
+                            findViewById<Button>(R.id.edit_button).visibility = View.GONE
+                            progressDialog1.dismiss()
+
+                        }
+                    }
+                }
+            }
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -156,5 +199,11 @@ class InfoGroupActivity: AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    override fun onBackPressed() {
+        startActivity(Intent(this, GroupActivity::class.java)
+            .putExtra("groupId", groupId)
+            .putExtra("groupName", group!!.nameGroup)
+        )
     }
 }

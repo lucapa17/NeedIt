@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activities.InfoGroupActivity">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,9 +16,10 @@
 
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -33,7 +35,7 @@
                     android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_groups_24"
                     app:civ_border_color="#FF000000"
-                    app:civ_border_width="2dp">
+                    app:civ_border_width="1dp">
 
                 </de.hdodenhof.circleimageview.CircleImageView>
 
@@ -47,11 +49,81 @@
 
 
             </RelativeLayout>
-            
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="8dp">
+
+
+                    <TextView
+                        android:id="@+id/nameGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ccc"
+                        android:textColor="@color/black"
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/edit_nameGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="5dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/modify_nameGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_edit" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/edit_button"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:text="Save"
+                android:textSize="16dp"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/numberMembers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:textColor="#878583"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/mRecycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
         </LinearLayout>
     </ScrollView>
 
