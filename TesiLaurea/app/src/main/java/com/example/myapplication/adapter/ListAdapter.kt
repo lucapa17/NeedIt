@@ -2,6 +2,7 @@ package com.example.myapplication.adapter
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -27,7 +28,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var nameRequest:TextView
         var userName:TextView
         var commentRequest:TextView
-        private var optionsMenu:ImageView
+        var optionsMenu:ImageView
         var completedBy:TextView
         var date:TextView
         var time:TextView
@@ -53,10 +54,15 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         private fun popupMenus(v:View) {
             val position = requestList[adapterPosition]
             val popupMenus = PopupMenu(c,v)
-            if(active)
-                popupMenus.inflate(R.menu.options_menu)
-            else
-                popupMenus.inflate(R.menu.options_complete_menu)
+            popupMenus.inflate(R.menu.options_menu)
+            if(active && position.user.id != FirebaseAuthWrapper(c).getUid()){
+                popupMenus.menu.findItem(R.id.editText).isVisible = false
+                popupMenus.menu.findItem(R.id.delete).isVisible = false
+            }
+            else if(!active){
+                popupMenus.menu.findItem(R.id.editText).isVisible = false
+                popupMenus.menu.findItem(R.id.complete).isVisible = false
+            }
             popupMenus.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.editText->{
@@ -64,10 +70,17 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         val title = view.findViewById<TextView>(R.id.Title)
                         val name = view.findViewById<EditText>(R.id.nameRequest)
                         val comment = view.findViewById<EditText>(R.id.commentRequest)
+                        val toDo = view.findViewById<RadioButton>(R.id.toDo)
+                        val toBuy = view.findViewById<RadioButton>(R.id.toBuy)
+
 
                         title.text = "Edit Request"
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
+                        if(position.type == Request.Type.ToBuy){
+                            toBuy.isChecked = true
+                        }
+
                         AlertDialog.Builder(c)
                             .setView(view)
                             .setPositiveButton("Ok"){
@@ -75,12 +88,16 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 if(name.text.toString().trim().isEmpty()){
                                     Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
                                 }
-                                else if (name.text.toString().trim() == position.nameRequest && comment.text.toString().trim() == position.comment){
+                                else if (name.text.toString().trim() == position.nameRequest && comment.text.toString().trim() == position.comment && toDo.isChecked == position.type.equals(Request.Type.ToDo)){
                                     Toast.makeText(c,"You changed nothing",Toast.LENGTH_SHORT).show()
                                 }
                                 else {
                                     position.nameRequest = name.text.toString()
                                     position.comment = comment.text.toString()
+                                    if(toDo.isChecked)
+                                        position.type = Request.Type.ToDo
+                                    else
+                                        position.type = Request.Type.ToBuy
                                     Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
                                     val intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
@@ -194,6 +211,8 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         progressDialog.setCancelable(false)
         progressDialog.show()
         val newList = requestList[position]
+        if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())
+            holder.optionsMenu.visibility = View.INVISIBLE
         if(newList.user.id != FirebaseAuthWrapper(c).getUid())
             holder.card.setCardBackgroundColor(Color.WHITE)
         if(newList.price!!.isEmpty())
