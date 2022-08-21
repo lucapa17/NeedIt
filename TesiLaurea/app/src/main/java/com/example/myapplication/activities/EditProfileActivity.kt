@@ -105,34 +105,49 @@ class EditProfileActivity : AppCompatActivity() {
         button.setOnClickListener { v ->
             val tName: String = findViewById<EditText>(R.id.edit_name).text.toString().trim()
             val tSurname: String = findViewById<EditText>(R.id.edit_surname).text.toString().trim()
-            val tNickname: String =
-                findViewById<EditText>(R.id.edit_nickname).text.toString().trim()
+            val tNickname: String = findViewById<EditText>(R.id.edit_nickname).text.toString().trim()
 
             if (tName.isEmpty() || tSurname.isEmpty() || tNickname.isEmpty()) {
                 Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
             } else {
+                val progressDialog1 = ProgressDialog(this)
+                progressDialog1.setMessage("Wait...")
+                progressDialog1.setCancelable(false)
+                progressDialog1.show()
                 CoroutineScope(Dispatchers.Main + Job()).launch {
                     withContext(Dispatchers.IO) {
-                        val nicknameAlreadyUsed: Boolean =
-                            nicknameIsAlreadyUsed(v!!.context, tNickname)
+                        val nicknameAlreadyUsed: Boolean = nicknameIsAlreadyUsed(v!!.context, tNickname)
                         user = getUser(this@EditProfileActivity)
                         withContext(Dispatchers.Main) {
-                            if (tNickname != findViewById<TextView>(R.id.nickname).text && nicknameAlreadyUsed)
-                                Toast.makeText(
-                                    v.context,
-                                    "Nickname is already used",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                            if (tNickname != findViewById<TextView>(R.id.nickname).text && nicknameAlreadyUsed){
+                                progressDialog1.dismiss()
+                                findViewById<EditText>(R.id.edit_nickname).error = "Nickname is already used"
+                                //Toast.makeText(v.context, "Nickname is already used", Toast.LENGTH_SHORT).show()
+                            }
                             else {
                                 user!!.name = tName
                                 user!!.surname = tSurname
                                 user!!.nickname = tNickname
                                 Firebase.database.getReference("users").child(id).setValue(user)
+                                findViewById<TextView>(R.id.name).text = tName
+                                findViewById<TextView>(R.id.name).visibility = View.VISIBLE
+                                findViewById<EditText>(R.id.edit_name).visibility = View.GONE
+                                findViewById<TextView>(R.id.surname).text = tSurname
+                                findViewById<TextView>(R.id.surname).visibility = View.VISIBLE
+                                findViewById<EditText>(R.id.edit_surname).visibility = View.GONE
+                                findViewById<TextView>(R.id.nickname).text = tNickname
+                                findViewById<TextView>(R.id.nickname).visibility = View.VISIBLE
+                                findViewById<EditText>(R.id.edit_nickname).visibility = View.GONE
+                                findViewById<Button>(R.id.edit_button).visibility = View.GONE
+                                progressDialog1.dismiss()
+                                /*
                                 val intent = Intent(
                                     this@EditProfileActivity,
                                     EditProfileActivity::class.java
                                 )
                                 this@EditProfileActivity.startActivity(intent)
+
+                                 */
                             }
                         }
                     }

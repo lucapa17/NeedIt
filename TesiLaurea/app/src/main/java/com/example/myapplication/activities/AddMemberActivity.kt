@@ -21,6 +21,8 @@ class AddMemberActivity : AppCompatActivity() {
 
     private lateinit var recv: RecyclerView
     private lateinit var membersAdapter: NewMembersAdapter
+    var groupId : Long = -1
+    var group : Group? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +36,8 @@ class AddMemberActivity : AppCompatActivity() {
         recv.adapter = membersAdapter
 
         val intent : Intent = intent
-        val groupId : Long = intent.getLongExtra("groupId", 0L)
+        groupId = intent.getLongExtra("groupId", 0L)
         var myNickname: String? = null
-        var group : Group? = null
 
         GlobalScope.launch {
             group = getGroupById(this@AddMemberActivity, groupId)
@@ -160,5 +161,11 @@ class AddMemberActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    override fun onBackPressed() {
+        startActivity(Intent(this, GroupActivity::class.java)
+            .putExtra("groupId", groupId)
+            .putExtra("groupName", group!!.nameGroup)
+        )
     }
 }

@@ -184,4 +184,7 @@ class NewGroupActivity : BaseActivity() {
             findViewById<ImageView>(R.id.group_image).setImageURI(image)
         }
     }
+    override fun onBackPressed() {
+        startActivity(Intent(this, MainActivity::class.java))
+    }
 }
