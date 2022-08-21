@@ -526,10 +526,17 @@ class FirebaseStorageWrapper {
     }
 
     fun download(id: String, context: Context): Uri? {
+        val dir = File(context.cacheDir.absolutePath)
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                if(f.name.toString().contains("image_${id}_")){
+                    f.delete()
+                }
+            }
+        }
         val tmp = File.createTempFile("image_${id}_", null, context.cacheDir)
         tmp.deleteOnExit()
         var image : Uri? = null
-
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {

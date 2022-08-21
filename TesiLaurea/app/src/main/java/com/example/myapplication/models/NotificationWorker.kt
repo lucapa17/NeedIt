@@ -5,8 +5,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.graphics.*
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.*
@@ -17,10 +19,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 fun runInstantWorker(context: Context) {
     val requestNotificationWorker = OneTimeWorkRequestBuilder<RequestNotificationWorker>().build()
@@ -63,7 +65,7 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                 for(notification in notificationList){
                     val notificationText: String = when (notification.type) {
                         Notification.Type.NewRequest -> {
-                            "${notification.sender} sent a new request :  \n ${notification.request!!.nameRequest} "
+                            "${notification.sender} sent a new request : \n${notification.request!!.nameRequest} "
                         }
                         Notification.Type.CompletedRequest -> {
                             "${notification.completedBy} has completed the following request of ${notification.sender} :  \n ${notification.request!!.nameRequest} "
@@ -77,37 +79,50 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     }
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
 
-                    val builder = NotificationCompat.Builder(context, "NOTIFICATION")
-                        .setSmallIcon(R.drawable.logo_notifica_2)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.logo_notifica_2))
-                        .setContentTitle(notification.groupName)
-                        .setWhen(notification.date!!.time)
-                        .setContentText(notificationText).setStyle(
-                            NotificationCompat.BigTextStyle().bigText(notificationText)
-                        ).setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true)
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val name = "notification"
-                        val descriptionText = "notification"
-                        val importance = NotificationManager.IMPORTANCE_DEFAULT
-                        val channel =
-                            NotificationChannel("NOTIFICATION", name, importance).apply {
-                                description = descriptionText
+                    var uri : Uri? = null
+                    CoroutineScope(Dispatchers.Main + Job()).launch {
+                        withContext(Dispatchers.IO) {
+                            uri = FirebaseStorageWrapper().download(notification.groupId.toString(), context)
+                            var bitmap : Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.logo_notifica_2)
+                            if(uri != null){
+                                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri)
                             }
+                            withContext(Dispatchers.Main) {
+                                val builder = NotificationCompat.Builder(context, "NOTIFICATION")
+                                    .setSmallIcon(R.drawable.logo_notifica_3)
+                                    .setLargeIcon(bitmap)
+                                    .setContentTitle(notification.groupName)
+                                    .setWhen(notification.date!!.time)
+                                    .setContentText(notificationText).setStyle(
+                                        NotificationCompat.BigTextStyle().bigText(notificationText)
+                                    ).setPriority(NotificationCompat.PRIORITY_HIGH)
+                                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                                    .setContentIntent(pendingIntent)
+                                    .setAutoCancel(true)
 
-                        val notificationManager: NotificationManager =
-                            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                        notificationManager.createNotificationChannel(channel)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    val name = "notification"
+                                    val descriptionText = "notification"
+                                    val importance = NotificationManager.IMPORTANCE_DEFAULT
+                                    val channel =
+                                        NotificationChannel("NOTIFICATION", name, importance).apply {
+                                            description = descriptionText
+                                        }
+
+                                    val notificationManager: NotificationManager =
+                                        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                                    notificationManager.createNotificationChannel(channel)
+                                }
+
+                                with(NotificationManagerCompat.from(context)) {
+                                    notify(notification.notificationId.toInt(), builder.build())
+                                }
+
+                                Firebase.database.getReference("notifications").child(uid!!).child(notification.notificationId.toString()).removeValue()
+                            }
+                        }
                     }
 
-                    with(NotificationManagerCompat.from(context)) {
-                        notify(notification.notificationId.toInt(), builder.build())
-                    }
-
-                    Firebase.database.getReference("notifications").child(uid!!).child(notification.notificationId.toString()).removeValue()
                 }
             }
         return Result.success()
