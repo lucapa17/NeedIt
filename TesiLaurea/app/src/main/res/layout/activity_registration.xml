@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:focusable="true"
-                android:textColor="#317825"
+                android:textColor="#1D7854"
                 android:ems="10"
                 android:text="@string/registration"
                 android:textAlignment="center"/>

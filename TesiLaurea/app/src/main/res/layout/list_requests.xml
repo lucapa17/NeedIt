@@ -42,7 +42,7 @@
                 <TextView
                     android:id="@+id/userName"
                     android:text=""
-                    android:textColor="#1C651F"
+                    android:textColor="#1E5520"
                     android:textSize="18dp"
                     android:textStyle="bold"
                     android:layout_width="match_parent"
