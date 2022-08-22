@@ -125,6 +125,10 @@ class ActiveListFragment : Fragment() {
                             val notificationId : Long = getNotificationId(requireContext(), userId)
                             val notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, request.date, request.groupId, Notification.Type.NewRequest)
                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
+                            var unreadMessages = getUnread(requireContext(), groupId!!, userId)
+                            unreadMessages++
+                            Firebase.database.getReference("unread").child(userId).child(groupId.toString()).setValue(unreadMessages)
+
                         }
                     }
                     val intent = Intent(requireContext(), GroupActivity::class.java)

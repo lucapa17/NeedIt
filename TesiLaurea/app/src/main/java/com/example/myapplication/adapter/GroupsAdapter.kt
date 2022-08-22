@@ -19,9 +19,11 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
     inner class UserViewHolder(v:View):RecyclerView.ViewHolder(v) {
         var nameGroup: TextView
         var logoGroup: ImageView
+        var unread: TextView
         init {
             nameGroup = v.findViewById(R.id.nameGroup)
             logoGroup = v.findViewById(R.id.logoGroup)
+            unread = v.findViewById(R.id.unread)
             v.setOnClickListener { v ->
                 val position = groupList[adapterPosition]
                 val intent = Intent(v!!.context, GroupActivity::class.java)
@@ -45,7 +47,7 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
         progressDialog.show()
         val newList = groupList[position]
         holder.nameGroup.text = newList.nameGroup
-        var uri: Uri?
+        var uri: Uri? = null
         val dir = File(c.cacheDir.absolutePath)
         var found = false
         if (dir.exists()) {
@@ -59,21 +61,26 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
                 }
             }
         }
-        for (f in dir.listFiles())
-            (java.util.Calendar.getInstance().timeInMillis - f.lastModified()) / (1000*60)
-        if(!found){
-            CoroutineScope(Dispatchers.Main + Job()).launch {
-                withContext(Dispatchers.IO) {
+        var unreadMessages : Int
+        CoroutineScope(Dispatchers.Main + Job()).launch {
+            withContext(Dispatchers.IO) {
+                if(!found) {
                     uri = FirebaseStorageWrapper().download(newList.groupId.toString(), c)
-                    withContext(Dispatchers.Main) {
-                        if(uri != null){
-                            holder.logoGroup.setImageURI(uri)
-                        }
-                        progressDialog.dismiss()
+                }
+                unreadMessages = getUnread(c, newList.groupId, FirebaseAuthWrapper(c).getUid()!!)
+                withContext(Dispatchers.Main) {
+                    if(unreadMessages != 0){
+                        holder.unread.text = unreadMessages.toString()
+                        holder.unread.visibility = View.VISIBLE
                     }
+                    if(uri != null){
+                        holder.logoGroup.setImageURI(uri)
+                    }
+                    progressDialog.dismiss()
                 }
             }
         }
+
     }
     override fun getItemCount(): Int {
         return  groupList.size

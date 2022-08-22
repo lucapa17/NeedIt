@@ -337,16 +337,15 @@ fun getNotificationList (context: Context, userId : String) : MutableList<Notifi
     return list
 }
 
-fun getUnread(context: Context, groupId: Long) : Int {
+fun getUnread(context: Context, groupId: Long, userId : String) : Int {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    val uid = FirebaseAuthWrapper(context).getUid()
     var i = 0
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbUnread(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                i = snapshot.child(groupId.toString()).getValue(Int::class.java)!!
+                i = snapshot.child(userId).child(groupId.toString()).getValue(Int::class.java)!!
                 lock.withLock {
                     condition.signal()
                 }
@@ -501,7 +500,7 @@ class FirebaseDbWrapper(private val context: Context) {
 
     }
     fun readDbUnread(callback: FirebaseReadCallback) {
-        val ref = Firebase.database.getReference("unread").child(uid!!)
+        val ref = Firebase.database.getReference("unread")
         ref.addValueEventListener(FirebaseReadListener(callback))
 
     }
