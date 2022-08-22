@@ -80,6 +80,7 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
 
                     var uri : Uri? = null
+                    var unreadMessages : Int
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
                             uri = FirebaseStorageWrapper().download(notification.groupId.toString(), context)
@@ -87,6 +88,10 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                             if(uri != null){
                                 bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri)
                             }
+                            unreadMessages = getUnread(context, notification.groupId)
+                            unreadMessages++
+                            Firebase.database.getReference("unread").child(uid!!).child(notification.groupId.toString()).setValue(unreadMessages)
+
                             withContext(Dispatchers.Main) {
                                 val builder = NotificationCompat.Builder(context, "NOTIFICATION")
                                     .setSmallIcon(R.drawable.logo2nobackground)

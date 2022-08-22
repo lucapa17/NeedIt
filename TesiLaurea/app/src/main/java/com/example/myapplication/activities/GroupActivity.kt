@@ -14,6 +14,8 @@ import com.example.myapplication.databinding.ActivityGroupBinding
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -30,7 +32,7 @@ class GroupActivity : AppCompatActivity() {
         groupId = intent.getLongExtra("groupId", 0L)
         groupName = intent.getStringExtra("groupName")
         supportActionBar?.title = groupName
-
+        Firebase.database.getReference("unread").child(FirebaseAuthWrapper(this).getUid()!!).child(groupId.toString()).setValue(0)
         val fragmentArrayList = ArrayList<Fragment>()
         val progressDialog = ProgressDialog(this)
 

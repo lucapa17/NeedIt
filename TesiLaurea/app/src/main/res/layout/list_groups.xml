@@ -32,14 +32,18 @@
 
         <TextView
             android:id="@+id/nameGroup"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_marginLeft="20dp"
             android:text="Title"
             android:textColor="@color/black"
             android:textSize="25dp"
             android:gravity="center_vertical"
             android:textStyle="bold" />
+
+
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

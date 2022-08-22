@@ -223,7 +223,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         progressDialog.show()
         val newList = requestList[position]
         if(position == requestList.size-1){
-            //used to have some space left t the bottom in order to not cover the add bottom
+            //used to have some space left in order to not cover the add botton
             holder.price.visibility = View.GONE
             holder.commentRequest.visibility = View.GONE
             holder.completedBy.visibility = View.GONE

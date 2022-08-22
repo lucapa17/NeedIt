@@ -136,6 +136,7 @@ class AddMemberActivity : AppCompatActivity() {
                         group!!.users!!.add(member.id)
                         member.groups!!.add(groupId)
                         Firebase.database.getReference("users").child(member.id).setValue(member)
+                        Firebase.database.getReference("unread").child(member.id).child(groupId.toString()).setValue(0)
                         val notificationId: Long =
                             getNotificationId(this@AddMemberActivity, member.id)
                         val notification = Notification(

@@ -139,13 +139,13 @@ class NewGroupActivity : BaseActivity() {
                         val membersId: MutableList<String> = mutableListOf(myUser!!.id)
                         myUser!!.groups!!.add(groupId)
                         Firebase.database.getReference("users").child(myUser!!.id).setValue(myUser)
+                        Firebase.database.getReference("unread").child(myUser!!.id).child(groupId.toString()).setValue(0)
                         for (member in memberList) {
                             membersId.add(member.id)
                             member.groups!!.add(groupId)
-                            Firebase.database.getReference("users").child(member.id)
-                                .setValue(member)
-                            val notificationId: Long =
-                                getNotificationId(this@NewGroupActivity, member.id)
+                            Firebase.database.getReference("users").child(member.id).setValue(member)
+                            Firebase.database.getReference("unread").child(member.id).child(groupId.toString()).setValue(0)
+                            val notificationId: Long = getNotificationId(this@NewGroupActivity, member.id)
                             val notification = Notification(
                                 member.id,
                                 null,
@@ -157,8 +157,7 @@ class NewGroupActivity : BaseActivity() {
                                 groupId,
                                 Notification.Type.NewGroup
                             )
-                            Firebase.database.getReference("notifications").child(member.id)
-                                .child(notificationId.toString()).setValue(notification)
+                            Firebase.database.getReference("notifications").child(member.id).child(notificationId.toString()).setValue(notification)
                         }
                         val group =
                             Group(groupId, groupName.text.toString().trim(), membersId)
@@ -167,8 +166,8 @@ class NewGroupActivity : BaseActivity() {
                     }
                     withContext(Dispatchers.Main) {
                         //Thread.sleep(1_000)
-                        val intent =
-                            Intent(this@NewGroupActivity, GroupActivity::class.java)
+
+                        val intent = Intent(this@NewGroupActivity, GroupActivity::class.java)
                         intent.putExtra("groupId", groupId)
                         intent.putExtra("groupName", groupName.text.toString().trim())
                         this@NewGroupActivity.startActivity(intent)
