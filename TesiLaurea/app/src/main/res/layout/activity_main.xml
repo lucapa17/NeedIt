@@ -32,7 +32,7 @@
             android:fontFamily="sans-serif-thin"
             android:text="You haven't joined any group yet"
             android:textAlignment="center"
-            android:textColor="#317825"
+            android:textColor="#1D7854"
             android:textSize="20dp"
             android:textStyle="bold" />
         <TextView
@@ -42,7 +42,7 @@
             android:fontFamily="sans-serif-thin"
             android:text="@string/newGroup"
             android:textAlignment="center"
-            android:textColor="#317825"
+            android:textColor="#1D7854"
             android:textSize="20dp"
             android:textStyle="bold" />
 
