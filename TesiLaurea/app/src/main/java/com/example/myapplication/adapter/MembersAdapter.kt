@@ -2,6 +2,7 @@ package com.example.myapplication.adapter
 
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.activities.GroupActivity
+import com.example.myapplication.activities.ShowProfile
 import com.example.myapplication.models.FirebaseStorageWrapper
 import com.example.myapplication.models.User
 import com.example.myapplication.models.getUserIdByNickname
@@ -21,6 +24,15 @@ class MembersAdapter (private val c: Context, private val memberList:ArrayList<U
         var username: TextView = v.findViewById(R.id.username)
         var name: TextView = v.findViewById(R.id.name)
         var photo: ImageView = v.findViewById(R.id.photo)
+        init {
+            v.setOnClickListener {
+                val position = memberList[adapterPosition]
+                val intent = Intent(v.context, ShowProfile::class.java)
+                intent.putExtra("id", position.id)
+                v.context.startActivity(intent)
+            }
+        }
+
 
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersAdapter.UserViewHolder {
