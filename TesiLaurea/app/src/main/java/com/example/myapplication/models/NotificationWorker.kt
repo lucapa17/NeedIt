@@ -83,13 +83,13 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
                             uri = FirebaseStorageWrapper().download(notification.groupId.toString(), context)
-                            var bitmap : Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.logo_notifica_2)
+                            var bitmap : Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.logo2nobackground)
                             if(uri != null){
                                 bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri)
                             }
                             withContext(Dispatchers.Main) {
                                 val builder = NotificationCompat.Builder(context, "NOTIFICATION")
-                                    .setSmallIcon(R.drawable.logo_notifica_3)
+                                    .setSmallIcon(R.drawable.logo2nobackground)
                                     .setLargeIcon(bitmap)
                                     .setContentTitle(notification.groupName)
                                     .setWhen(notification.date!!.time)
