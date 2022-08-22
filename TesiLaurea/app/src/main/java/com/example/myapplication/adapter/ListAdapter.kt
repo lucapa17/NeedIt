@@ -16,6 +16,7 @@ import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
+import com.example.myapplication.activities.ShowProfile
 import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -47,6 +48,16 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             time = v.findViewById(R.id.Time)
             photo = v.findViewById(R.id.photo)
             card = v.findViewById(R.id.card)
+            photo.setOnClickListener {
+                val position = requestList[adapterPosition]
+                if(position.user.id != FirebaseAuthWrapper(c).getUid()){
+
+                    val intent = Intent(v.context, ShowProfile::class.java)
+                    intent.putExtra("id", position.user.id)
+                    v.context.startActivity(intent)
+                }
+            }
+
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
         }
