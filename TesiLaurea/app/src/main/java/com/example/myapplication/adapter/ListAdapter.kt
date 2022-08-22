@@ -222,39 +222,49 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         progressDialog.setCancelable(false)
         progressDialog.show()
         val newList = requestList[position]
-        if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())
-            holder.optionsMenu.visibility = View.INVISIBLE
-        if(newList.user.id != FirebaseAuthWrapper(c).getUid())
-            holder.card.setCardBackgroundColor(Color.WHITE)
-        if(newList.price!!.isEmpty())
+        if(position == requestList.size-1){
+            //used to have some space left t the bottom in order to not cover the add bottom
             holder.price.visibility = View.GONE
-        else
-            holder.price.text = "Bought for: ${newList.price} €"
-        if(newList.comment!!.isEmpty())
             holder.commentRequest.visibility = View.GONE
-        else
-            holder.commentRequest.text = "Comment: ${newList.comment}"
-        holder.nameRequest.text = newList.nameRequest
-        if(!newList.isCompleted)
             holder.completedBy.visibility = View.GONE
-        val sdf = SimpleDateFormat("dd/MM/yy")
-        val day = sdf.format(newList.date)
-        val sdf2 = SimpleDateFormat("HH:mm")
-        val time = sdf2.format(newList.date)
-        holder.date.text = day
-        holder.time.text = time
-        holder.userName.text = newList.user.nickname
+            holder.card.visibility = View.INVISIBLE
+        } else {
+            if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())
+                holder.optionsMenu.visibility = View.INVISIBLE
+            if(newList.user.id != FirebaseAuthWrapper(c).getUid())
+                holder.card.setCardBackgroundColor(Color.WHITE)
+            if(newList.price!!.isEmpty())
+                holder.price.visibility = View.GONE
+            else
+                holder.price.text = "Bought for: ${newList.price} €"
+            if(newList.comment!!.isEmpty())
+                holder.commentRequest.visibility = View.GONE
+            else
+                holder.commentRequest.text = "Comment: ${newList.comment}"
+            holder.nameRequest.text = newList.nameRequest
+            if(!newList.isCompleted)
+                holder.completedBy.visibility = View.GONE
+            val sdf = SimpleDateFormat("dd/MM/yy")
+            val day = sdf.format(newList.date)
+            val sdf2 = SimpleDateFormat("HH:mm")
+            val time = sdf2.format(newList.date)
+            holder.date.text = day
+            holder.time.text = time
+            holder.userName.text = newList.user.nickname
 
-        if(newList.isCompleted) {
-            holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
-        }
-        for(photo in photoList){
-            if(photo.contains("${newList.user.id}_")){
-                holder.photo.setImageURI(photo.toUri())
-                break
+            if(newList.isCompleted) {
+                holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
+            }
+            for(photo in photoList){
+                if(photo.contains("${newList.user.id}_")){
+                    holder.photo.setImageURI(photo.toUri())
+                    break
+                }
             }
         }
         progressDialog.dismiss()
+
+
     }
     override fun getItemCount(): Int {
         return  requestList.size

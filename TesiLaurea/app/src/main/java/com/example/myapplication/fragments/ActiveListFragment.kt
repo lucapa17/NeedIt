@@ -70,6 +70,7 @@ class ActiveListFragment : Fragment() {
                         groupActiveList.add(request)
                     }
                 }
+                groupActiveList.add(Request())
                 withContext(Dispatchers.Main) {
                     listAdapter = ListAdapter(requireContext(), groupActiveList, photoList!!, groupName!!, true)
                     recv.layoutManager = LinearLayoutManager(requireContext())
