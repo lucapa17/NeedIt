@@ -1,6 +1,7 @@
 package com.example.myapplication.models
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 class Request() {
 
@@ -13,9 +14,10 @@ class Request() {
     var comment : String? = null
     var date : Date? = null
     var price : String? = ""
+    var list : ArrayList<String>? = null
     lateinit var type : Type
 
-    constructor(id : Long, groupId : Long,  user : User, nameRequest : String, isCompleted : Boolean, comment : String?, completedBy : User?, date : Date, price : String?, type : Type) : this() {
+    constructor(id : Long, groupId : Long,  user : User, nameRequest : String, isCompleted : Boolean, comment : String?, completedBy : User?, date : Date, price : String?, type : Type, list : ArrayList<String>?) : this() {
         this.groupId = groupId
         this.completedBy = completedBy
         this.id = id
@@ -26,6 +28,7 @@ class Request() {
         this.date = date
         this.price = price
         this.type = type
+        this.list = list
     }
     enum class Type {
         ToDo,

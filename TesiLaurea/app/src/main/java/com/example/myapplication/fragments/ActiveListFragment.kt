@@ -5,19 +5,20 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
+import com.example.myapplication.adapter.ItemsAdapter
 import com.example.myapplication.adapter.ListAdapter
+import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.models.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.ktx.database
@@ -96,8 +97,37 @@ class ActiveListFragment : Fragment() {
         val nameRequest = v.findViewById<EditText>(R.id.nameRequest)
         val comment = v.findViewById<EditText>(R.id.commentRequest)
         val toDo = v.findViewById<RadioButton>(R.id.toDo)
+        val isList = v.findViewById<CheckBox>(R.id.isList)
+        val layoutList = v.findViewById<LinearLayout>(R.id.layoutList)
+        val newItem = v.findViewById<EditText>(R.id.newItem)
+        val addItem = v.findViewById<ImageView>(R.id.addItem)
+        val recv1: RecyclerView = v.findViewById(R.id.mRecycler)
         val addDialog = AlertDialog.Builder(requireContext())
+        isList.setOnClickListener {
+            if(isList.isChecked){
+                layoutList.visibility = View.VISIBLE
+                recv1.visibility = View.VISIBLE
+            }
+            else {
+                layoutList.visibility = View.GONE
+                recv1.visibility = View.GONE
 
+            }
+
+        }
+        val list : ArrayList<String> = ArrayList()
+        val itemsAdapter = ItemsAdapter(requireContext(), list)
+        recv1.layoutManager = LinearLayoutManager(requireContext())
+        recv1.adapter = itemsAdapter
+        addItem.setOnClickListener {
+            if(newItem.text.toString().trim().isEmpty())
+                newItem.error = "empty"
+            else {
+                list.add(newItem.text.toString().trim())
+                itemsAdapter.notifyDataSetChanged()
+                newItem.setText("")
+            }
+        }
         addDialog.setView(v)
         addDialog.setPositiveButton("Ok"){
                 dialog,_->
@@ -117,7 +147,7 @@ class ActiveListFragment : Fragment() {
                         type = Request.Type.ToDo
                     else
                         type = Request.Type.ToBuy
-                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type)
+                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type, null)
                     Firebase.database.getReference("requests").child(request.id.toString()).setValue(request)
                     val group : Group? = getGroupById(requireContext(), groupId!!)
                     for(userId in group!!.users!!){
