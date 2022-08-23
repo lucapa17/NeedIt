@@ -116,7 +116,7 @@ class ActiveListFragment : Fragment() {
 
         }
         var list : ArrayList<String>? = ArrayList()
-        val itemsAdapter = ItemsAdapter(requireContext(), list!!)
+        val itemsAdapter = ItemsAdapter(requireContext(), list!!, false, null)
         recv1.layoutManager = LinearLayoutManager(requireContext())
         recv1.adapter = itemsAdapter
         addItem.setOnClickListener {

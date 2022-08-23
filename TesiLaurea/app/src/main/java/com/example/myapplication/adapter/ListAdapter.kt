@@ -35,6 +35,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var completedBy:TextView
         var date:TextView
         var time:TextView
+        var readList: TextView
         var price: TextView
         var photo: ImageView
         var card : CardView
@@ -50,6 +51,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             price = v.findViewById(R.id.price)
             time = v.findViewById(R.id.Time)
             photo = v.findViewById(R.id.photo)
+            readList = v.findViewById(R.id.readList)
             card = v.findViewById(R.id.card)
             recv = v.findViewById(R.id.mRecycler)
 
@@ -88,11 +90,52 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         val comment = view.findViewById<EditText>(R.id.commentRequest)
                         val toDo = view.findViewById<RadioButton>(R.id.toDo)
                         val toBuy = view.findViewById<RadioButton>(R.id.toBuy)
-
+                        val isList = view.findViewById<CheckBox>(R.id.isList)
+                        val layoutList = view.findViewById<LinearLayout>(R.id.layoutList)
+                        val newItem = view.findViewById<EditText>(R.id.newItem)
+                        val addItem = view.findViewById<ImageView>(R.id.addItem)
+                        val recv1: RecyclerView = view.findViewById(R.id.mRecycler)
 
                         title.text = "Edit Request"
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
+                        var itemsAdapter = ItemsAdapter(c, ArrayList(), false, null)
+                        if(position.list != null) {
+                            isList.isChecked = true
+                            layoutList.visibility = View.VISIBLE
+                            recv1.visibility = View.VISIBLE
+                            itemsAdapter = ItemsAdapter(c, position.list!!, false, null)
+                            recv1.layoutManager = LinearLayoutManager(c)
+                            recv1.adapter = itemsAdapter
+                        }
+                        isList.setOnClickListener {
+                            if(isList.isChecked){
+                                layoutList.visibility = View.VISIBLE
+                                recv1.visibility = View.VISIBLE
+                            }
+                            else {
+                                layoutList.visibility = View.GONE
+                                recv1.visibility = View.GONE
+
+                            }
+                        }
+                        addItem.setOnClickListener {
+                            if(newItem.text.toString().trim().isEmpty())
+                                newItem.error = "empty"
+                            else if(position.list == null){
+                                position.list = ArrayList()
+                                position.list!!.add(newItem.text.toString().trim())
+                                itemsAdapter = ItemsAdapter(c, position.list!!, false, null)
+                                recv1.layoutManager = LinearLayoutManager(c)
+                                recv1.adapter = itemsAdapter
+                                newItem.setText("")
+                            }
+                            else {
+                                position.list!!.add(newItem.text.toString().trim())
+                                itemsAdapter.notifyDataSetChanged()
+                                newItem.setText("")
+                            }
+                        }
                         if(position.type == Request.Type.ToBuy){
                             toBuy.isChecked = true
                         }
@@ -101,11 +144,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             .setView(view)
                             .setPositiveButton("Ok"){
                                     dialog,_->
+                                if(!isList.isChecked || (isList.isChecked && position.list!!.isEmpty()))
+                                    position.list = null
                                 if(name.text.toString().trim().isEmpty()){
                                     Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
-                                }
-                                else if (name.text.toString().trim() == position.nameRequest && comment.text.toString().trim() == position.comment && toDo.isChecked == position.type.equals(Request.Type.ToDo)){
-                                    Toast.makeText(c,"You changed nothing",Toast.LENGTH_SHORT).show()
                                 }
                                 else {
                                     position.nameRequest = name.text.toString()
@@ -114,6 +156,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                         position.type = Request.Type.ToDo
                                     else
                                         position.type = Request.Type.ToBuy
+
                                     Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
                                     val intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
@@ -234,10 +277,13 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             holder.completedBy.visibility = View.GONE
             holder.card.visibility = View.INVISIBLE
         } else {
+            var mine = true
             if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())
                 holder.optionsMenu.visibility = View.INVISIBLE
-            if(newList.user.id != FirebaseAuthWrapper(c).getUid())
+            if(newList.user.id != FirebaseAuthWrapper(c).getUid()){
                 holder.card.setCardBackgroundColor(Color.WHITE)
+                mine = false
+            }
             if(newList.price!!.isEmpty())
                 holder.price.visibility = View.GONE
             else
@@ -261,9 +307,23 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                 holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
             }
             if(newList.list != null){
-                val itemsAdapter = ItemsAdapter(c, newList.list!!)
+                var isOpen = false
+                val itemsAdapter = ItemsAdapter(c, newList.list!!, true, mine)
                 holder.recv.layoutManager = LinearLayoutManager(c)
                 holder.recv.adapter = itemsAdapter
+                holder.readList.visibility = View.VISIBLE
+                holder.readList.setOnClickListener {
+                    if(!isOpen){
+                        holder.recv.visibility = View.VISIBLE
+                        holder.readList.setText(R.string.closeList)
+                    }
+                    else {
+                        holder.recv.visibility = View.GONE
+                        holder.readList.setText(R.string.readList)
+                    }
+                    isOpen = !isOpen
+                }
+
             }
             for(photo in photoList){
                 if(photo.contains("${newList.user.id}_")){

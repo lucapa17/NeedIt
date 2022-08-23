@@ -5,5 +5,7 @@
     <string name="login"><u>Are not you already registered? Sign up!</u></string>
     <string name="registration"><u>Are you already registered? Sign in!</u></string>
     <string name="newGroup"><u>Create a new group</u></string>
+    <string name="readList"><u>View all</u></string>
+    <string name="closeList"><u>Reduce all</u></string>
 
 </resources>
