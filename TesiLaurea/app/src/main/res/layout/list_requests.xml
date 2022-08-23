@@ -88,17 +88,39 @@
                 android:layout_marginTop="1dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/readList"
-                android:text="@string/readList"
-                android:textColor="@android:color/black"
-                android:textSize="15dp"
-                android:textStyle="bold"
-                android:layout_marginHorizontal="1dp"
-                android:layout_marginTop="1dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/readListLayout"
+                android:visibility="gone">
+                <TextView
+                    android:text="@string/readList"
+                    android:id="@+id/readList"
+                    android:textColor="@android:color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:layout_marginHorizontal="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+                <ImageView
+                    android:id="@+id/readListButton"
+                    android:src="@drawable/ic_baseline_read_list"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_margin="1dp"
+                    android:layout_gravity="bottom"/>
+                <ImageView
+                    android:id="@+id/reduceListButton"
+                    android:src="@drawable/ic_baseline_reduce_list"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="bottom"
+                    android:layout_margin="1dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/mRecycler"
                 android:visibility="gone"

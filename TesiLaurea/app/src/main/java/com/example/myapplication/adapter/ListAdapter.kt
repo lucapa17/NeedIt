@@ -35,7 +35,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var completedBy:TextView
         var date:TextView
         var time:TextView
+        var readListLayout : LinearLayout
         var readList: TextView
+        var open: ImageView
+        var close: ImageView
         var price: TextView
         var photo: ImageView
         var card : CardView
@@ -51,7 +54,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             price = v.findViewById(R.id.price)
             time = v.findViewById(R.id.Time)
             photo = v.findViewById(R.id.photo)
+            readListLayout = v.findViewById(R.id.readListLayout)
             readList = v.findViewById(R.id.readList)
+            open = v.findViewById(R.id.readListButton)
+            close = v.findViewById(R.id.reduceListButton)
             card = v.findViewById(R.id.card)
             recv = v.findViewById(R.id.mRecycler)
 
@@ -311,15 +317,19 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                 val itemsAdapter = ItemsAdapter(c, newList.list!!, true, mine)
                 holder.recv.layoutManager = LinearLayoutManager(c)
                 holder.recv.adapter = itemsAdapter
-                holder.readList.visibility = View.VISIBLE
-                holder.readList.setOnClickListener {
+                holder.readListLayout.visibility = View.VISIBLE
+                holder.readListLayout.setOnClickListener {
                     if(!isOpen){
                         holder.recv.visibility = View.VISIBLE
+                        holder.open.visibility = View.GONE
+                        holder.close.visibility = View.VISIBLE
                         holder.readList.setText(R.string.closeList)
                     }
                     else {
                         holder.recv.visibility = View.GONE
                         holder.readList.setText(R.string.readList)
+                        holder.open.visibility = View.VISIBLE
+                        holder.close.visibility = View.GONE
                     }
                     isOpen = !isOpen
                 }
