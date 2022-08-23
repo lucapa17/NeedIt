@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
 import androidx.core.view.marginLeft
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
@@ -36,6 +38,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var price: TextView
         var photo: ImageView
         var card : CardView
+        var recv : RecyclerView
 
 
         init {
@@ -48,6 +51,8 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             time = v.findViewById(R.id.Time)
             photo = v.findViewById(R.id.photo)
             card = v.findViewById(R.id.card)
+            recv = v.findViewById(R.id.mRecycler)
+
             photo.setOnClickListener {
                 val position = requestList[adapterPosition]
                 if(position.user.id != FirebaseAuthWrapper(c).getUid()){
@@ -254,6 +259,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
             if(newList.isCompleted) {
                 holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
+            }
+            if(newList.list != null){
+                val itemsAdapter = ItemsAdapter(c, newList.list!!)
+                holder.recv.layoutManager = LinearLayoutManager(c)
+                holder.recv.adapter = itemsAdapter
             }
             for(photo in photoList){
                 if(photo.contains("${newList.user.id}_")){

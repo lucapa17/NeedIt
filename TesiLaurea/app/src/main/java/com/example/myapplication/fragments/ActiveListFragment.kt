@@ -115,15 +115,15 @@ class ActiveListFragment : Fragment() {
             }
 
         }
-        val list : ArrayList<String> = ArrayList()
-        val itemsAdapter = ItemsAdapter(requireContext(), list)
+        var list : ArrayList<String>? = ArrayList()
+        val itemsAdapter = ItemsAdapter(requireContext(), list!!)
         recv1.layoutManager = LinearLayoutManager(requireContext())
         recv1.adapter = itemsAdapter
         addItem.setOnClickListener {
             if(newItem.text.toString().trim().isEmpty())
                 newItem.error = "empty"
             else {
-                list.add(newItem.text.toString().trim())
+                list!!.add(newItem.text.toString().trim())
                 itemsAdapter.notifyDataSetChanged()
                 newItem.setText("")
             }
@@ -147,7 +147,9 @@ class ActiveListFragment : Fragment() {
                         type = Request.Type.ToDo
                     else
                         type = Request.Type.ToBuy
-                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type, null)
+                    if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
+                        list = null
+                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type, list)
                     Firebase.database.getReference("requests").child(request.id.toString()).setValue(request)
                     val group : Group? = getGroupById(requireContext(), groupId!!)
                     for(userId in group!!.users!!){
