@@ -88,8 +88,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                 popupMenus.menu.findItem(R.id.complete).isVisible = false
             }
             popupMenus.setOnMenuItemClickListener {
+
                 when(it.itemId){
                     R.id.editText->{
+
                         val view = LayoutInflater.from(c).inflate(R.layout.add_request,null)
                         val title = view.findViewById<TextView>(R.id.Title)
                         val name = view.findViewById<EditText>(R.id.nameRequest)
@@ -102,17 +104,22 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         val addItem = view.findViewById<ImageView>(R.id.addItem)
                         val recv1: RecyclerView = view.findViewById(R.id.mRecycler)
 
+                        var list : ArrayList<String>?
+                        if(position.list != null)
+                            list = ArrayList(position.list)
+                        else
+                            list = null
                         title.text = "Edit Request"
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
-                        var itemsAdapter = ItemsAdapter(c, ArrayList(), false, null)
-                        if(position.list != null) {
+                        var itemsAdapter1 = ItemsAdapter(c, ArrayList(), false, null)
+                        if(list != null) {
                             isList.isChecked = true
                             layoutList.visibility = View.VISIBLE
                             recv1.visibility = View.VISIBLE
-                            itemsAdapter = ItemsAdapter(c, position.list!!, false, null)
+                            itemsAdapter1 = ItemsAdapter(c, list, false, null)
                             recv1.layoutManager = LinearLayoutManager(c)
-                            recv1.adapter = itemsAdapter
+                            recv1.adapter = itemsAdapter1
                         }
                         isList.setOnClickListener {
                             if(isList.isChecked){
@@ -128,17 +135,17 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         addItem.setOnClickListener {
                             if(newItem.text.toString().trim().isEmpty())
                                 newItem.error = "empty"
-                            else if(position.list == null){
-                                position.list = ArrayList()
-                                position.list!!.add(newItem.text.toString().trim())
-                                itemsAdapter = ItemsAdapter(c, position.list!!, false, null)
+                            else if(list == null){
+                                list = ArrayList()
+                                list!!.add(newItem.text.toString().trim())
+                                itemsAdapter1 = ItemsAdapter(c, list!!, false, null)
                                 recv1.layoutManager = LinearLayoutManager(c)
-                                recv1.adapter = itemsAdapter
+                                recv1.adapter = itemsAdapter1
                                 newItem.setText("")
                             }
                             else {
-                                position.list!!.add(newItem.text.toString().trim())
-                                itemsAdapter.notifyDataSetChanged()
+                                list!!.add(newItem.text.toString().trim())
+                                itemsAdapter1.notifyDataSetChanged()
                                 newItem.setText("")
                             }
                         }
@@ -150,12 +157,13 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             .setView(view)
                             .setPositiveButton("Ok"){
                                     dialog,_->
-                                if(!isList.isChecked || (isList.isChecked && position.list!!.isEmpty()))
-                                    position.list = null
+
                                 if(name.text.toString().trim().isEmpty()){
                                     Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
                                 }
                                 else {
+                                    if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
+                                        list = null
                                     position.nameRequest = name.text.toString()
                                     position.comment = comment.text.toString()
                                     if(toDo.isChecked)
@@ -163,6 +171,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                     else
                                         position.type = Request.Type.ToBuy
 
+                                    position.list = list
                                     Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
                                     val intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
@@ -178,6 +187,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             }
                             .create()
                             .show()
+
                         true
                     }
                     R.id.delete->{
@@ -254,6 +264,8 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     }
                     else-> true
                 }
+
+
             }
             popupMenus.show()
             val popup = PopupMenu::class.java.getDeclaredField("mPopup")
