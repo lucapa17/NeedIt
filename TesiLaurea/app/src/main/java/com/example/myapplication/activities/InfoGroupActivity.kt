@@ -181,6 +181,7 @@ class InfoGroupActivity: AppCompatActivity() {
                                 Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
                             }
                         }
+                        Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
                         user.groups!!.remove(groupId)
                         Firebase.database.getReference("users").child(user.id).setValue(user)
                         group!!.users!!.remove(user.id)
@@ -191,7 +192,6 @@ class InfoGroupActivity: AppCompatActivity() {
                         else{
                             Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
                         }
-                        Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
                         val intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
                         this@InfoGroupActivity.startActivity(intent)
                     }

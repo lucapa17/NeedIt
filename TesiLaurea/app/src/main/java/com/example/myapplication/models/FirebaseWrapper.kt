@@ -8,6 +8,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.core.net.toFile
 import com.example.myapplication.activities.LoginActivity
 import com.example.myapplication.activities.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
