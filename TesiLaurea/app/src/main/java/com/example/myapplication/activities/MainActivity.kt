@@ -1,8 +1,11 @@
 package com.example.myapplication.activities
 
 import android.app.ProgressDialog
+import android.content.ContentValues.TAG
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,8 +23,13 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         deleteCache()
+        val dir = File(this.cacheDir.absolutePath)
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                Log.d(TAG, "fff "+f.name.toString())
+            }
+        }
         recv = this.findViewById(R.id.mRecycler)
         groupsAdapter = GroupsAdapter(this, ArrayList())
         recv.layoutManager = LinearLayoutManager(this)

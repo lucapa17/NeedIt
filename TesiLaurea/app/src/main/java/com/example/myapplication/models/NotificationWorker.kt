@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -82,7 +83,20 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                     var uri : Uri? = null
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
-                            uri = FirebaseStorageWrapper().download(notification.groupId.toString(), context)
+                            val dir = File(context.cacheDir.absolutePath)
+                            var found = false
+                            if (dir.exists()) {
+                                for (f in dir.listFiles()) {
+                                    if(f.name.toString().contains("image_${notification.groupId}_")){
+                                        if(f.length() != 0L)
+                                            uri = Uri.fromFile(f)
+                                        found = true
+                                        break
+                                    }
+                                }
+                            }
+                            if(!found)
+                                uri = FirebaseStorageWrapper().download(notification.groupId.toString(), context)
                             var bitmap : Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.logo2nobackground)
                             if(uri != null){
                                 bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri)

@@ -577,6 +577,7 @@ class FirebaseStorageWrapper {
                         condition.signal()
                     }
                 }.addOnFailureListener {
+
                     lock.withLock {
                         condition.signal()
                     }
