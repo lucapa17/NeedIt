@@ -72,7 +72,7 @@ class FirebaseAuthWrapper(private val context: Context) {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {
-            FirebaseStorageWrapper().delete(uid!!)
+            FirebaseStorageWrapper().delete(uid!!, context)
             val groupList : MutableList<Group> = getGroups(context)
             for(group in groupList){
                 val requestList : MutableList<Request> = getRequestsList(context, group.groupId)
@@ -85,7 +85,7 @@ class FirebaseAuthWrapper(private val context: Context) {
                 group.users!!.remove(uid)
                 Log.d(TAG, "yyyy "+group.users)
                 if(group.users!!.isEmpty()){
-                    FirebaseStorageWrapper().delete(group.groupId.toString())
+                    FirebaseStorageWrapper().delete(group.groupId.toString(), context)
                     Firebase.database.getReference("groups").child(group.groupId.toString()).removeValue()
                 }
                 else{
@@ -589,7 +589,7 @@ class FirebaseStorageWrapper {
         return image
     }
 
-    fun delete(id: String) {
+    fun delete(id: String, context: Context) {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {

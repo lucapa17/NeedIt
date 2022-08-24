@@ -17,6 +17,7 @@ import com.example.myapplication.models.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -26,6 +27,8 @@ class InfoGroupActivity: AppCompatActivity() {
     private var image: Uri? = null
     var groupId : Long? = null
     var group : Group? = null
+    var uri : Uri? = null
+
 
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +42,6 @@ class InfoGroupActivity: AppCompatActivity() {
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = membersAdapter
 
-        var uri : Uri? = null
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
@@ -87,10 +89,15 @@ class InfoGroupActivity: AppCompatActivity() {
 
         val editPhoto : ImageView = findViewById(R.id.edit_group_photo)
         editPhoto.setOnClickListener {
-            val i = Intent()
-            i.type = "image/*"
-            i.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(i, 100)
+            if(uri != null) {
+                popupMenus(editPhoto)
+            }
+            else {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(intent, 100)
+            }
         }
 
         val modifyNameGroup : ImageView = findViewById(R.id.modify_nameGroup)
@@ -132,8 +139,8 @@ class InfoGroupActivity: AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 100 && resultCode == RESULT_OK){
-            image = data?.data!!
-            findViewById<ImageView>(R.id.group_image).setImageURI(image)
+            uri = data?.data!!
+            findViewById<ImageView>(R.id.group_image).setImageURI(uri)
             GlobalScope.launch{
                 //FirebaseStorageWrapper().delete(id)
                 val dir = File(this@InfoGroupActivity.cacheDir.absolutePath)
@@ -144,7 +151,7 @@ class InfoGroupActivity: AppCompatActivity() {
                         }
                     }
                 }
-                FirebaseStorageWrapper().upload(image!!, groupId.toString(), this@InfoGroupActivity)
+                FirebaseStorageWrapper().upload(uri!!, groupId.toString(), this@InfoGroupActivity)
             }
         }
     }
@@ -178,7 +185,7 @@ class InfoGroupActivity: AppCompatActivity() {
                         Firebase.database.getReference("users").child(user.id).setValue(user)
                         group!!.users!!.remove(user.id)
                         if(group!!.users!!.isEmpty()){
-                            FirebaseStorageWrapper().delete(group!!.groupId.toString())
+                            FirebaseStorageWrapper().delete(group!!.groupId.toString(), this@InfoGroupActivity)
                             Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
                         }
                         else{
@@ -206,5 +213,44 @@ class InfoGroupActivity: AppCompatActivity() {
             .putExtra("groupId", groupId)
             .putExtra("groupName", group!!.nameGroup)
         )
+    }
+    fun popupMenus(v:View) {
+        val popupMenus = PopupMenu(this,v)
+        popupMenus.inflate(R.menu.options_image)
+        popupMenus.setOnMenuItemClickListener {
+
+            when(it.itemId){
+                R.id.changeImage->{
+                    val intent = Intent()
+                    intent.type = "image/*"
+                    intent.action = Intent.ACTION_GET_CONTENT
+                    startActivityForResult(intent, 100)
+                    true
+                }
+                R.id.deleteImage->{
+                    findViewById<ImageView>(R.id.group_image).setImageResource(R.drawable.ic_baseline_groups_24)
+                    FirebaseStorage.getInstance().reference.child("images/${groupId}.jpg").delete()
+                    val dir = File(this.cacheDir.absolutePath)
+                    if (dir.exists()) {
+                        for (f in dir.listFiles()) {
+                            if(f.name.toString().contains("image_${groupId}_")){
+                                f.delete()
+                            }
+                        }
+                    }
+                    uri = null
+                    true
+                }
+                else-> true
+            }
+
+
+        }
+        popupMenus.show()
+        val popup = PopupMenu::class.java.getDeclaredField("mPopup")
+        popup.isAccessible = true
+        val menu = popup.get(popupMenus)
+        menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
+            .invoke(menu,true)
     }
 }

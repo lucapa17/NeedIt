@@ -14,6 +14,7 @@ import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -107,10 +108,15 @@ class NewGroupActivity : BaseActivity() {
 
         val editPhoto : ImageView = findViewById(R.id.edit_group_photo)
         editPhoto.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(intent, 100)
+            if(image != null) {
+                popupMenus(editPhoto)
+            }
+            else {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(intent, 100)
+            }
         }
         val button : Button = findViewById(R.id.buttonCreateGroup)
         button.setOnClickListener {
@@ -185,5 +191,35 @@ class NewGroupActivity : BaseActivity() {
     }
     override fun onBackPressed() {
         startActivity(Intent(this, MainActivity::class.java))
+    }
+    fun popupMenus(v:View) {
+        val popupMenus = PopupMenu(this,v)
+        popupMenus.inflate(R.menu.options_image)
+        popupMenus.setOnMenuItemClickListener {
+
+            when(it.itemId){
+                R.id.changeImage->{
+                    val intent = Intent()
+                    intent.type = "image/*"
+                    intent.action = Intent.ACTION_GET_CONTENT
+                    startActivityForResult(intent, 100)
+                    true
+                }
+                R.id.deleteImage->{
+                    findViewById<ImageView>(R.id.group_image).setImageResource(R.drawable.ic_baseline_groups_24)
+                    image = null
+                    true
+                }
+                else-> true
+            }
+
+
+        }
+        popupMenus.show()
+        val popup = PopupMenu::class.java.getDeclaredField("mPopup")
+        popup.isAccessible = true
+        val menu = popup.get(popupMenus)
+        menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
+            .invoke(menu,true)
     }
 }

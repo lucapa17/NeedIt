@@ -3,17 +3,23 @@ package com.example.myapplication.activities
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.adapter.ItemsAdapter
 import com.example.myapplication.models.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -96,10 +102,15 @@ class EditProfileActivity : AppCompatActivity() {
 
         val editPhoto : ImageView = findViewById(R.id.edit_photo)
         editPhoto.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(intent, 100)
+            if(image != null) {
+                popupMenus(editPhoto)
+            }
+            else {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(intent, 100)
+            }
         }
         val button : Button = findViewById(R.id.edit_button)
         button.setOnClickListener { v ->
@@ -326,5 +337,46 @@ class EditProfileActivity : AppCompatActivity() {
     }
     override fun onBackPressed() {
         startActivity(Intent(this, MainActivity::class.java))
+    }
+    fun popupMenus(v:View) {
+        val popupMenus = PopupMenu(this,v)
+        popupMenus.inflate(R.menu.options_image)
+        popupMenus.setOnMenuItemClickListener {
+
+            when(it.itemId){
+                R.id.changeImage->{
+                    val intent = Intent()
+                    intent.type = "image/*"
+                    intent.action = Intent.ACTION_GET_CONTENT
+                    startActivityForResult(intent, 100)
+                    true
+                }
+                R.id.deleteImage->{
+                    findViewById<ImageView>(R.id.profile_image).setImageResource(R.drawable.ic_baseline_person_grey)
+                    //FirebaseStorageWrapper().delete(id, this)
+                    FirebaseStorage.getInstance().reference.child("images/${id}.jpg").delete()
+                    val dir = File(this.cacheDir.absolutePath)
+                    if (dir.exists()) {
+                        for (f in dir.listFiles()) {
+                            if(f.name.toString().contains("image_${id}_")){
+                                f.delete()
+                            }
+                        }
+                    }
+                    image = null
+
+                    true
+                }
+                else-> true
+            }
+
+
+        }
+        popupMenus.show()
+        val popup = PopupMenu::class.java.getDeclaredField("mPopup")
+        popup.isAccessible = true
+        val menu = popup.get(popupMenus)
+        menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
+            .invoke(menu,true)
     }
 }
