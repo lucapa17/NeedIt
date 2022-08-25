@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.models.FirebaseAuthWrapper
+import java.io.File
 
 open class BaseActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -32,6 +33,12 @@ open class BaseActivity : AppCompatActivity() {
                 true
             }
             com.example.myapplication.R.id.nav_logout -> {
+                val dir = File(this.cacheDir.absolutePath)
+                if (dir.exists()) {
+                    for (f in dir.listFiles()) {
+                        f.delete()
+                    }
+                }
                 val firebaseWrapper  = FirebaseAuthWrapper(this)
                 firebaseWrapper.logOut()
                 true

@@ -1,10 +1,12 @@
 package com.example.myapplication.activities
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -136,12 +138,15 @@ class NewGroupActivity : BaseActivity() {
                                 }
                             }
                         }
-                        if (image != null)
-                            FirebaseStorageWrapper().upload(
-                                image!!,
-                                groupId.toString(),
-                                this@NewGroupActivity
-                            )
+                        if (image != null){
+                            Log.d(TAG, "rrrr0")
+                            FirebaseStorageWrapper().upload(image!!, groupId.toString(), this@NewGroupActivity)
+                        }
+                        else {
+                            val tmp = File.createTempFile("image_${groupId}_", null, this@NewGroupActivity.cacheDir)
+                            tmp.deleteOnExit()
+                        }
+                        Log.d(TAG, "rrrr")
                         val membersId: MutableList<String> = mutableListOf(myUser!!.id)
                         myUser!!.groups!!.add(groupId)
                         Firebase.database.getReference("users").child(myUser!!.id).setValue(myUser)

@@ -22,9 +22,8 @@ class MainActivity : BaseActivity() {
     private lateinit var groupsAdapter: GroupsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "qqq77 ")
-
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         deleteCache()
         val dir = File(this.cacheDir.absolutePath)

@@ -363,6 +363,8 @@ class EditProfileActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    val tmp = File.createTempFile("image_${id}_", null, this.cacheDir)
+                    tmp.deleteOnExit()
                     image = null
 
                     true

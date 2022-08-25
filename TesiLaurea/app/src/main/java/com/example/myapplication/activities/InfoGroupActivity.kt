@@ -211,7 +211,14 @@ class InfoGroupActivity: AppCompatActivity() {
 
 
                             withContext(Dispatchers.Main) {
-
+                                val dir = File(this@InfoGroupActivity.cacheDir.absolutePath)
+                                if (dir.exists()) {
+                                    for (f in dir.listFiles()) {
+                                        if (f.name.toString().contains("image_${groupId}_")) {
+                                            f.delete()
+                                        }
+                                    }
+                                }
                                 val intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
                                 this@InfoGroupActivity.startActivity(intent)
 
@@ -262,6 +269,10 @@ class InfoGroupActivity: AppCompatActivity() {
                             }
                         }
                     }
+
+                    val tmp = File.createTempFile("image_${groupId}_", null, this.cacheDir)
+                    tmp.deleteOnExit()
+
                     uri = null
                     true
                 }

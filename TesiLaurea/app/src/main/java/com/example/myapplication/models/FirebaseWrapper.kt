@@ -8,7 +8,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import androidx.core.net.toFile
 import com.example.myapplication.activities.LoginActivity
 import com.example.myapplication.activities.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +22,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -108,6 +108,12 @@ class FirebaseAuthWrapper(private val context: Context) {
         }
         lock.withLock {
             condition.await()
+        }
+        val dir = File(context.cacheDir.absolutePath)
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                f.delete()
+            }
         }
         val intent = Intent(context, LoginActivity::class.java)
         context.startActivity(intent)
@@ -484,6 +490,8 @@ class FirebaseDbWrapper(private val context: Context) {
     fun registerUser(user: User) {
         Firebase.database.getReference("users").child(uid!!).setValue(user).addOnCompleteListener {
             if (it.isSuccessful) {
+                val tmp = File.createTempFile("image_${uid}_", null, context.cacheDir)
+                tmp.deleteOnExit()
                 val intent = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
             } else
@@ -551,17 +559,33 @@ class FirebaseStorageWrapper {
         try {
             bmp = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
         } catch (e: IOException) {
+
             e.printStackTrace()
         }
+        Log.d(TAG, "rrrr1")
         val baos = ByteArrayOutputStream()
         bmp!!.compress(Bitmap.CompressFormat.JPEG, 15, baos)
         val fileInBytes: ByteArray = baos.toByteArray()
+        Log.d(TAG, "rrrr2")
+        val dir = File(context.cacheDir.absolutePath)
+        if (dir.exists()) {
+            for (f in dir.listFiles()) {
+                if(f.name.toString().contains("image_${id}_")){
+                    f.delete()
+                }
+            }
+        }
+        val tmp = File.createTempFile("image_${id}_", null, context.cacheDir)
+        tmp.deleteOnExit()
+        val out = FileOutputStream(tmp)
+        bmp.compress(Bitmap.CompressFormat.JPEG, 15, out)
         GlobalScope.launch {
             storage.child("images/${id}.jpg").putBytes(fileInBytes)
             lock.withLock {
                 condition.signal()
             }
         }
+
 
         lock.withLock {
             condition.await()
