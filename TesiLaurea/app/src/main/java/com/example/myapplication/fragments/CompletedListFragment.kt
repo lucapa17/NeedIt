@@ -77,10 +77,7 @@ class CompletedListFragment : Fragment() {
         }
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
-            val intent = Intent(requireContext(), GroupActivity::class.java)
-            intent.putExtra("groupId", groupId)
-            intent.putExtra("groupName", groupName)
-            requireContext().startActivity(intent)
+            requireActivity().recreate()
         }
         return view
     }

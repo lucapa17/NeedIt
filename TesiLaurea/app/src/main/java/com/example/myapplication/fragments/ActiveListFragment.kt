@@ -1,5 +1,6 @@
 package com.example.myapplication.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ContentValues
@@ -86,10 +87,14 @@ class ActiveListFragment : Fragment() {
 
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
+            requireActivity().recreate()
+            /*
             val intent = Intent(requireContext(), GroupActivity::class.java)
             intent.putExtra("groupId", groupId)
             intent.putExtra("groupName", groupName)
             requireContext().startActivity(intent)
+
+             */
         }
         return view
     }
@@ -171,6 +176,7 @@ class ActiveListFragment : Fragment() {
                     intent.putExtra("groupId", groupId)
                     intent.putExtra("groupName", groupName)
                     requireContext().startActivity(intent)
+
                 }
             }
         dialog.dismiss()

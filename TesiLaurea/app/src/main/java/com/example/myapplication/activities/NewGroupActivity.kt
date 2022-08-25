@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -20,7 +21,7 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import java.io.File
 
-class NewGroupActivity : BaseActivity() {
+class NewGroupActivity : AppCompatActivity() {
     private var image: Uri? = null
     private lateinit var recv: RecyclerView
     private lateinit var membersAdapter: NewMembersAdapter

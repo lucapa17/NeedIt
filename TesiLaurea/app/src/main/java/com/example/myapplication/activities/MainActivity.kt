@@ -11,9 +11,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.myapplication.R
 import com.example.myapplication.adapter.GroupsAdapter
 import com.example.myapplication.models.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -45,6 +52,7 @@ class MainActivity : BaseActivity() {
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val groupList : MutableList<Group> = getGroups(this@MainActivity)
+                groupList.reverse()
                 withContext(Dispatchers.Main) {
                     if(groupList.isEmpty()){
                         progressDialog.dismiss()
@@ -64,6 +72,7 @@ class MainActivity : BaseActivity() {
             val intent = Intent(v!!.context, NewGroupActivity::class.java)
             v.context.startActivity(intent)
         }
+
     }
     override fun onBackPressed() {
         finishAffinity()

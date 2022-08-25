@@ -18,8 +18,20 @@ open class BaseActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             com.example.myapplication.R.id.nav_home -> {
+                /*
                 val intent  = Intent(this, MainActivity::class.java)
                 this.startActivity(intent)
+
+                 */
+                /*
+                finish()
+                overridePendingTransition(0,0)
+                val intent  = getIntent()
+                this.startActivity(intent)
+                overridePendingTransition(0,0)
+
+                 */
+                this.recreate()
                 true
             }
             com.example.myapplication.R.id.nav_profile -> {
