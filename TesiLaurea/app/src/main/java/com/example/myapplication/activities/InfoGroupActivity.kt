@@ -3,16 +3,21 @@ package com.example.myapplication.activities
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.adapter.MembersAdapter
+import com.example.myapplication.adapter.ViewPagerAdapter
+import com.example.myapplication.fragments.ActiveListFragment
+import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -173,27 +178,46 @@ class InfoGroupActivity: AppCompatActivity() {
                 builder.setMessage("Do you want to leave this group?")
                 builder.setPositiveButton("Yes"){
                         dialog,_->
-                    GlobalScope.launch {
-                        val user : User = getUser(this@InfoGroupActivity)
-                        val requestList : MutableList<Request> = getRequestsList(this@InfoGroupActivity, group!!.groupId)
-                        for(request in requestList){
-                            if(request.user.id == user.id){
-                                Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
+                    CoroutineScope(Dispatchers.Main + Job()).launch {
+                        withContext(Dispatchers.IO) {
+                            val user : User = getUser(this@InfoGroupActivity)
+                            val requestList : MutableList<Request> = getRequestsList(this@InfoGroupActivity, group!!.groupId)
+                            for(request in requestList){
+                                if(request.user.id == user.id){
+                                    Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
+                                }
+                            }
+                            user.groups!!.remove(groupId)
+                            Firebase.database.getReference("users").child(user.id).setValue(user)
+                            Log.d(ContentValues.TAG, "qqq1 ")
+
+                            group!!.users!!.remove(user.id)
+                            if(group!!.users!!.isEmpty()){
+                                FirebaseStorageWrapper().delete(group!!.groupId.toString(), this@InfoGroupActivity)
+                                Log.d(ContentValues.TAG, "qqq2 ")
+                                Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
+                                Log.d(ContentValues.TAG, "qqq5 ")
+                                Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
+                                Log.d(ContentValues.TAG, "qqq3 ")
+
+                            }
+                            else{
+                                Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
+                                Log.d(ContentValues.TAG, "qqq4 ")
+                                Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
+                                Log.d(ContentValues.TAG, "qqq5 ")
+                            }
+
+
+
+                            withContext(Dispatchers.Main) {
+
+                                val intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
+                                this@InfoGroupActivity.startActivity(intent)
+
+
                             }
                         }
-                        Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
-                        user.groups!!.remove(groupId)
-                        Firebase.database.getReference("users").child(user.id).setValue(user)
-                        group!!.users!!.remove(user.id)
-                        if(group!!.users!!.isEmpty()){
-                            FirebaseStorageWrapper().delete(group!!.groupId.toString(), this@InfoGroupActivity)
-                            Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
-                        }
-                        else{
-                            Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
-                        }
-                        val intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
-                        this@InfoGroupActivity.startActivity(intent)
                     }
 
                 }

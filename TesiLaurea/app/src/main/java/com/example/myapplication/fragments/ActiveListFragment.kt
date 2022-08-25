@@ -2,10 +2,12 @@ package com.example.myapplication.fragments
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -157,7 +159,9 @@ class ActiveListFragment : Fragment() {
                             val notificationId : Long = getNotificationId(requireContext(), userId)
                             val notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, request.date, request.groupId, Notification.Type.NewRequest)
                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
-                            var unreadMessages = getUnread(requireContext(), groupId!!, userId)
+                            Log.d(ContentValues.TAG, "qqq69 ")
+                            var unreadMessages = getUnread(requireContext(), groupId!!, userId)!!
+                            Log.d(ContentValues.TAG, "qqq70 ")
                             unreadMessages++
                             Firebase.database.getReference("unread").child(userId).child(groupId.toString()).setValue(unreadMessages)
 

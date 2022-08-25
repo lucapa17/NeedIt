@@ -259,6 +259,14 @@ fun getGroups (context: Context) : MutableList<Group> {
     val condition = lock.newCondition()
     val list : MutableList<Group> = mutableListOf()
     GlobalScope.launch {
+        val myUser = getUser(context)
+        for(groupId in myUser.groups!!){
+            list.add(getGroupById(context, groupId)!!)
+        }
+        lock.withLock {
+            condition.signal()
+        }
+        /*
         val uid = FirebaseAuthWrapper(context).getUid()
         FirebaseDbWrapper(context).readDbGroup(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
@@ -275,6 +283,8 @@ fun getGroups (context: Context) : MutableList<Group> {
             override fun onCancelledCallback(error: DatabaseError) {
             }
         })
+
+         */
     }
     lock.withLock {
         condition.await()
@@ -338,20 +348,23 @@ fun getNotificationList (context: Context, userId : String) : MutableList<Notifi
     return list
 }
 
-fun getUnread(context: Context, groupId: Long, userId : String) : Int {
+fun getUnread(context: Context, groupId: Long, userId : String) : Int? {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var i = 0
+    var i : Int? = 0
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbUnread(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
             override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                i = snapshot.child(userId).child(groupId.toString()).getValue(Int::class.java)!!
+                i = snapshot.child(userId).child(groupId.toString()).getValue(Int::class.java)
                 lock.withLock {
                     condition.signal()
                 }
             }
             override fun onCancelledCallback(error: DatabaseError) {
+                lock.withLock {
+                    condition.signal()
+                }
             }
         })
     }

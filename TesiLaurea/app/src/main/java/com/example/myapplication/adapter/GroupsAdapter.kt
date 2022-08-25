@@ -1,9 +1,11 @@
 package com.example.myapplication.adapter
 
 import android.app.ProgressDialog
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,7 +69,7 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
                 if(!found) {
                     uri = FirebaseStorageWrapper().download(newList.groupId.toString(), c)
                 }
-                unreadMessages = getUnread(c, newList.groupId, FirebaseAuthWrapper(c).getUid()!!)
+                unreadMessages = getUnread(c, newList.groupId, FirebaseAuthWrapper(c).getUid()!!)!!
                 withContext(Dispatchers.Main) {
                     if(unreadMessages != 0){
                         holder.unread.text = unreadMessages.toString()

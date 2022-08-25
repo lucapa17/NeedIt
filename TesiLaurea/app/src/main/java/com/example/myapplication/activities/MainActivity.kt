@@ -1,6 +1,7 @@
 package com.example.myapplication.activities
 
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
@@ -21,6 +22,8 @@ class MainActivity : BaseActivity() {
     private lateinit var groupsAdapter: GroupsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "qqq77 ")
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         deleteCache()
