@@ -109,4 +109,15 @@ class GroupActivity : AppCompatActivity() {
     override fun onBackPressed() {
         startActivity(Intent(this, MainActivity::class.java))
     }
+
+    override fun onRestart() {
+        super.onRestart()
+        val intent  = Intent(this, GroupActivity::class.java)
+        intent.putExtra("groupId", groupId)
+        intent.putExtra("groupName", groupName)
+        this.startActivity(intent)
+
+    }
+
+
 }

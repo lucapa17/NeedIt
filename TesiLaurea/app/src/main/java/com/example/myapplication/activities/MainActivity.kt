@@ -1,18 +1,14 @@
 package com.example.myapplication.activities
 
 import android.app.ProgressDialog
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.myapplication.R
 import com.example.myapplication.adapter.GroupsAdapter
 import com.example.myapplication.models.*
@@ -22,11 +18,16 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+
 import java.io.File
+
 
 class MainActivity : BaseActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var groupsAdapter: GroupsAdapter
+    private val uid = FirebaseAuthWrapper(this@MainActivity).getUid()
+    private lateinit var valueEventListener : ValueEventListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +74,77 @@ class MainActivity : BaseActivity() {
             v.context.startActivity(intent)
         }
 
+        GlobalScope.launch {
+            val listUnread = getUnreadList(this@MainActivity, uid!!)
+            Log.d(TAG, "rrrr0size "+listUnread.size)
+
+
+
+            valueEventListener = Firebase.database.getReference("unread").child(uid).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = ArrayList<Int>()
+                    for(child in snapshot.children){
+                        list.add(child.getValue(Int::class.java)!!)
+                    }
+                    if(!listUnread.equals(list)){
+                        finish()
+                        val intent  = Intent(this@MainActivity, MainActivity::class.java)
+                        this@MainActivity.startActivity(intent)
+                    }
+
+
+
+
+                /*
+                    val listUnread1 = getUnreadList(this@MainActivity, uid)
+                    for(i in listUnread1){
+                        Log.d(TAG, "rrrr1 "+i.toString())
+                    }
+                    if(listUnread1.equals(listUnread))
+                        Log.d(TAG, "rrrr2 uguali")
+                    else
+                        Log.d(TAG, "rrrr2 diversi")
+
+                     */
+
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d(TAG, "rrrr1")
+                }
+
+            })
+        }
+
+
+
+
+
+
+
     }
     override fun onBackPressed() {
         finishAffinity()
     }
+
+
+    override fun onRestart() {
+        super.onRestart()
+        val intent  = Intent(this, MainActivity::class.java)
+        this.startActivity(intent)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Firebase.database.getReference("unread").child(uid!!).removeEventListener(valueEventListener) //ref will be your node where you are setting Event Listener.
+    }
+
+
+
+
+
     private fun deleteCache(){
         val dir = File(this.cacheDir.absolutePath)
         for (f in dir.listFiles()) {

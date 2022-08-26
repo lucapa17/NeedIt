@@ -3,10 +3,12 @@ package com.example.myapplication.adapter
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ClipData
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,6 +75,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
+
         }
 
         private fun popupMenus(v:View) {
@@ -290,10 +293,12 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         val newList = requestList[position]
         if(active && position == requestList.size-1){
             //used to have some space left in order to not cover the add botton
+            Log.d(TAG, "pppp ")
             holder.price.visibility = View.GONE
             holder.commentRequest.visibility = View.GONE
             holder.completedBy.visibility = View.GONE
             holder.card.visibility = View.INVISIBLE
+
         } else {
             var mine = true
             if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())

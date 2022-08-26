@@ -380,6 +380,37 @@ fun getUnread(context: Context, groupId: Long, userId : String) : Int? {
     return i
 }
 
+fun getUnreadList(context: Context, userId : String) : ArrayList<Int> {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var list = ArrayList<Int>()
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbUnread(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                for(child in snapshot.child(userId).children){
+                    list.add(child.getValue(Int::class.java)!!)
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+            override fun onCancelledCallback(error: DatabaseError) {
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    Log.d(TAG, "rrrr2size "+list.size)
+
+    return list
+}
+
+
 fun getGroupById (context: Context, groupId : Long) : Group? {
     val lock = ReentrantLock()
     val condition = lock.newCondition()

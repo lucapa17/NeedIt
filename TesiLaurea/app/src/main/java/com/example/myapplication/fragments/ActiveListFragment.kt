@@ -6,6 +6,7 @@ import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.os.Bundle
 import android.text.Layout
 import android.util.Log
@@ -87,7 +88,15 @@ class ActiveListFragment : Fragment() {
 
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
-            requireActivity().recreate()
+            //requireActivity().recreate()
+            requireActivity().finish()
+            requireActivity().overridePendingTransition(0,0)
+            val intent  = Intent(requireContext(), GroupActivity::class.java)
+            intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
+            this.startActivity(intent)
+            requireActivity().overridePendingTransition(0,0)
+
             /*
             val intent = Intent(requireContext(), GroupActivity::class.java)
             intent.putExtra("groupId", groupId)

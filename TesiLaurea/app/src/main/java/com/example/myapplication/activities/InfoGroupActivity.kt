@@ -189,24 +189,17 @@ class InfoGroupActivity: AppCompatActivity() {
                             }
                             user.groups!!.remove(groupId)
                             Firebase.database.getReference("users").child(user.id).setValue(user)
-                            Log.d(ContentValues.TAG, "qqq1 ")
 
                             group!!.users!!.remove(user.id)
                             if(group!!.users!!.isEmpty()){
                                 FirebaseStorageWrapper().delete(group!!.groupId.toString(), this@InfoGroupActivity)
-                                Log.d(ContentValues.TAG, "qqq2 ")
-                                Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
-                                Log.d(ContentValues.TAG, "qqq5 ")
                                 Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
-                                Log.d(ContentValues.TAG, "qqq3 ")
 
                             }
                             else{
                                 Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
-                                Log.d(ContentValues.TAG, "qqq4 ")
-                                Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
-                                Log.d(ContentValues.TAG, "qqq5 ")
                             }
+                            Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
 
 
 
