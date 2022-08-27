@@ -165,6 +165,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                     Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
                                 }
                                 else {
+                                    val progressDialog = ProgressDialog(c)
+                                    progressDialog.setMessage("Wait...")
+                                    progressDialog.setCancelable(false)
+                                    progressDialog.show()
                                     if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
                                         list = null
                                     position.nameRequest = name.text.toString()
@@ -176,6 +180,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
                                     position.list = list
                                     Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
+
                                     val intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
                                     //Log.d(ContentValues.TAG,"www: "+groupName)
@@ -201,6 +206,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             .setMessage("Are you sure delete this Request?")
                             .setPositiveButton("Yes"){
                                     dialog,_->
+                                val progressDialog = ProgressDialog(c)
+                                progressDialog.setMessage("Wait...")
+                                progressDialog.setCancelable(false)
+                                progressDialog.show()
                                 Firebase.database.getReference("requests").child(position.id.toString()).removeValue()
                                 val intent = Intent(c, GroupActivity::class.java)
                                 intent.putExtra("groupId", position.groupId)
@@ -232,6 +241,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         builder.setMessage("Do you want to complete this request?")
                         builder.setPositiveButton("Yes"){
                                 dialog,_->
+                            val progressDialog = ProgressDialog(c)
+                            progressDialog.setMessage("Wait...")
+                            progressDialog.setCancelable(false)
+                            progressDialog.show()
                             position.isCompleted = true
                             if(!toDo){
                                 val priceValue : String = input!!.text.toString()

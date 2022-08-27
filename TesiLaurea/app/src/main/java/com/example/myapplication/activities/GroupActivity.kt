@@ -150,11 +150,6 @@ class GroupActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            com.example.myapplication.R.id.nav_home -> {
-                val intent  = Intent(this, MainActivity::class.java)
-                this.startActivity(intent)
-                true
-            }
             com.example.myapplication.R.id.nav_add_member -> {
                 val intent  = Intent(this, AddMemberActivity::class.java)
                 intent.putExtra("groupId", groupId)
