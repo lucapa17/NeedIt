@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.getIntent
@@ -15,16 +16,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
+import com.example.myapplication.activities.MainActivity
 import com.example.myapplication.adapter.ItemsAdapter
 import com.example.myapplication.adapter.ListAdapter
 import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.models.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
@@ -210,4 +216,5 @@ class ActiveListFragment : Fragment() {
                 }
             }
     }
+
 }

@@ -1,9 +1,11 @@
 package com.example.myapplication.activities
 
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -14,6 +16,9 @@ import com.example.myapplication.databinding.ActivityGroupBinding
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
@@ -23,6 +28,7 @@ class GroupActivity : AppCompatActivity() {
     private var binding : ActivityGroupBinding? = null
     private var groupId : Long? = null
     private var groupName : String? = null
+    private var valueEventListener : ValueEventListener? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupBinding.inflate(layoutInflater)
@@ -35,7 +41,6 @@ class GroupActivity : AppCompatActivity() {
         Firebase.database.getReference("unread").child(FirebaseAuthWrapper(this).getUid()!!).child(groupId.toString()).setValue(0)
         val fragmentArrayList = ArrayList<Fragment>()
         val progressDialog = ProgressDialog(this)
-
         progressDialog.setMessage("Wait...")
         progressDialog.setCancelable(false)
         progressDialog.show()
@@ -71,8 +76,70 @@ class GroupActivity : AppCompatActivity() {
                     binding!!.viewPager.adapter = adapter
                     binding!!.tabs.setupWithViewPager(binding!!.viewPager)
                     progressDialog.dismiss()
+
+
                 }
             }
+        }
+        var requests: ArrayList<Request>
+        GlobalScope.launch {
+            val requestList : MutableList<Request> = getRequestsList(this@GroupActivity, groupId!!)
+            requests = ArrayList(requestList)
+            valueEventListener = Firebase.database.getReference("requests").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list : ArrayList<Request> = ArrayList()
+                    for(child in snapshot.children){
+                        val request = child.getValue(Request::class.java)
+                        if(request!!.groupId == groupId)
+                            list.add(request)
+                    }
+                    var same = true
+                    if(list.size != requests.size){
+                        same = false
+                    }
+                    else {
+                        for(i in list.indices){
+                            if(list.get(i).equals(requests.get(i))){
+                                same = false
+                                break
+                            }
+                        }
+                    }
+                    if(!same){
+                        //requireActivity().finish()
+                        //requireActivity().overridePendingTransition(0,0)
+                        Log.d(ContentValues.TAG, "nnn5 close")
+                        finish()
+                        val intent  = Intent(this@GroupActivity, GroupActivity::class.java)
+                        intent.putExtra("groupId", groupId)
+                        intent.putExtra("groupName", groupName)
+                        this@GroupActivity.startActivity(intent)
+                        //requireActivity().overridePendingTransition(0,0)
+                    }
+
+
+
+
+                    /*
+                        val listUnread1 = getUnreadList(this@MainActivity, uid)
+                        for(i in listUnread1){
+                            Log.d(TAG, "rrrr1 "+i.toString())
+                        }
+                        if(listUnread1.equals(listUnread))
+                            Log.d(TAG, "rrrr2 uguali")
+                        else
+                            Log.d(TAG, "rrrr2 diversi")
+
+                         */
+
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d(ContentValues.TAG, "rrrr1")
+                }
+
+            })
         }
 
     }
@@ -117,6 +184,11 @@ class GroupActivity : AppCompatActivity() {
         intent.putExtra("groupName", groupName)
         this.startActivity(intent)
 
+    }
+    override fun onPause() {
+        super.onPause()
+        if(valueEventListener != null)
+            Firebase.database.getReference("requests").removeEventListener(valueEventListener!!) //ref will be your node where you are setting Event Listener.
     }
 
 

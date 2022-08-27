@@ -26,7 +26,7 @@ class MainActivity : BaseActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var groupsAdapter: GroupsAdapter
     private val uid = FirebaseAuthWrapper(this@MainActivity).getUid()
-    private lateinit var valueEventListener : ValueEventListener
+    private var valueEventListener : ValueEventListener? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,7 +138,8 @@ class MainActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        Firebase.database.getReference("unread").child(uid!!).removeEventListener(valueEventListener) //ref will be your node where you are setting Event Listener.
+        if(valueEventListener != null)
+            Firebase.database.getReference("unread").child(uid!!).removeEventListener(valueEventListener!!) //ref will be your node where you are setting Event Listener.
     }
 
 
