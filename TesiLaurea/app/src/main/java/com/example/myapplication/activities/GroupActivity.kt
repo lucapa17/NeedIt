@@ -108,7 +108,6 @@ class GroupActivity : AppCompatActivity() {
                     if(!same){
                         //requireActivity().finish()
                         //requireActivity().overridePendingTransition(0,0)
-                        Log.d(ContentValues.TAG, "nnn5 close")
                         finish()
                         val intent  = Intent(this@GroupActivity, GroupActivity::class.java)
                         intent.putExtra("groupId", groupId)

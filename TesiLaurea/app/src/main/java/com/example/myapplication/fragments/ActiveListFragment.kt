@@ -160,6 +160,10 @@ class ActiveListFragment : Fragment() {
                 Toast.makeText(requireContext(),"Empty Request",Toast.LENGTH_SHORT).show()
             }
             else {
+                val progressDialog = ProgressDialog(requireContext())
+                progressDialog.setMessage("Wait...")
+                progressDialog.setCancelable(false)
+                progressDialog.show()
                 var request: Request
                 GlobalScope.launch {
                     val requestId : Long = getRequestId(requireContext())
@@ -174,24 +178,24 @@ class ActiveListFragment : Fragment() {
                         list = null
                     request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type, list)
                     Firebase.database.getReference("requests").child(request.id.toString()).setValue(request)
+                    val intent = Intent(requireContext(), GroupActivity::class.java)
+                    intent.putExtra("groupId", groupId)
+                    intent.putExtra("groupName", groupName)
+                    requireContext().startActivity(intent)
                     val group : Group? = getGroupById(requireContext(), groupId!!)
                     for(userId in group!!.users!!){
                         if(userId != uid){
                             val notificationId : Long = getNotificationId(requireContext(), userId)
                             val notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, request.date, request.groupId, Notification.Type.NewRequest)
                             Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
-                            Log.d(ContentValues.TAG, "qqq69 ")
                             var unreadMessages = getUnread(requireContext(), groupId!!, userId)!!
-                            Log.d(ContentValues.TAG, "qqq70 ")
                             unreadMessages++
                             Firebase.database.getReference("unread").child(userId).child(groupId.toString()).setValue(unreadMessages)
 
                         }
                     }
-                    val intent = Intent(requireContext(), GroupActivity::class.java)
-                    intent.putExtra("groupId", groupId)
-                    intent.putExtra("groupName", groupName)
-                    requireContext().startActivity(intent)
+
+
 
                 }
             }

@@ -286,10 +286,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        val progressDialog = ProgressDialog(c)
-        progressDialog.setMessage("Wait...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
         val newList = requestList[position]
         /*
         if(active && position == requestList.size-1){
@@ -361,9 +357,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                 break
             }
         }
-
-        progressDialog.dismiss()
-
 
     }
     override fun getItemCount(): Int {
