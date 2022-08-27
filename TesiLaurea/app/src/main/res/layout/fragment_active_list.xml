@@ -7,28 +7,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragments.ActiveListFragment"
+
     >
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swiperefresh"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/mRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:paddingBottom="72dp"
+        android:clipToPadding="false"
+        />
 
 
-        </LinearLayout>
-
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addingBtn"
@@ -41,6 +31,7 @@
         android:layout_marginBottom="15dp"
         android:backgroundTint="#1D7854"
         android:src="@drawable/ic_baseline_add_24"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        android:contentDescription="button Add Request" />
 
 </RelativeLayout>

@@ -291,6 +291,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         progressDialog.setCancelable(false)
         progressDialog.show()
         val newList = requestList[position]
+        /*
         if(active && position == requestList.size-1){
             //used to have some space left in order to not cover the add botton
             Log.d(TAG, "pppp ")
@@ -299,66 +300,68 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             holder.completedBy.visibility = View.GONE
             holder.card.visibility = View.INVISIBLE
 
-        } else {
-            var mine = true
-            if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())
-                holder.optionsMenu.visibility = View.INVISIBLE
-            if(newList.user.id != FirebaseAuthWrapper(c).getUid()){
-                holder.card.setCardBackgroundColor(Color.WHITE)
-                mine = false
-            }
-            if(newList.price!!.isEmpty())
-                holder.price.visibility = View.GONE
-            else
-                holder.price.text = "Bought for: ${newList.price} €"
-            if(newList.comment!!.isEmpty())
-                holder.commentRequest.visibility = View.GONE
-            else
-                holder.commentRequest.text = "Comment: ${newList.comment}"
-            holder.nameRequest.text = newList.nameRequest
-            if(!newList.isCompleted)
-                holder.completedBy.visibility = View.GONE
-            val sdf = SimpleDateFormat("dd/MM/yy")
-            val day = sdf.format(newList.date)
-            val sdf2 = SimpleDateFormat("HH:mm")
-            val time = sdf2.format(newList.date)
-            holder.date.text = day
-            holder.time.text = time
-            holder.userName.text = newList.user.nickname
+        }
+        */
 
-            if(newList.isCompleted) {
-                holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
-            }
-            if(newList.list != null){
-                var isOpen = false
-                val itemsAdapter = ItemsAdapter(c, newList.list!!, true, mine)
-                holder.recv.layoutManager = LinearLayoutManager(c)
-                holder.recv.adapter = itemsAdapter
-                holder.readListLayout.visibility = View.VISIBLE
-                holder.readListLayout.setOnClickListener {
-                    if(!isOpen){
-                        holder.recv.visibility = View.VISIBLE
-                        holder.open.visibility = View.GONE
-                        holder.close.visibility = View.VISIBLE
-                        holder.readList.setText(R.string.closeList)
-                    }
-                    else {
-                        holder.recv.visibility = View.GONE
-                        holder.readList.setText(R.string.readList)
-                        holder.open.visibility = View.VISIBLE
-                        holder.close.visibility = View.GONE
-                    }
-                    isOpen = !isOpen
-                }
+        var mine = true
+        if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())
+            holder.optionsMenu.visibility = View.INVISIBLE
+        if(newList.user.id != FirebaseAuthWrapper(c).getUid()){
+            holder.card.setCardBackgroundColor(Color.WHITE)
+            mine = false
+        }
+        if(newList.price!!.isEmpty())
+            holder.price.visibility = View.GONE
+        else
+            holder.price.text = "Bought for: ${newList.price} €"
+        if(newList.comment!!.isEmpty())
+            holder.commentRequest.visibility = View.GONE
+        else
+            holder.commentRequest.text = "Comment: ${newList.comment}"
+        holder.nameRequest.text = newList.nameRequest
+        if(!newList.isCompleted)
+            holder.completedBy.visibility = View.GONE
+        val sdf = SimpleDateFormat("dd/MM/yy")
+        val day = sdf.format(newList.date)
+        val sdf2 = SimpleDateFormat("HH:mm")
+        val time = sdf2.format(newList.date)
+        holder.date.text = day
+        holder.time.text = time
+        holder.userName.text = newList.user.nickname
 
-            }
-            for(photo in photoList){
-                if(photo.contains("${newList.user.id}_")){
-                    holder.photo.setImageURI(photo.toUri())
-                    break
+        if(newList.isCompleted) {
+            holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
+        }
+        if(newList.list != null){
+            var isOpen = false
+            val itemsAdapter = ItemsAdapter(c, newList.list!!, true, mine)
+            holder.recv.layoutManager = LinearLayoutManager(c)
+            holder.recv.adapter = itemsAdapter
+            holder.readListLayout.visibility = View.VISIBLE
+            holder.readListLayout.setOnClickListener {
+                if(!isOpen){
+                    holder.recv.visibility = View.VISIBLE
+                    holder.open.visibility = View.GONE
+                    holder.close.visibility = View.VISIBLE
+                    holder.readList.setText(R.string.closeList)
                 }
+                else {
+                    holder.recv.visibility = View.GONE
+                    holder.readList.setText(R.string.readList)
+                    holder.open.visibility = View.VISIBLE
+                    holder.close.visibility = View.GONE
+                }
+                isOpen = !isOpen
+            }
+
+        }
+        for(photo in photoList){
+            if(photo.contains("${newList.user.id}_")){
+                holder.photo.setImageURI(photo.toUri())
+                break
             }
         }
+
         progressDialog.dismiss()
 
 

@@ -81,7 +81,6 @@ class ActiveListFragment : Fragment() {
                         groupActiveList.add(request)
                     }
                 }
-                groupActiveList.add(Request())
                 withContext(Dispatchers.Main) {
                     listAdapter = ListAdapter(requireContext(), groupActiveList, photoList!!, groupName!!, true)
                     recv.layoutManager = LinearLayoutManager(requireContext())
@@ -91,7 +90,7 @@ class ActiveListFragment : Fragment() {
                 }
             }
         }
-
+        /*
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
             //requireActivity().recreate()
@@ -111,6 +110,8 @@ class ActiveListFragment : Fragment() {
 
              */
         }
+
+         */
         return view
     }
     private fun addInfo() {
