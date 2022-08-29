@@ -1,5 +1,6 @@
 package com.example.myapplication.adapter
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -28,6 +29,7 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
             unread = v.findViewById(R.id.unread)
             v.setOnClickListener { v ->
                 val position = groupList[adapterPosition]
+                (c as Activity).finish()
                 val intent = Intent(v!!.context, GroupActivity::class.java)
                 intent.putExtra("groupId", position.groupId)
                 intent.putExtra("groupName", position.nameGroup)

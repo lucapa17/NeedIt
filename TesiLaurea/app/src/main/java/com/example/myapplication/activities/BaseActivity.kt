@@ -18,7 +18,7 @@ open class BaseActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             com.example.myapplication.R.id.nav_home -> {
-
+                finish()
                 val intent  = Intent(this, MainActivity::class.java)
                 this.startActivity(intent)
 
@@ -44,11 +44,13 @@ open class BaseActivity : AppCompatActivity() {
                 true
             }
             com.example.myapplication.R.id.nav_profile -> {
+                finish()
                 val intent  = Intent(this, EditProfileActivity::class.java)
                 this.startActivity(intent)
                 true
             }
             com.example.myapplication.R.id.nav_new_group -> {
+                finish()
                 val intent  = Intent(this, NewGroupActivity::class.java)
                 this.startActivity(intent)
                 true
@@ -60,6 +62,7 @@ open class BaseActivity : AppCompatActivity() {
                         f.delete()
                     }
                 }
+                finish()
                 val firebaseWrapper  = FirebaseAuthWrapper(this)
                 firebaseWrapper.logOut()
                 true

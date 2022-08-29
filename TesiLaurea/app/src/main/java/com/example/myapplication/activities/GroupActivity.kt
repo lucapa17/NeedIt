@@ -28,7 +28,7 @@ class GroupActivity : AppCompatActivity() {
     private var binding : ActivityGroupBinding? = null
     private var groupId : Long? = null
     private var groupName : String? = null
-    private var valueEventListener : ValueEventListener? = null
+    //private var valueEventListener : ValueEventListener? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupBinding.inflate(layoutInflater)
@@ -81,6 +81,7 @@ class GroupActivity : AppCompatActivity() {
                 }
             }
         }
+        /*
         var requests: ArrayList<Request>
         GlobalScope.launch {
             val requestList : MutableList<Request> = getRequestsList(this@GroupActivity, groupId!!)
@@ -141,6 +142,8 @@ class GroupActivity : AppCompatActivity() {
             })
         }
 
+         */
+
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -177,13 +180,15 @@ class GroupActivity : AppCompatActivity() {
         intent.putExtra("groupId", groupId)
         intent.putExtra("groupName", groupName)
         this.startActivity(intent)
-
     }
+    /*
     override fun onPause() {
         super.onPause()
         if(valueEventListener != null)
             Firebase.database.getReference("requests").removeEventListener(valueEventListener!!) //ref will be your node where you are setting Event Listener.
     }
+
+     */
 
 
 }

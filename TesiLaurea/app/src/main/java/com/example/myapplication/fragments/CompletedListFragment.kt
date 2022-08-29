@@ -75,7 +75,6 @@ class CompletedListFragment : Fragment() {
                 }
             }
         }
-        /*
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
             requireActivity().finish()
@@ -87,7 +86,6 @@ class CompletedListFragment : Fragment() {
             requireActivity().overridePendingTransition(0,0)
         }
 
-         */
         return view
     }
 

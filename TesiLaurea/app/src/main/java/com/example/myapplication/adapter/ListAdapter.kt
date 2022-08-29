@@ -115,12 +115,12 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         title.text = "Edit Request"
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
-                        var itemsAdapter1 = ItemsAdapter(c, ArrayList(), false, null)
+                        var itemsAdapter1 = ItemsAdapter(c, ArrayList(), false)
                         if(list != null) {
                             isList.isChecked = true
                             layoutList.visibility = View.VISIBLE
                             recv1.visibility = View.VISIBLE
-                            itemsAdapter1 = ItemsAdapter(c, list, false, null)
+                            itemsAdapter1 = ItemsAdapter(c, list, false)
                             recv1.layoutManager = LinearLayoutManager(c)
                             recv1.adapter = itemsAdapter1
                         }
@@ -141,7 +141,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             else if(list == null){
                                 list = ArrayList()
                                 list!!.add(newItem.text.toString().trim())
-                                itemsAdapter1 = ItemsAdapter(c, list!!, false, null)
+                                itemsAdapter1 = ItemsAdapter(c, list!!, false)
                                 recv1.layoutManager = LinearLayoutManager(c)
                                 recv1.adapter = itemsAdapter1
                                 newItem.setText("")
@@ -206,10 +206,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             .setMessage("Are you sure delete this Request?")
                             .setPositiveButton("Yes"){
                                     dialog,_->
-                                val progressDialog = ProgressDialog(c)
-                                progressDialog.setMessage("Wait...")
-                                progressDialog.setCancelable(false)
-                                progressDialog.show()
                                 Firebase.database.getReference("requests").child(position.id.toString()).removeValue()
                                 val intent = Intent(c, GroupActivity::class.java)
                                 intent.putExtra("groupId", position.groupId)
@@ -241,10 +237,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         builder.setMessage("Do you want to complete this request?")
                         builder.setPositiveButton("Yes"){
                                 dialog,_->
-                            val progressDialog = ProgressDialog(c)
-                            progressDialog.setMessage("Wait...")
-                            progressDialog.setCancelable(false)
-                            progressDialog.show()
                             position.isCompleted = true
                             if(!toDo){
                                 val priceValue : String = input!!.text.toString()
@@ -300,25 +292,9 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val newList = requestList[position]
-        /*
-        if(active && position == requestList.size-1){
-            //used to have some space left in order to not cover the add botton
-            Log.d(TAG, "pppp ")
-            holder.price.visibility = View.GONE
-            holder.commentRequest.visibility = View.GONE
-            holder.completedBy.visibility = View.GONE
-            holder.card.visibility = View.INVISIBLE
 
-        }
-        */
-
-        var mine = true
         if(!active && newList.user.id != FirebaseAuthWrapper(c).getUid())
             holder.optionsMenu.visibility = View.INVISIBLE
-        if(newList.user.id != FirebaseAuthWrapper(c).getUid()){
-            holder.card.setCardBackgroundColor(Color.WHITE)
-            mine = false
-        }
         if(newList.price!!.isEmpty())
             holder.price.visibility = View.GONE
         else
@@ -343,7 +319,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         }
         if(newList.list != null){
             var isOpen = false
-            val itemsAdapter = ItemsAdapter(c, newList.list!!, true, mine)
+            val itemsAdapter = ItemsAdapter(c, newList.list!!, true)
             holder.recv.layoutManager = LinearLayoutManager(c)
             holder.recv.adapter = itemsAdapter
             holder.readListLayout.visibility = View.VISIBLE

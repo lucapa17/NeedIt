@@ -92,9 +92,6 @@ class MainActivity : BaseActivity() {
                         this@MainActivity.startActivity(intent)
                     }
 
-
-
-
                 /*
                     val listUnread1 = getUnreadList(this@MainActivity, uid)
                     for(i in listUnread1){

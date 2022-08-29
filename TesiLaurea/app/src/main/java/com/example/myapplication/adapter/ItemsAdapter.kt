@@ -11,7 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 
-class ItemsAdapter (val c: Context, val itemsList:ArrayList<String>, val isSent : Boolean, val isMine : Boolean?): RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
+class ItemsAdapter (val c: Context, val itemsList:ArrayList<String>, val isSent : Boolean): RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
     inner class ItemViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var card : CardView
         var item: TextView
@@ -22,8 +22,6 @@ class ItemsAdapter (val c: Context, val itemsList:ArrayList<String>, val isSent 
             card = v.findViewById(R.id.cardList)
             if(isSent){
                 remove.visibility = View.GONE
-                if(isMine!!)
-                    card.setCardBackgroundColor(Color.parseColor("#E0EFE0"))
             }
         }
     }

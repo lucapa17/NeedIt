@@ -90,7 +90,6 @@ class ActiveListFragment : Fragment() {
                 }
             }
         }
-        /*
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
             //requireActivity().recreate()
@@ -111,7 +110,6 @@ class ActiveListFragment : Fragment() {
              */
         }
 
-         */
         return view
     }
     private fun addInfo() {
@@ -139,7 +137,7 @@ class ActiveListFragment : Fragment() {
 
         }
         var list : ArrayList<String>? = ArrayList()
-        val itemsAdapter = ItemsAdapter(requireContext(), list!!, false, null)
+        val itemsAdapter = ItemsAdapter(requireContext(), list!!, false)
         recv1.layoutManager = LinearLayoutManager(requireContext())
         recv1.adapter = itemsAdapter
         addItem.setOnClickListener {
@@ -160,10 +158,6 @@ class ActiveListFragment : Fragment() {
                 Toast.makeText(requireContext(),"Empty Request",Toast.LENGTH_SHORT).show()
             }
             else {
-                val progressDialog = ProgressDialog(requireContext())
-                progressDialog.setMessage("Wait...")
-                progressDialog.setCancelable(false)
-                progressDialog.show()
                 var request: Request
                 GlobalScope.launch {
                     val requestId : Long = getRequestId(requireContext())
@@ -204,7 +198,6 @@ class ActiveListFragment : Fragment() {
         addDialog.setNegativeButton("Cancel"){
                 dialog,_->
             dialog.dismiss()
-            Toast.makeText(requireContext(),"Cancel",Toast.LENGTH_SHORT).show()
         }
         addDialog.create()
         addDialog.show()
