@@ -307,7 +307,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 val priceValue : String = input!!.text.toString()
                                 position.price = priceValue
                             }
-                            position.expiration = null
+                            position.expiration = Calendar.getInstance().time
                             GlobalScope.launch {
                                 val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
                                 position.completedBy = completedBy
@@ -318,7 +318,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 for(userId in group!!.users!!){
                                     if(userId != uid){
                                         val notificationId : Long = getNotificationId(c, userId)
-                                        val notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, java.util.Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
+                                        val notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
                                         Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                     }
                                 }
@@ -381,15 +381,13 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         holder.userName.text = newList.user.nickname
         val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
-        if(active && newList.expiration != null){
+        if(!newList.isCompleted && newList.expiration != null){
             holder.expiration.text = "Valid until ${simpleDateFormat.format(newList.expiration)}"
         }
         else
             holder.expiration.visibility = View.GONE
-
-
         if(newList.isCompleted) {
-            holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"
+            holder.completedBy.text = "Completed by ${newList.completedBy!!.nickname}, ${simpleDateFormat.format(newList.expiration)}"
         }
         if(newList.list != null){
             var isOpen = false
