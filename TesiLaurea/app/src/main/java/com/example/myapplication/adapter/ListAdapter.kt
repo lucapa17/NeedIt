@@ -1,7 +1,9 @@
 package com.example.myapplication.adapter
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.app.ProgressDialog
+import android.app.TimePickerDialog
 import android.content.ClipData
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -26,6 +28,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val photoList:ArrayList<String>, val groupName: String, val active : Boolean):RecyclerView.Adapter<ListAdapter.UserViewHolder>()
 {
@@ -45,6 +49,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var photo: ImageView
         var card : CardView
         var recv : RecyclerView
+        var expiration:TextView
 
 
         init {
@@ -55,6 +60,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             date = v.findViewById(R.id.Date)
             price = v.findViewById(R.id.price)
             time = v.findViewById(R.id.Time)
+            expiration = v.findViewById(R.id.expiration)
             photo = v.findViewById(R.id.photo)
             readListLayout = v.findViewById(R.id.readListLayout)
             readList = v.findViewById(R.id.readList)
@@ -106,12 +112,62 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         val newItem = view.findViewById<EditText>(R.id.newItem)
                         val addItem = view.findViewById<ImageView>(R.id.addItem)
                         val recv1: RecyclerView = view.findViewById(R.id.mRecycler)
+                        val expiration = view.findViewById<EditText>(R.id.expiration)
+                        val hasExpiration = view.findViewById<CheckBox>(R.id.hasExpiration)
+
 
                         var list : ArrayList<String>?
                         if(position.list != null)
                             list = ArrayList(position.list)
                         else
                             list = null
+                        val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
+                        if(position.expiration != null){
+                            expiration.visibility = View.VISIBLE
+                            hasExpiration.isChecked = true
+                            expiration.setText(simpleDateFormat.format(position.expiration))
+                        }
+                        hasExpiration.setOnClickListener {
+                            if(hasExpiration.isChecked){
+                                expiration.visibility = View.VISIBLE
+                            }
+                            else {
+                                expiration.visibility = View.GONE
+                            }
+                        }
+                        expiration.setOnClickListener {
+                            val calendar = Calendar.getInstance()
+                            val dateSetListener =
+                                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                                    calendar[Calendar.YEAR] = year
+                                    calendar[Calendar.MONTH] = month
+                                    calendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+                                    val timeSetListener =
+                                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                                            calendar[Calendar.HOUR_OF_DAY] = hourOfDay
+                                            calendar[Calendar.MINUTE] = minute
+                                            expiration.setText(simpleDateFormat.format(calendar.time))
+                                            if (calendar.time <= Calendar.getInstance().time)
+                                                expiration.error = "invalid date"
+                                            else
+                                                expiration.error = null
+                                        }
+                                    TimePickerDialog(
+                                        c,
+                                        timeSetListener,
+                                        calendar[Calendar.HOUR_OF_DAY],
+                                        calendar[Calendar.MINUTE],
+                                        false
+                                    ).show()
+                                }
+
+                            DatePickerDialog(
+                                c, dateSetListener,
+                                calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
+                            ).show()
+
+                        }
+
                         title.text = "Edit Request"
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
@@ -164,6 +220,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 if(name.text.toString().trim().isEmpty()){
                                     Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
                                 }
+                                else if(hasExpiration.isChecked && expiration.text.isEmpty()){
+                                    Toast.makeText(c,"Empty Expiration",Toast.LENGTH_SHORT).show()
+                                }
+                                else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
+                                    Toast.makeText(c,"invalid date",Toast.LENGTH_SHORT).show()
                                 else {
                                     val progressDialog = ProgressDialog(c)
                                     progressDialog.setMessage("Wait...")
@@ -179,6 +240,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                         position.type = Request.Type.ToBuy
 
                                     position.list = list
+                                    var deadline : Date? = null
+                                    if(hasExpiration.isChecked)
+                                        deadline = simpleDateFormat.parse(expiration.text.toString())
+                                    position.expiration = deadline
                                     Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
 
                                     val intent = Intent(c, GroupActivity::class.java)
@@ -242,6 +307,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 val priceValue : String = input!!.text.toString()
                                 position.price = priceValue
                             }
+                            position.expiration = null
                             GlobalScope.launch {
                                 val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
                                 position.completedBy = completedBy
@@ -313,6 +379,14 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         holder.date.text = day
         holder.time.text = time
         holder.userName.text = newList.user.nickname
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
+
+        if(active && newList.expiration != null){
+            holder.expiration.text = "Valid until ${simpleDateFormat.format(newList.expiration)}"
+        }
+        else
+            holder.expiration.visibility = View.GONE
+
 
         if(newList.isCompleted) {
             holder.completedBy.text = "Completed by: ${newList.completedBy!!.nickname}"

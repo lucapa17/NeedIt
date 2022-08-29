@@ -1,41 +1,35 @@
 package com.example.myapplication.fragments
 
-import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.app.ProgressDialog
-import android.content.ContentValues
-import android.content.ContentValues.TAG
+import android.app.TimePickerDialog
+import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
 import android.os.Bundle
-import android.text.Layout
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
-import com.example.myapplication.activities.MainActivity
 import com.example.myapplication.adapter.ItemsAdapter
 import com.example.myapplication.adapter.ListAdapter
-import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.models.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 class ActiveListFragment : Fragment() {
     private var groupId: Long? = null
@@ -46,6 +40,8 @@ class ActiveListFragment : Fragment() {
     private var uid : String? = null
     private var groupName : String? = null
     private var photoList : ArrayList<String>? = ArrayList()
+    private val myCalendar : Calendar = Calendar.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -78,7 +74,10 @@ class ActiveListFragment : Fragment() {
                 val groupActiveList : ArrayList<Request> = ArrayList()
                 for (request in requestList){
                     if(!request.isCompleted){
-                        groupActiveList.add(request)
+                        if(request.expiration != null && request.expiration!! <= Calendar.getInstance().time)
+                            Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
+                        else
+                            groupActiveList.add(request)
                     }
                 }
                 withContext(Dispatchers.Main) {
@@ -119,6 +118,8 @@ class ActiveListFragment : Fragment() {
         val comment = v.findViewById<EditText>(R.id.commentRequest)
         val toDo = v.findViewById<RadioButton>(R.id.toDo)
         val isList = v.findViewById<CheckBox>(R.id.isList)
+        val hasExpiration = v.findViewById<CheckBox>(R.id.hasExpiration)
+        val expiration = v.findViewById<EditText>(R.id.expiration)
         val layoutList = v.findViewById<LinearLayout>(R.id.layoutList)
         val newItem = v.findViewById<EditText>(R.id.newItem)
         val addItem = v.findViewById<ImageView>(R.id.addItem)
@@ -136,6 +137,51 @@ class ActiveListFragment : Fragment() {
             }
 
         }
+
+
+        hasExpiration.setOnClickListener {
+            if(hasExpiration.isChecked){
+                expiration.visibility = View.VISIBLE
+            }
+            else {
+                expiration.visibility = View.GONE
+            }
+        }
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
+
+        expiration.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val dateSetListener =
+                OnDateSetListener { view, year, month, dayOfMonth ->
+                    calendar[Calendar.YEAR] = year
+                    calendar[Calendar.MONTH] = month
+                    calendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+                    val timeSetListener =
+                        OnTimeSetListener { view, hourOfDay, minute ->
+                            calendar[Calendar.HOUR_OF_DAY] = hourOfDay
+                            calendar[Calendar.MINUTE] = minute
+                            expiration.setText(simpleDateFormat.format(calendar.time))
+                            if(calendar.time <= Calendar.getInstance().time)
+                                expiration.error = "invalid date"
+                            else
+                                expiration.error = null
+                        }
+                    TimePickerDialog(
+                        requireContext(), timeSetListener,
+                        calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false
+                    ).show()
+                }
+
+            DatePickerDialog(
+                requireContext(), dateSetListener,
+                calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
+            ).show()
+
+        }
+
+
+
+
         var list : ArrayList<String>? = ArrayList()
         val itemsAdapter = ItemsAdapter(requireContext(), list!!, false)
         recv1.layoutManager = LinearLayoutManager(requireContext())
@@ -157,6 +203,11 @@ class ActiveListFragment : Fragment() {
             if(namerequest.isEmpty()){
                 Toast.makeText(requireContext(),"Empty Request",Toast.LENGTH_SHORT).show()
             }
+            else if(hasExpiration.isChecked && expiration.text.isEmpty()){
+                Toast.makeText(requireContext(),"Empty Expiration",Toast.LENGTH_SHORT).show()
+            }
+            else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
+                Toast.makeText(requireContext(),"invalid date",Toast.LENGTH_SHORT).show()
             else {
                 var request: Request
                 GlobalScope.launch {
@@ -170,7 +221,10 @@ class ActiveListFragment : Fragment() {
                         type = Request.Type.ToBuy
                     if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
                         list = null
-                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type, list)
+                    var deadline : Date? = null
+                    if(hasExpiration.isChecked)
+                        deadline = simpleDateFormat.parse(expiration.text.toString())
+                    request = Request(requestId, groupId!!, user, namerequest, false, comment1, null, currentDate, null, type, list, deadline)
                     Firebase.database.getReference("requests").child(request.id.toString()).setValue(request)
                     val intent = Intent(requireContext(), GroupActivity::class.java)
                     intent.putExtra("groupId", groupId)

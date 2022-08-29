@@ -15,9 +15,10 @@ class Request() {
     var date : Date? = null
     var price : String? = ""
     var list : ArrayList<String>? = null
+    var expiration : Date? = null
     lateinit var type : Type
 
-    constructor(id : Long, groupId : Long,  user : User, nameRequest : String, isCompleted : Boolean, comment : String?, completedBy : User?, date : Date, price : String?, type : Type, list : ArrayList<String>?) : this() {
+    constructor(id : Long, groupId : Long,  user : User, nameRequest : String, isCompleted : Boolean, comment : String?, completedBy : User?, date : Date, price : String?, type : Type, list : ArrayList<String>?, expiration : Date?) : this() {
         this.groupId = groupId
         this.completedBy = completedBy
         this.id = id
@@ -29,6 +30,7 @@ class Request() {
         this.price = price
         this.type = type
         this.list = list
+        this.expiration = expiration
     }
     enum class Type {
         ToDo,

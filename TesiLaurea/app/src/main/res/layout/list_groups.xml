@@ -4,10 +4,10 @@
     android:id="@+id/cardGroup"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="1dp"
+    android:layout_margin="3dp"
     android:focusable="auto"
-    app:cardCornerRadius="0dp"
-    app:cardElevation="8dp"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="4dp"
     app:cardMaxElevation="5dp">
 
     <LinearLayout

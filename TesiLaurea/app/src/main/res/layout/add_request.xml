@@ -103,6 +103,22 @@
 
                 android:visibility="gone"/>
 
+            <EditText
+                android:id="@+id/expiration"
+                android:hint="expiration"
+                android:textColor="@color/black"
+                android:background="@drawable/shape_background"
+                android:padding="15dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="15dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:focusableInTouchMode="false"
+                android:visibility="gone"/>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -112,8 +128,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_weight="1">
+                    android:layout_marginHorizontal="15dp"
+                    >
 
                     <RadioButton
                         android:id="@+id/toDo"
@@ -121,7 +137,7 @@
                         android:layout_height="wrap_content"
                         android:text="To-Do"
                         android:textStyle="bold"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginRight="3dp"
                         android:textSize="15dp"
                         android:checked="true"
                         android:buttonTint="#1D7854" />
@@ -137,6 +153,13 @@
                         android:buttonTint="#1D7854"/>
 
                 </RadioGroup>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <CheckBox
                     android:id="@+id/isList"
                     android:layout_width="wrap_content"
@@ -144,9 +167,17 @@
                     android:textSize="15dp"
                     android:textStyle="bold"
                     android:buttonTint="#1D7854"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginHorizontal="15dp"
                     android:text="List" />
-
+                <CheckBox
+                    android:id="@+id/hasExpiration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:buttonTint="#1D7854"
+                    android:layout_marginRight="10dp"
+                    android:text="Expiration" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
