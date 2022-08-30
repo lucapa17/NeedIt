@@ -3,6 +3,7 @@ package com.example.myapplication.activities
 import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
@@ -41,7 +42,7 @@ class MainActivity : BaseActivity() {
             }
         }
         recv = this.findViewById(R.id.mRecycler)
-        groupsAdapter = GroupsAdapter(this, ArrayList())
+        groupsAdapter = GroupsAdapter(this, ArrayList(), ArrayList(), ArrayList())
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = groupsAdapter
         runInstantWorker(this)
@@ -54,13 +55,39 @@ class MainActivity : BaseActivity() {
             withContext(Dispatchers.IO) {
                 val groupList : MutableList<Group> = getGroups(this@MainActivity)
                 groupList.sortByDescending{ group -> group.lastNotification }
+                val photoList : ArrayList<String?> = ArrayList()
+                val unreadList : ArrayList<Int> = ArrayList()
+                for(group in groupList){
+                    var uri : Uri? = null
+                    val dir = File(this@MainActivity.cacheDir.absolutePath)
+                    var found = false
+                    if (dir.exists()) {
+                        for (f in dir.listFiles()) {
+                            if(f.name.toString().contains("image_${group.groupId}_")){
+                                if(f.length() != 0L){
+                                    uri = Uri.fromFile(f)
+                                }
+                                found = true
+                                break
+                            }
+                        }
+                    }
+                    if(!found){
+                        uri = FirebaseStorageWrapper().download(group.groupId.toString(), this@MainActivity)
+                    }
+                    if(uri != null)
+                        photoList.add(uri.toString())
+                    else
+                        photoList.add(null)
+                    unreadList.add(getUnread(this@MainActivity, group.groupId, uid!!)!!)
+                }
                 withContext(Dispatchers.Main) {
                     if(groupList.isEmpty()){
                         progressDialog.dismiss()
                         layoutNoGroup.visibility = android.view.View.VISIBLE
                     }
                     else {
-                        groupsAdapter = GroupsAdapter(this@MainActivity, ArrayList(groupList))
+                        groupsAdapter = GroupsAdapter(this@MainActivity, ArrayList(groupList), photoList, unreadList)
                         recv.layoutManager = LinearLayoutManager(this@MainActivity)
                         recv.adapter = groupsAdapter
                         progressDialog.dismiss()
@@ -76,9 +103,6 @@ class MainActivity : BaseActivity() {
 
         GlobalScope.launch {
             val listUnread = getUnreadList(this@MainActivity, uid!!)
-            Log.d(TAG, "rrrr0size "+listUnread.size)
-
-
 
             valueEventListener = Firebase.database.getReference("unread").child(uid).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

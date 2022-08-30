@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
@@ -18,7 +19,7 @@ import com.example.myapplication.models.*
 import kotlinx.coroutines.*
 import java.io.File
 
-class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):RecyclerView.Adapter<GroupsAdapter.UserViewHolder>() {
+class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>, private val photoList:ArrayList<String?>, private val unreadList:ArrayList<Int>):RecyclerView.Adapter<GroupsAdapter.UserViewHolder>() {
     inner class UserViewHolder(v:View):RecyclerView.ViewHolder(v) {
         var nameGroup: TextView
         var logoGroup: ImageView
@@ -45,46 +46,14 @@ class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>):Recy
     }
 
     override fun onBindViewHolder(holder: GroupsAdapter.UserViewHolder, position: Int) {
-        val progressDialog = ProgressDialog(c)
-        progressDialog.setMessage("Wait...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
         val newList = groupList[position]
         holder.nameGroup.text = newList.nameGroup
-        var uri: Uri? = null
-        val dir = File(c.cacheDir.absolutePath)
-        var found = false
-        if (dir.exists()) {
-            for (f in dir.listFiles()) {
-                if(f.name.toString().contains("image_${newList.groupId}_")){
-                    if(f.length() != 0L)
-                        holder.logoGroup.setImageURI(Uri.fromFile(f))
-                    found = true
-                    progressDialog.dismiss()
-                    break
-                }
-            }
+        if(photoList[position] != null)
+            holder.logoGroup.setImageURI(photoList[position]!!.toUri())
+        if(unreadList[position] != 0){
+            holder.unread.text = unreadList[position].toString()
+            holder.unread.visibility = View.VISIBLE
         }
-        var unreadMessages : Int
-        CoroutineScope(Dispatchers.Main + Job()).launch {
-            withContext(Dispatchers.IO) {
-                if(!found) {
-                    uri = FirebaseStorageWrapper().download(newList.groupId.toString(), c)
-                }
-                unreadMessages = getUnread(c, newList.groupId, FirebaseAuthWrapper(c).getUid()!!)!!
-                withContext(Dispatchers.Main) {
-                    if(unreadMessages != 0){
-                        holder.unread.text = unreadMessages.toString()
-                        holder.unread.visibility = View.VISIBLE
-                    }
-                    if(uri != null){
-                        holder.logoGroup.setImageURI(uri)
-                    }
-                    progressDialog.dismiss()
-                }
-            }
-        }
-
     }
     override fun getItemCount(): Int {
         return  groupList.size
