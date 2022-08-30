@@ -231,7 +231,9 @@ class ActiveListFragment : Fragment() {
                     intent.putExtra("groupName", groupName)
                     requireContext().startActivity(intent)
                     val group : Group? = getGroupById(requireContext(), groupId!!)
-                    for(userId in group!!.users!!){
+                    group!!.lastNotification = Calendar.getInstance().time
+                    Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
+                    for(userId in group.users!!){
                         if(userId != uid){
                             val notificationId : Long = getNotificationId(requireContext(), userId)
                             val notification = Notification(userId, request, user.nickname, null, groupName!!, notificationId, request.date, request.groupId, Notification.Type.NewRequest)

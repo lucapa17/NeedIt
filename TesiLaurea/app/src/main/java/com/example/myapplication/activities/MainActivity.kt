@@ -53,7 +53,7 @@ class MainActivity : BaseActivity() {
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val groupList : MutableList<Group> = getGroups(this@MainActivity)
-                groupList.reverse()
+                groupList.sortByDescending{ group -> group.lastNotification }
                 withContext(Dispatchers.Main) {
                     if(groupList.isEmpty()){
                         progressDialog.dismiss()

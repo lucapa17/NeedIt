@@ -370,8 +370,9 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
                                 val group : Group? = getGroupById(c, position.groupId)
                                 val uid : String = FirebaseAuthWrapper(c).getUid()!!
-
-                                for(userId in group!!.users!!){
+                                group!!.lastNotification = Calendar.getInstance().time
+                                Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
+                                for(userId in group.users!!){
                                     if(userId != uid){
                                         val notificationId : Long = getNotificationId(c, userId)
                                         val notification = Notification(userId, position, position.user.nickname, null, groupName,  notificationId, Calendar.getInstance().time, position.groupId, Notification.Type.NewRequest)

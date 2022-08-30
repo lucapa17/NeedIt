@@ -20,6 +20,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 class NewGroupActivity : AppCompatActivity() {
     private var image: Uri? = null
@@ -166,8 +168,7 @@ class NewGroupActivity : AppCompatActivity() {
                             )
                             Firebase.database.getReference("notifications").child(member.id).child(notificationId.toString()).setValue(notification)
                         }
-                        val group =
-                            Group(groupId, groupName.text.toString().trim(), membersId)
+                        val group = Group(groupId, groupName.text.toString().trim(), membersId, Calendar.getInstance().time)
                         Firebase.database.getReference("groups").child(group.groupId.toString())
                             .setValue(group)
                     }
