@@ -8,6 +8,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.adapter.MembersAdapter
+import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.adapter.ViewPagerAdapter
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
@@ -229,6 +232,162 @@ class InfoGroupActivity: AppCompatActivity() {
                 builder.show()
                 true
             }
+
+            R.id.nav_add_member -> {
+                val recv1: RecyclerView
+                val newMembersAdapter: NewMembersAdapter
+
+                val inflater = LayoutInflater.from(this@InfoGroupActivity)
+                val view = inflater.inflate(R.layout.add_users, null)
+                val addDialog = AlertDialog.Builder(this@InfoGroupActivity)
+                addDialog.setView(view)
+
+                val memberList : ArrayList<User> = ArrayList()
+                recv1 = view.findViewById(R.id.mRecycler)
+                newMembersAdapter = NewMembersAdapter(this, memberList)
+                recv1.layoutManager = LinearLayoutManager(this)
+                recv1.adapter = newMembersAdapter
+
+                var myUser: User? = null
+                var user : User? = null
+                var group : Group? = null
+                GlobalScope.launch {
+                    group = getGroupById(this@InfoGroupActivity, groupId!!)!!
+                    myUser = getUser(this@InfoGroupActivity)
+                }
+                val nicknameEditText: EditText = view.findViewById(R.id.memberNickname)
+                val addUser: ImageView = view.findViewById(R.id.addUser)
+
+                nicknameEditText.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        nicknameEditText.error = null
+
+                        CoroutineScope(Dispatchers.Main + Job()).launch {
+                            withContext(Dispatchers.IO) {
+                                if(nicknameEditText.text.toString().trim().contains("@"))
+                                    user = getUserByEmail(this@InfoGroupActivity, nicknameEditText.text.toString().trim())
+                                else
+                                    user = getUserByNickname(this@InfoGroupActivity, nicknameEditText.text.toString().trim())
+                                withContext(Dispatchers.Main) {
+                                    if (user!!.id.isEmpty()) {
+                                        if(nicknameEditText.text.isNotEmpty()){
+                                            nicknameEditText.error = "user not found"
+                                        }
+                                        addUser.visibility = View.GONE
+                                    }
+                                    else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
+                                        nicknameEditText.error = "this is your user"
+                                        addUser.visibility = View.GONE
+                                    }
+
+                                    else{
+                                        var found = false
+                                        for(member in memberList){
+                                            if(member.id == user!!.id){
+                                                found = true
+                                                nicknameEditText.error = "user already added"
+                                                break
+                                            }
+                                        }
+                                        if(!found){
+                                            for(member in group!!.users!!){
+                                                if(member == user!!.id){
+                                                    found = true
+                                                    nicknameEditText.error = "user is already in the group"
+                                                    break
+                                                }
+                                            }
+
+                                        }
+                                        if(!found)
+                                            addUser.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    override fun afterTextChanged(s: Editable?) {
+                    }
+                })
+
+                addUser.setOnClickListener {
+                    CoroutineScope(Dispatchers.Main + Job()).launch {
+                        withContext(Dispatchers.IO) {
+                            var found = false
+                            for (member in memberList) {
+                                if (member.id == user!!.id) {
+                                    found = true
+                                    break
+                                }
+                            }
+                            if (!found)
+                                memberList.add(user!!)
+                            withContext(Dispatchers.Main) {
+                                newMembersAdapter.notifyDataSetChanged()
+                                nicknameEditText.setText("")
+
+                            }
+                        }
+                    }
+                }
+                addDialog.setPositiveButton("Ok") {
+                        dialog, _ ->
+
+                    if(memberList.isNotEmpty()){
+                        GlobalScope.launch {
+                            for (member in memberList) {
+                                group!!.users!!.add(member.id)
+                                member.groups!!.add(groupId!!)
+                                Firebase.database.getReference("users").child(member.id).setValue(member)
+                                Firebase.database.getReference("unread").child(member.id).child(groupId.toString()).setValue(0)
+                                val notificationId: Long =
+                                    getNotificationId(this@InfoGroupActivity, member.id)
+                                val notification = Notification(
+                                    member.id,
+                                    null,
+                                    myUser!!.nickname,
+                                    null,
+                                    group!!.nameGroup,
+                                    notificationId,
+                                    java.util.Calendar.getInstance().time,
+                                    groupId!!,
+                                    Notification.Type.NewGroup
+                                )
+                                Firebase.database.getReference("notifications").child(member.id)
+                                    .child(notificationId.toString()).setValue(notification)
+                            }
+                            Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
+
+                        }
+                        val i = Intent(this@InfoGroupActivity, GroupActivity::class.java)
+                        i.putExtra("groupId", groupId)
+                        i.putExtra("groupName", group!!.nameGroup)
+                        this@InfoGroupActivity.startActivity(i)
+                    }
+                    dialog.dismiss()
+
+                }
+                addDialog.setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                addDialog.create()
+                addDialog.show()
+
+
+
+
+
+                /*val intent  = Intent(this, AddMemberActivity::class.java)
+                intent.putExtra("groupId", groupId)
+
+                this.startActivity(intent)
+
+                 */
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

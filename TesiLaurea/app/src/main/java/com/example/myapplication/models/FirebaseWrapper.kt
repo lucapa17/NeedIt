@@ -491,6 +491,34 @@ fun getUserByNickname (context: Context, nickname: String ) : User {
     }
     return user
 }
+fun getUserByEmail (context: Context, email: String ) : User {
+    val lock = ReentrantLock()
+    val condition = lock.newCondition()
+    var user = User()
+    GlobalScope.launch {
+        FirebaseDbWrapper(context).readDbData(object :
+            FirebaseDbWrapper.Companion.FirebaseReadCallback {
+            override fun onDataChangeCallback(snapshot: DataSnapshot) {
+                val children = snapshot.children
+                for(child in children) {
+                    if (child.child("email").getValue(String::class.java).equals(email)) {
+                        user = child.getValue(User::class.java)!!
+                        break
+                    }
+                }
+                lock.withLock {
+                    condition.signal()
+                }
+            }
+            override fun onCancelledCallback(error: DatabaseError) {
+            }
+        })
+    }
+    lock.withLock {
+        condition.await()
+    }
+    return user
+}
 
 fun getUserById (context: Context, id: String) : User? {
     val lock = ReentrantLock()

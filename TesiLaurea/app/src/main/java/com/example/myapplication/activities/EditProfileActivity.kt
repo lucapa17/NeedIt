@@ -22,6 +22,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import java.io.File
+import java.util.regex.Pattern
 
 class EditProfileActivity : AppCompatActivity() {
     private var image: Uri? = null
@@ -120,7 +121,11 @@ class EditProfileActivity : AppCompatActivity() {
 
             if (tName.isEmpty() || tSurname.isEmpty() || tNickname.isEmpty()) {
                 Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
-            } else {
+            }
+            else if (!Pattern.matches("^[a-zA-Z][a-zA-Z0-9_.-]{5,20}$", tNickname)){
+                findViewById<EditText>(R.id.edit_nickname).error = "nickname not valid!"
+            }
+            else {
                 val progressDialog1 = ProgressDialog(this)
                 progressDialog1.setMessage("Wait...")
                 progressDialog1.setCancelable(false)
@@ -264,63 +269,49 @@ class EditProfileActivity : AppCompatActivity() {
                 addDialog.setPositiveButton("Ok") {
 
                         dialog, _ ->
-                    val progressDialog1 = ProgressDialog(this@EditProfileActivity)
-                    progressDialog1.setMessage("Wait...")
-                    progressDialog1.setCancelable(false)
-                    progressDialog1.show()
+
                     val oldPassword1 = oldPassword.text.toString().trim()
                     val newPassword1 = newPassword.text.toString().trim()
                     val confirmPassword1 = confirmPassword.text.toString().trim()
 
                     if (oldPassword1.isEmpty() || newPassword1.isEmpty() || confirmPassword1.isEmpty()) {
-                        progressDialog1.dismiss()
-                        Toast.makeText(view!!.context, "Fill all the fields!", Toast.LENGTH_SHORT)
-                            .show()
-
-                    } else if (newPassword1 != confirmPassword1) {
-                        progressDialog1.dismiss()
-                        Toast.makeText(view!!.context, "Passwords mismatched!", Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        Firebase.auth.signInWithEmailAndPassword(user!!.email, oldPassword1)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    if (newPassword1 == oldPassword1) {
-                                        progressDialog1.dismiss()
-                                        Toast.makeText(
-                                            this@EditProfileActivity,
-                                            "new password is equal to old password!",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Firebase.auth.currentUser!!.updatePassword(newPassword1)
-                                            .addOnCompleteListener {
-                                                if (it.isSuccessful) {
-                                                    progressDialog1.dismiss()
-                                                    Toast.makeText(
-                                                        view!!.context,
-                                                        "Passwords changed correctly!",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                } else {
-                                                    progressDialog1.dismiss()
-                                                    Toast.makeText(
-                                                        this@EditProfileActivity,
-                                                        it.exception!!.message,
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                            }
-                                    }
-                                } else {
+                        Toast.makeText(view!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
+                    }
+                    else if (!Pattern.matches("[\\p{Alpha}\\p{Digit}\\p{Punct}]{8,20}", newPassword1)){
+                        Toast.makeText(view!!.context, "password not valid!", Toast.LENGTH_SHORT).show()
+                    }
+                    else if (newPassword1 != confirmPassword1) {
+                        Toast.makeText(view!!.context, "Passwords mismatched!", Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        val progressDialog1 = ProgressDialog(this@EditProfileActivity)
+                        progressDialog1.setMessage("Wait...")
+                        progressDialog1.setCancelable(false)
+                        progressDialog1.show()
+                        Firebase.auth.signInWithEmailAndPassword(user!!.email, oldPassword1).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                if (newPassword1 == oldPassword1) {
                                     progressDialog1.dismiss()
-                                    Toast.makeText(
-                                        this@EditProfileActivity,
-                                        task.exception!!.message,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    Toast.makeText(this@EditProfileActivity, "new password is equal to old password!", Toast.LENGTH_SHORT).show()
+                                }
+                                else {
+                                    Firebase.auth.currentUser!!.updatePassword(newPassword1).addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            progressDialog1.dismiss()
+                                            Toast.makeText(view!!.context, "Passwords changed correctly!", Toast.LENGTH_SHORT).show()
+                                        }
+                                        else {
+                                            progressDialog1.dismiss()
+                                            Toast.makeText(this@EditProfileActivity, it.exception!!.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                 }
                             }
+                            else {
+                                progressDialog1.dismiss()
+                                Toast.makeText(this@EditProfileActivity, task.exception!!.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
                         dialog.dismiss()
                     }
                 }

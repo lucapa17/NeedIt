@@ -1,28 +1,33 @@
 package com.example.myapplication.activities
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.R
+import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.adapter.ViewPagerAdapter
 import com.example.myapplication.databinding.ActivityGroupBinding
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.*
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
+import java.util.regex.Pattern
 
 class GroupActivity : AppCompatActivity() {
     private var binding : ActivityGroupBinding? = null
@@ -152,15 +157,160 @@ class GroupActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val recv: RecyclerView
+        val membersAdapter: NewMembersAdapter
         return when (item.itemId) {
-            com.example.myapplication.R.id.nav_add_member -> {
-                val intent  = Intent(this, AddMemberActivity::class.java)
+            R.id.nav_add_member -> {
+
+                val inflater = LayoutInflater.from(this@GroupActivity)
+                val view = inflater.inflate(R.layout.add_users, null)
+                val addDialog = AlertDialog.Builder(this@GroupActivity)
+                addDialog.setView(view)
+
+                val memberList : ArrayList<User> = ArrayList()
+                recv = view.findViewById(R.id.mRecycler)
+                membersAdapter = NewMembersAdapter(this, memberList)
+                recv.layoutManager = LinearLayoutManager(this)
+                recv.adapter = membersAdapter
+
+                var myUser: User? = null
+                var user : User? = null
+                var group : Group? = null
+                GlobalScope.launch {
+                    group = getGroupById(this@GroupActivity, groupId!!)!!
+                    myUser = getUser(this@GroupActivity)
+                }
+                val nicknameEditText: EditText = view.findViewById(R.id.memberNickname)
+                val addUser: ImageView = view.findViewById(R.id.addUser)
+
+                nicknameEditText.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        nicknameEditText.error = null
+
+                        CoroutineScope(Dispatchers.Main + Job()).launch {
+                            withContext(Dispatchers.IO) {
+                                if(nicknameEditText.text.toString().trim().contains("@"))
+                                    user = getUserByEmail(this@GroupActivity, nicknameEditText.text.toString().trim())
+                                else
+                                    user = getUserByNickname(this@GroupActivity, nicknameEditText.text.toString().trim())
+                                withContext(Dispatchers.Main) {
+                                    if (user!!.id.isEmpty()) {
+                                        if(nicknameEditText.text.isNotEmpty()){
+                                            nicknameEditText.error = "user not found"
+                                        }
+                                        addUser.visibility = View.GONE
+                                    }
+                                    else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
+                                        nicknameEditText.error = "this is your user"
+                                        addUser.visibility = View.GONE
+                                    }
+
+                                    else{
+                                        var found = false
+                                        for(member in memberList){
+                                            if(member.id == user!!.id){
+                                                found = true
+                                                nicknameEditText.error = "user already added"
+                                                break
+                                            }
+                                        }
+                                        if(!found){
+                                            for(member in group!!.users!!){
+                                                if(member == user!!.id){
+                                                    found = true
+                                                    nicknameEditText.error = "user is already in the group"
+                                                    break
+                                                }
+                                            }
+
+                                        }
+                                        if(!found)
+                                            addUser.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    override fun afterTextChanged(s: Editable?) {
+                    }
+                })
+
+                addUser.setOnClickListener {
+                    CoroutineScope(Dispatchers.Main + Job()).launch {
+                        withContext(Dispatchers.IO) {
+                            var found = false
+                            for (member in memberList) {
+                                if (member.id == user!!.id) {
+                                    found = true
+                                    break
+                                }
+                            }
+                            if (!found)
+                                memberList.add(user!!)
+                            withContext(Dispatchers.Main) {
+                                membersAdapter.notifyDataSetChanged()
+                                nicknameEditText.setText("")
+
+                            }
+                        }
+                    }
+                }
+                addDialog.setPositiveButton("Ok") {
+                        dialog, _ ->
+
+                    if(memberList.isNotEmpty()){
+                        GlobalScope.launch {
+                            for (member in memberList) {
+                                group!!.users!!.add(member.id)
+                                member.groups!!.add(groupId!!)
+                                Firebase.database.getReference("users").child(member.id).setValue(member)
+                                Firebase.database.getReference("unread").child(member.id).child(groupId.toString()).setValue(0)
+                                val notificationId: Long =
+                                    getNotificationId(this@GroupActivity, member.id)
+                                val notification = Notification(
+                                    member.id,
+                                    null,
+                                    myUser!!.nickname,
+                                    null,
+                                    group!!.nameGroup,
+                                    notificationId,
+                                    java.util.Calendar.getInstance().time,
+                                    groupId!!,
+                                    Notification.Type.NewGroup
+                                )
+                                Firebase.database.getReference("notifications").child(member.id)
+                                    .child(notificationId.toString()).setValue(notification)
+                            }
+                            Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
+
+                        }
+                        Toast.makeText(this@GroupActivity, "Users added correctly", Toast.LENGTH_SHORT).show()
+
+                    }
+                    dialog.dismiss()
+
+                }
+                addDialog.setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                addDialog.create()
+                addDialog.show()
+
+
+
+
+
+                /*val intent  = Intent(this, AddMemberActivity::class.java)
                 intent.putExtra("groupId", groupId)
 
                 this.startActivity(intent)
+
+                 */
                 true
             }
-            com.example.myapplication.R.id.nav_show_members -> {
+            R.id.nav_show_members -> {
                 val intent  = Intent(this, InfoGroupActivity::class.java)
                 intent.putExtra("groupId", groupId)
                 this.startActivity(intent)

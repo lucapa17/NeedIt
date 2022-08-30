@@ -40,28 +40,27 @@ class NewGroupActivity : AppCompatActivity() {
         recv.adapter = membersAdapter
         val nicknameEditText: EditText = findViewById(R.id.memberNickname)
         val addUser: ImageView = findViewById(R.id.addUser)
-        var userExists: Boolean
+        var user : User? = null
         nicknameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 nicknameEditText.error = null
-                userExists = false
-                var user : User? = null
                 CoroutineScope(Dispatchers.Main + Job()).launch {
                     withContext(Dispatchers.IO) {
-                        userExists = nicknameIsAlreadyUsed(this@NewGroupActivity, nicknameEditText.text.toString().trim())
-                        if(userExists)
+                        if(nicknameEditText.text.toString().trim().contains("@"))
+                            user = getUserByEmail(this@NewGroupActivity, nicknameEditText.text.toString().trim())
+                        else
                             user = getUserByNickname(this@NewGroupActivity, nicknameEditText.text.toString().trim())
                         withContext(Dispatchers.Main) {
-                            if (!userExists) {
+                            if (user!!.id.isEmpty()) {
                                 if(nicknameEditText.text.isNotEmpty()){
-                                    nicknameEditText.error = "user with this nickname does not exist"
+                                    nicknameEditText.error = "user not found"
                                 }
                                 addUser.visibility = View.GONE
                             }
-                            else if(nicknameEditText.text.toString().trim()==myUser!!.nickname){
-                                nicknameEditText.error = "this is your nickname"
+                            else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
+                                nicknameEditText.error = "this is your user"
                                 addUser.visibility = View.GONE
                             }
                             else{
@@ -88,19 +87,15 @@ class NewGroupActivity : AppCompatActivity() {
         addUser.setOnClickListener {
             CoroutineScope(Dispatchers.Main + Job()).launch {
                 withContext(Dispatchers.IO) {
-                    val user: User = getUserByNickname(
-                        this@NewGroupActivity,
-                        nicknameEditText.text.toString().trim()
-                    )
                     var found = false
                     for (member in memberList) {
-                        if (member.id == user.id) {
+                        if (member.id == user!!.id) {
                             found = true
                             break
                         }
                     }
                     if (!found)
-                        memberList.add(user)
+                        memberList.add(user!!)
                     withContext(Dispatchers.Main) {
                         membersAdapter.notifyDataSetChanged()
                         nicknameEditText.setText("")

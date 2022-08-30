@@ -29,7 +29,6 @@ class AddMemberActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_member)
 
         val memberList : ArrayList<User> = ArrayList()
-
         recv = this.findViewById(R.id.mRecycler)
         membersAdapter = NewMembersAdapter(this, memberList)
         recv.layoutManager = LinearLayoutManager(this)
@@ -37,11 +36,11 @@ class AddMemberActivity : AppCompatActivity() {
 
         val intent : Intent = intent
         groupId = intent.getLongExtra("groupId", 0L)
-        var myNickname: String? = null
-
+        var myUser: User? = null
+        var user : User? = null
         GlobalScope.launch {
             group = getGroupById(this@AddMemberActivity, groupId)
-            myNickname = getUser(this@AddMemberActivity).nickname
+            myUser = getUser(this@AddMemberActivity)
         }
         val nicknameEditText: EditText = findViewById(R.id.memberNickname)
         val addUser: ImageView = findViewById(R.id.addUser)
@@ -51,28 +50,27 @@ class AddMemberActivity : AppCompatActivity() {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 nicknameEditText.error = null
-                var userExists : Boolean
-                var user : User? = null
+
                 CoroutineScope(Dispatchers.Main + Job()).launch {
                     withContext(Dispatchers.IO) {
-                        userExists = nicknameIsAlreadyUsed(this@AddMemberActivity, nicknameEditText.text.toString().trim())
-                        if(userExists)
+                        if(nicknameEditText.text.toString().trim().contains("@"))
+                            user = getUserByEmail(this@AddMemberActivity, nicknameEditText.text.toString().trim())
+                        else
                             user = getUserByNickname(this@AddMemberActivity, nicknameEditText.text.toString().trim())
                         withContext(Dispatchers.Main) {
-                            if (!userExists) {
+                            if (user!!.id.isEmpty()) {
                                 if(nicknameEditText.text.isNotEmpty()){
-                                    nicknameEditText.error = "user with this nickname does not exist"
+                                    nicknameEditText.error = "user not found"
                                 }
                                 addUser.visibility = View.GONE
                             }
-                            else if(nicknameEditText.text.toString().trim()==myNickname){
-                                nicknameEditText.error = "this is your nickname"
+                            else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
+                                nicknameEditText.error = "this is your user"
                                 addUser.visibility = View.GONE
                             }
 
                             else{
                                 var found = false
-
                                 for(member in memberList){
                                     if(member.id == user!!.id){
                                         found = true
@@ -104,19 +102,15 @@ class AddMemberActivity : AppCompatActivity() {
         addUser.setOnClickListener {
             CoroutineScope(Dispatchers.Main + Job()).launch {
                 withContext(Dispatchers.IO) {
-                    val user: User = getUserByNickname(
-                        this@AddMemberActivity,
-                        nicknameEditText.text.toString().trim()
-                    )
                     var found = false
                     for (member in memberList) {
-                        if (member.id == user.id) {
+                        if (member.id == user!!.id) {
                             found = true
                             break
                         }
                     }
                     if (!found)
-                        memberList.add(user)
+                        memberList.add(user!!)
                     withContext(Dispatchers.Main) {
                         membersAdapter.notifyDataSetChanged()
                         nicknameEditText.setText("")
@@ -142,7 +136,7 @@ class AddMemberActivity : AppCompatActivity() {
                         val notification = Notification(
                             member.id,
                             null,
-                            myNickname!!,
+                            myUser!!.nickname,
                             null,
                             group!!.nameGroup,
                             notificationId,
