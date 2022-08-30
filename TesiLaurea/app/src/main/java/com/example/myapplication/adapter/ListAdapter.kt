@@ -88,11 +88,16 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             val position = requestList[adapterPosition]
             val popupMenus = PopupMenu(c,v)
             popupMenus.inflate(R.menu.options_menu)
-            if(active && position.user.id != FirebaseAuthWrapper(c).getUid()){
-                popupMenus.menu.findItem(R.id.editText).isVisible = false
-                popupMenus.menu.findItem(R.id.delete).isVisible = false
+            if(active){
+                if(position.user.id != FirebaseAuthWrapper(c).getUid()){
+                    popupMenus.menu.findItem(R.id.editText).isVisible = false
+                    popupMenus.menu.findItem(R.id.delete).isVisible = false
+                }
+                popupMenus.menu.findItem(R.id.restore).isVisible = false
             }
-            else if(!active){
+            else {
+                if(position.user.id != FirebaseAuthWrapper(c).getUid())
+                    popupMenus.menu.findItem(R.id.restore).isVisible = false
                 popupMenus.menu.findItem(R.id.editText).isVisible = false
                 popupMenus.menu.findItem(R.id.complete).isVisible = false
             }
@@ -286,13 +291,13 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             .show()
                         true
                     }
-                    R.id.complete->{
+                    R.id.complete-> {
                         val builder = AlertDialog.Builder(c)
                         var toDo = true
-                        var input : EditText? = null
-                        if(position.type == Request.Type.ToBuy){
+                        var input: EditText? = null
+                        if (position.type == Request.Type.ToBuy) {
                             toDo = false
-                            val v1 = LayoutInflater.from(c).inflate(R.layout.set_price,null)
+                            val v1 = LayoutInflater.from(c).inflate(R.layout.set_price, null)
                             input = v1.findViewById(R.id.price)
                             builder.setView(v1)
 
@@ -300,17 +305,68 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         builder.setTitle("Complete")
                         builder.setIcon(R.drawable.ic_baseline_check_circle_24)
                         builder.setMessage("Do you want to complete this request?")
-                        builder.setPositiveButton("Yes"){
-                                dialog,_->
+                        builder.setPositiveButton("Yes") { dialog, _ ->
                             position.isCompleted = true
-                            if(!toDo){
-                                val priceValue : String = input!!.text.toString()
+                            if (!toDo) {
+                                val priceValue: String = input!!.text.toString()
                                 position.price = priceValue
                             }
                             position.expiration = Calendar.getInstance().time
                             GlobalScope.launch {
-                                val completedBy : User? = getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
+                                val completedBy: User? =
+                                    getUserById(c, FirebaseAuthWrapper(c).getUid()!!)
                                 position.completedBy = completedBy
+                                Firebase.database.getReference("requests")
+                                    .child(position.id.toString()).setValue(position)
+                                val group: Group? = getGroupById(c, position.groupId)
+                                val uid: String = FirebaseAuthWrapper(c).getUid()!!
+
+                                for (userId in group!!.users!!) {
+                                    if (userId != uid) {
+                                        val notificationId: Long = getNotificationId(c, userId)
+                                        val notification = Notification(
+                                            userId,
+                                            position,
+                                            position.user.nickname,
+                                            completedBy!!.nickname,
+                                            groupName,
+                                            notificationId,
+                                            Calendar.getInstance().time,
+                                            position.groupId,
+                                            Notification.Type.CompletedRequest
+                                        )
+                                        Firebase.database.getReference("notifications")
+                                            .child(userId).child(notificationId.toString())
+                                            .setValue(notification)
+                                    }
+                                }
+                                val intent = Intent(c, GroupActivity::class.java)
+                                intent.putExtra("groupId", position.groupId)
+                                intent.putExtra("groupName", groupName)
+                                c.startActivity(intent)
+                            }
+                        }
+                        builder.setNegativeButton("No") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        builder.create()
+                        builder.show()
+                        true
+
+                    }
+                    R.id.restore->{
+                        val builder = AlertDialog.Builder(c)
+                        builder.setTitle("Restore")
+                        builder.setIcon(R.drawable.ic_baseline_undo_24)
+                        builder.setMessage("Do you want to restore this request?")
+                        builder.setPositiveButton("Yes"){
+                                dialog,_->
+                            position.isCompleted = false
+                            position.expiration = null
+                            position.completedBy = null
+                            position.price = null
+                            position.date = Calendar.getInstance().time
+                            GlobalScope.launch {
                                 Firebase.database.getReference("requests").child(position.id.toString()).setValue(position)
                                 val group : Group? = getGroupById(c, position.groupId)
                                 val uid : String = FirebaseAuthWrapper(c).getUid()!!
@@ -318,8 +374,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 for(userId in group!!.users!!){
                                     if(userId != uid){
                                         val notificationId : Long = getNotificationId(c, userId)
-                                        val notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName,  notificationId, Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
+                                        val notification = Notification(userId, position, position.user.nickname, null, groupName,  notificationId, Calendar.getInstance().time, position.groupId, Notification.Type.NewRequest)
                                         Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
+                                        var unreadMessages = getUnread(c, group.groupId, userId)!!
+                                        unreadMessages++
+                                        Firebase.database.getReference("unread").child(userId).child(group.groupId.toString()).setValue(unreadMessages)
                                     }
                                 }
                                 val intent = Intent(c, GroupActivity::class.java)
@@ -370,8 +429,9 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         else
             holder.commentRequest.text = "Comment: ${newList.comment}"
         holder.nameRequest.text = newList.nameRequest
-        if(!newList.isCompleted)
+        if(!newList.isCompleted){
             holder.completedBy.visibility = View.GONE
+        }
         val sdf = SimpleDateFormat("dd/MM/yy")
         val day = sdf.format(newList.date)
         val sdf2 = SimpleDateFormat("HH:mm")
