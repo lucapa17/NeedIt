@@ -32,7 +32,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Log.d(TAG, "ccccccccc")
         setContentView(R.layout.activity_main)
         deleteCache()
         recv = this.findViewById(R.id.mRecycler)

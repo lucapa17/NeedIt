@@ -137,16 +137,42 @@ class ActiveListFragment : Fragment() {
 
         }
 
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
         hasExpiration.setOnClickListener {
             if(hasExpiration.isChecked){
                 expiration.visibility = View.VISIBLE
+                val calendar = Calendar.getInstance()
+                val dateSetListener =
+                    OnDateSetListener { view, year, month, dayOfMonth ->
+                        calendar[Calendar.YEAR] = year
+                        calendar[Calendar.MONTH] = month
+                        calendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+                        val timeSetListener =
+                            OnTimeSetListener { view, hourOfDay, minute ->
+                                calendar[Calendar.HOUR_OF_DAY] = hourOfDay
+                                calendar[Calendar.MINUTE] = minute
+                                expiration.setText(simpleDateFormat.format(calendar.time))
+                                if(calendar.time <= Calendar.getInstance().time)
+                                    expiration.error = "invalid date"
+                                else
+                                    expiration.error = null
+                            }
+                        TimePickerDialog(
+                            requireContext(), timeSetListener,
+                            calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false
+                        ).show()
+                    }
+
+                DatePickerDialog(
+                    requireContext(), dateSetListener,
+                    calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
+                ).show()
             }
             else {
                 expiration.visibility = View.GONE
             }
         }
-        val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
         expiration.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -177,6 +203,7 @@ class ActiveListFragment : Fragment() {
             ).show()
 
         }
+
 
 
 
@@ -257,6 +284,7 @@ class ActiveListFragment : Fragment() {
         addDialog.create()
         addDialog.show()
     }
+
     companion object {
         @JvmStatic
         fun newInstance(groupId: Long, uid: String, groupName: String, photoList : ArrayList<String>) =

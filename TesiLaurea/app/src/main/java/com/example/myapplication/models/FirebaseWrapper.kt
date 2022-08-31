@@ -1,5 +1,6 @@
 package com.example.myapplication.models
 
+import android.accounts.NetworkErrorException
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -8,9 +9,14 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import com.example.myapplication.R
 import com.example.myapplication.activities.LoginActivity
 import com.example.myapplication.activities.SplashActivity
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,6 +30,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Error
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -46,7 +53,14 @@ class FirebaseAuthWrapper(private val context: Context) {
                     FirebaseDbWrapper(context).registerUser(user)
                 }
                 else {
-                    Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
+                    val exception = task.exception as FirebaseException
+                    Log.d(TAG, "qqq "+exception.toString())
+                    if(exception is FirebaseAuthUserCollisionException)
+                        Toast.makeText(context, context.resources.getString(R.string.emailAlreadyUsed), Toast.LENGTH_SHORT).show()
+                    else if(exception is FirebaseNetworkException)
+                        Toast.makeText(context, context.resources.getString(R.string.networkError), Toast.LENGTH_SHORT).show()
+                    else
+                        Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
                 }
             }
     }
@@ -58,7 +72,14 @@ class FirebaseAuthWrapper(private val context: Context) {
                 val intent  = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
             } else {
-                Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
+                val exception = task.exception as FirebaseException
+                if(exception is FirebaseAuthInvalidCredentialsException)
+                    Toast.makeText(context, context.resources.getString(R.string.wrongCredentials), Toast.LENGTH_SHORT).show()
+                else if(exception is FirebaseNetworkException)
+                    Toast.makeText(context, context.resources.getString(R.string.networkError), Toast.LENGTH_SHORT).show()
+                else
+                    Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
+
             }
         }
     }

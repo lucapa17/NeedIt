@@ -3,8 +3,8 @@
     <string name="logtoreg"><u>Are not you already registered? Sign up!</u></string>
     <string name="regtolog"><u>Are you already registered? Sign in!</u></string>
     <string name="createNewGroup"><u>Create a new group</u></string>
-    <string name="readList"><u>View List</u></string>
-    <string name="closeList"><u>Reduce List</u></string>
+    <string name="readList">View List</string>
+    <string name="closeList">Reduce List</string>
     <string name="userNotFound">User not found</string>
     <string name="yourUser">You can\'t add yourself</string>
     <string name="userAlreadyInGroup">User already in the group</string>
@@ -83,6 +83,13 @@
     <string name="infoGroup">Info group</string>
     <string name="changeImage">Change image</string>
     <string name="deleteImage">Delete image</string>
+    <string name="wrongCredentials">Wrong credentials</string>
+    <string name="networkError">Network Error</string>
+    <string name="emailAlreadyUsed">The email address is already in use by another account</string>
+    <string name="wrongPassword">Wrong password</string>
+
+
+
 
 
 

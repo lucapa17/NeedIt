@@ -81,8 +81,6 @@ class GroupActivity : AppCompatActivity() {
                     binding!!.viewPager.adapter = adapter
                     binding!!.tabs.setupWithViewPager(binding!!.viewPager)
                     progressDialog.dismiss()
-
-
                 }
             }
         }

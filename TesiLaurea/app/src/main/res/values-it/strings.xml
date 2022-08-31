@@ -3,8 +3,8 @@
     <string name="logtoreg"><u>Non sei ancora registrato? Registrati ora!</u></string>
     <string name="regtolog"><u>Hai già un account? Accedi!</u></string>
     <string name="createNewGroup"><u>Crea un nuovo gruppo</u></string>
-    <string name="readList"><u>Espandi lista</u></string>
-    <string name="closeList"><u>Riduci lista</u></string>
+    <string name="readList">Espandi lista</string>
+    <string name="closeList">Riduci lista</string>
     <string name="userNotFound">Utente non trovato</string>
     <string name="yourUser">Non puoi aggiungere te stesso</string>
     <string name="userAlreadyInGroup">Utente già presente nel gruppo</string>
@@ -57,7 +57,7 @@
     <string name="insertPass">Inserisci password</string>
     <string name="login">Accedi</string>
     <string name="registration">Registrati</string>
-    <string name="noGroup">Non fai ancora parte di nessun gruppo</string>
+    <string name="noGroup">Non fai parte di nessun gruppo</string>
     <string name="groupName">Nome del gruppo</string>
     <string name="insertMember">Inserisci un nuovo utente</string>
     <string name="createGroup">Crea gruppo</string>
@@ -83,8 +83,9 @@
     <string name="infoGroup">Info gruppo</string>
     <string name="changeImage">Cambia immagine</string>
     <string name="deleteImage">Elimina immagine</string>
-
-
-
+    <string name="wrongCredentials">Credenziali errate</string>
+    <string name="networkError">Errore di connessione</string>
+    <string name="emailAlreadyUsed">Email già in uso in un altro account</string>
+    <string name="wrongPassword">Password errata</string>
 
 </resources>

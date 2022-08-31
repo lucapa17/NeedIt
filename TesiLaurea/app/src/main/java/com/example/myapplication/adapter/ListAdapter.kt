@@ -135,6 +135,35 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         hasExpiration.setOnClickListener {
                             if(hasExpiration.isChecked){
                                 expiration.visibility = View.VISIBLE
+                                val calendar = Calendar.getInstance()
+                                val dateSetListener =
+                                    DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                                        calendar[Calendar.YEAR] = year
+                                        calendar[Calendar.MONTH] = month
+                                        calendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+                                        val timeSetListener =
+                                            TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                                                calendar[Calendar.HOUR_OF_DAY] = hourOfDay
+                                                calendar[Calendar.MINUTE] = minute
+                                                expiration.setText(simpleDateFormat.format(calendar.time))
+                                                if (calendar.time <= Calendar.getInstance().time)
+                                                    expiration.error = c.resources.getString(R.string.invalidDate)
+                                                else
+                                                    expiration.error = null
+                                            }
+                                        TimePickerDialog(
+                                            c,
+                                            timeSetListener,
+                                            calendar[Calendar.HOUR_OF_DAY],
+                                            calendar[Calendar.MINUTE],
+                                            false
+                                        ).show()
+                                    }
+
+                                DatePickerDialog(
+                                    c, dateSetListener,
+                                    calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
+                                ).show()
                             }
                             else {
                                 expiration.visibility = View.GONE
