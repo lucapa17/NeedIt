@@ -51,7 +51,7 @@ class InfoGroupActivity: AppCompatActivity() {
         recv.adapter = membersAdapter
 
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Wait...")
+        progressDialog.setMessage(R.string.wait.toString())
         progressDialog.setCancelable(false)
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -80,9 +80,9 @@ class InfoGroupActivity: AppCompatActivity() {
                     findViewById<TextView>(R.id.nameGroup).text = group!!.nameGroup
                     findViewById<EditText>(R.id.edit_nameGroup).setText(group!!.nameGroup)
                     if (groupMembersList.size >1 )
-                        findViewById<TextView>(R.id.numberMembers).text = "${groupMembersList.size} members:"
+                        findViewById<TextView>(R.id.numberMembers).text = "${groupMembersList.size} ${R.string.members}:"
                     else
-                        findViewById<TextView>(R.id.numberMembers).text = "1 member:"
+                        findViewById<TextView>(R.id.numberMembers).text = "1 ${R.string.member}:"
 
 
                     if(uri != null)
@@ -120,11 +120,11 @@ class InfoGroupActivity: AppCompatActivity() {
 
             val newNameGroup: String = findViewById<EditText>(R.id.edit_nameGroup).text.toString().trim()
             if (newNameGroup.isEmpty()) {
-                findViewById<EditText>(R.id.edit_nameGroup).error = "Empty!"
+                findViewById<EditText>(R.id.edit_nameGroup).error = R.string.emptyGroupName.toString()
 
             } else {
                 val progressDialog1 = ProgressDialog(this)
-                progressDialog1.setMessage("Wait...")
+                progressDialog1.setMessage(R.string.wait.toString())
                 progressDialog1.setCancelable(false)
                 progressDialog1.show()
                 CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -176,10 +176,10 @@ class InfoGroupActivity: AppCompatActivity() {
 
                 val builder = AlertDialog.Builder(this)
                 //builder.setView(v)
-                builder.setTitle("Exit Group")
+                builder.setTitle(R.string.exitGroup.toString())
                 builder.setIcon(R.drawable.ic_baseline_exit_to_app_24)
-                builder.setMessage("Do you want to leave this group?")
-                builder.setPositiveButton("Yes"){
+                builder.setMessage(R.string.leaveGroup.toString())
+                builder.setPositiveButton(R.string.yes.toString()){
                         dialog,_->
                     CoroutineScope(Dispatchers.Main + Job()).launch {
                         withContext(Dispatchers.IO) {
@@ -273,12 +273,12 @@ class InfoGroupActivity: AppCompatActivity() {
                                 withContext(Dispatchers.Main) {
                                     if (user!!.id.isEmpty()) {
                                         if(nicknameEditText.text.isNotEmpty()){
-                                            nicknameEditText.error = "user not found"
+                                            nicknameEditText.error = R.string.userNotFound.toString()
                                         }
                                         addUser.visibility = View.GONE
                                     }
                                     else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
-                                        nicknameEditText.error = "this is your user"
+                                        nicknameEditText.error = R.string.yourUser.toString()
                                         addUser.visibility = View.GONE
                                     }
 
@@ -287,7 +287,7 @@ class InfoGroupActivity: AppCompatActivity() {
                                         for(member in memberList){
                                             if(member.id == user!!.id){
                                                 found = true
-                                                nicknameEditText.error = "user already added"
+                                                nicknameEditText.error = R.string.userJustAdded.toString()
                                                 break
                                             }
                                         }
@@ -295,7 +295,7 @@ class InfoGroupActivity: AppCompatActivity() {
                                             for(member in group!!.users!!){
                                                 if(member == user!!.id){
                                                     found = true
-                                                    nicknameEditText.error = "user is already in the group"
+                                                    nicknameEditText.error = R.string.userAlreadyInGroup.toString()
                                                     break
                                                 }
                                             }
@@ -369,7 +369,7 @@ class InfoGroupActivity: AppCompatActivity() {
                     dialog.dismiss()
 
                 }
-                addDialog.setNegativeButton("Cancel") { dialog, _ ->
+                addDialog.setNegativeButton(R.string.cancel.toString()) { dialog, _ ->
                     dialog.dismiss()
                 }
                 addDialog.create()

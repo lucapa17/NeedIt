@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="Delete Profile"
+            android:text="@string/deleteProfileTitle"
             android:id="@+id/Title"
             android:textStyle="bold"
             android:textSize="18dp"
@@ -29,7 +29,7 @@
 
         <EditText
             android:id="@+id/password"
-            android:hint="insert password..."
+            android:hint="@string/insertPass"
             android:inputType="textPassword"
             android:textColor="@color/black"
             android:textSize="18dp"

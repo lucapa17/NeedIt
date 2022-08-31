@@ -6,12 +6,12 @@
 
     <item android:id="@+id/nav_add_member"
         android:icon="@drawable/ic_baseline_person_add_24"
-        android:title="add member"
+        android:title="@string/addMember"
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/nav_show_members"
         android:icon="@drawable/ic_baseline_info_24"
-        android:title="show members"
+        android:title="@string/infoGroup"
         app:showAsAction="ifRoom"/>
 
 

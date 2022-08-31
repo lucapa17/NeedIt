@@ -26,7 +26,7 @@
                 android:ems="10"
                 android:layout_margin="15dp"
                 android:inputType="textPersonName"
-                android:hint="insert name...." />
+                android:hint="@string/insertName" />
 
             <EditText
                 android:id="@+id/userSurname"
@@ -35,7 +35,7 @@
                 android:ems="10"
                 android:layout_margin="15dp"
                 android:inputType="textPersonName"
-                android:hint="insert surname...." />
+                android:hint="@string/insertSurname" />
 
             <EditText
                 android:id="@+id/userNickname"
@@ -44,7 +44,7 @@
                 android:ems="10"
                 android:layout_margin="15dp"
                 android:inputType="textPersonName"
-                android:hint="insert nickname...." />
+                android:hint="@string/insertNickname" />
 
 
             <EditText
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:hint="insert email...."
+                android:hint="@string/insertEmail"
                 android:inputType="textEmailAddress" />
 
             <EditText
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:hint="insert password...."
+                android:hint="@string/insertPass"
                 android:inputType="textPassword" />
 
             <EditText
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:hint="confirm password...."
+                android:hint="@string/confirmPass"
                 android:inputType="textPassword" />
 
             <Button
@@ -79,7 +79,7 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:text="Sign Up" />
+                android:text="@string/registration" />
 
             <TextView
                 android:id="@+id/switchToLogin"
@@ -89,7 +89,7 @@
                 android:focusable="true"
                 android:textColor="#1D7854"
                 android:ems="10"
-                android:text="@string/registration"
+                android:text="@string/regtolog"
                 android:textAlignment="center"/>
 
         </LinearLayout>

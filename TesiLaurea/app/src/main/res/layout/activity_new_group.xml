@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:hint="group name...."
+                android:hint="@string/groupName"
                 android:inputType="text" />
 
             <LinearLayout
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="insert a new Member...."
+                    android:hint="@string/insertMember"
                     android:inputType="text" />
 
                 <ImageView
@@ -101,7 +101,7 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:text="Create Group" />
+                android:text="@string/createGroup" />
 
 
 

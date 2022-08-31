@@ -68,13 +68,13 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                 for(notification in notificationList){
                     val notificationText: String = when (notification.type) {
                         Notification.Type.NewRequest -> {
-                            "${notification.sender} sent a new request : \n${notification.request!!.nameRequest} "
+                            "${notification.sender} ${R.string.sentRequestNot} : \n${notification.request!!.nameRequest} "
                         }
                         Notification.Type.CompletedRequest -> {
-                            "${notification.completedBy} has completed the following request of ${notification.sender} :  \n ${notification.request!!.nameRequest} "
+                            "${notification.completedBy}  ${R.string.completedRequestNot} : \n${notification.request!!.nameRequest} "
                         }
                         Notification.Type.NewGroup -> {
-                            "${notification.sender} added you "
+                            "${notification.sender} ${R.string.addedYouNot}"
                         }
                     }
                     val intent = Intent(context, MainActivity::class.java).apply {

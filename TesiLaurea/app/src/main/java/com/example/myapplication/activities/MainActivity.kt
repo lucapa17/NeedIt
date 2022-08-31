@@ -35,19 +35,13 @@ class MainActivity : BaseActivity() {
 
         setContentView(R.layout.activity_main)
         deleteCache()
-        val dir = File(this.cacheDir.absolutePath)
-        if (dir.exists()) {
-            for (f in dir.listFiles()) {
-                Log.d(TAG, "fff "+f.name.toString())
-            }
-        }
         recv = this.findViewById(R.id.mRecycler)
         groupsAdapter = GroupsAdapter(this, ArrayList(), ArrayList(), ArrayList())
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = groupsAdapter
         runInstantWorker(this)
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Wait...")
+        progressDialog.setMessage(R.string.wait.toString())
         progressDialog.setCancelable(false)
         progressDialog.show()
         val layoutNoGroup = this.findViewById<LinearLayout>(R.id.noGroup)
@@ -115,32 +109,13 @@ class MainActivity : BaseActivity() {
                         val intent  = Intent(this@MainActivity, MainActivity::class.java)
                         this@MainActivity.startActivity(intent)
                     }
-
-                /*
-                    val listUnread1 = getUnreadList(this@MainActivity, uid)
-                    for(i in listUnread1){
-                        Log.d(TAG, "rrrr1 "+i.toString())
-                    }
-                    if(listUnread1.equals(listUnread))
-                        Log.d(TAG, "rrrr2 uguali")
-                    else
-                        Log.d(TAG, "rrrr2 diversi")
-
-                     */
-
-
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.d(TAG, "rrrr1")
                 }
 
             })
         }
-
-
-
-
 
 
 

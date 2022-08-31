@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Need!t</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="login"><u>Non sei ancora registrato? Registrati!</u></string>
+    <string name="registration"><u>Are you already registered? Sign in!</u></string>
+    <string name="newGroup"><u>Create a new group</u></string>
+    <string name="readList"><u>View List</u></string>
+    <string name="closeList"><u>Reduce List</u></string>
+
+</resources>

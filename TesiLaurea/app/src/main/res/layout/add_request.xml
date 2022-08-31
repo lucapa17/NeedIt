@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             >
             <TextView
-                android:text="Add new Request"
+                android:text="@string/addNewRequest"
                 android:id="@+id/Title"
                 android:textStyle="bold"
                 android:textSize="18dp"
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"/>
             <EditText
                 android:id="@+id/nameRequest"
-                android:hint="insert a request"
+                android:hint="@string/insertRequest"
                 android:inputType="text"
                 android:textColor="@color/black"
                 android:textSize="18dp"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"/>
             <EditText
                 android:id="@+id/commentRequest"
-                android:hint="insert a comment (optional)"
+                android:hint="@string/insertComment"
                 android:inputType="textMultiLine"
                 android:textColor="@color/black"
                 android:background="@drawable/shape_background"
@@ -168,7 +168,7 @@
                     android:textStyle="bold"
                     android:buttonTint="#1D7854"
                     android:layout_marginHorizontal="15dp"
-                    android:text="List" />
+                    android:text="@string/list" />
                 <CheckBox
                     android:id="@+id/hasExpiration"
                     android:layout_width="wrap_content"
@@ -177,7 +177,7 @@
                     android:textStyle="bold"
                     android:buttonTint="#1D7854"
                     android:layout_marginRight="10dp"
-                    android:text="Expiration" />
+                    android:text="@string/expiration" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

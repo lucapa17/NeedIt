@@ -153,7 +153,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                             calendar[Calendar.MINUTE] = minute
                                             expiration.setText(simpleDateFormat.format(calendar.time))
                                             if (calendar.time <= Calendar.getInstance().time)
-                                                expiration.error = "invalid date"
+                                                expiration.error = R.string.invalidDate.toString()
                                             else
                                                 expiration.error = null
                                         }
@@ -173,7 +173,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
                         }
 
-                        title.text = "Edit Request"
+                        title.text = R.string.editRequest.toString()
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
                         var itemsAdapter1 = ItemsAdapter(c, ArrayList(), false)
@@ -198,7 +198,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         }
                         addItem.setOnClickListener {
                             if(newItem.text.toString().trim().isEmpty())
-                                newItem.error = "empty"
+                                newItem.error = R.string.emptyItem.toString()
                             else if(list == null){
                                 list = ArrayList()
                                 list!!.add(newItem.text.toString().trim())
@@ -223,16 +223,16 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                     dialog,_->
 
                                 if(name.text.toString().trim().isEmpty()){
-                                    Toast.makeText(c,"Empty Request",Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(c,R.string.emptyRequest.toString(),Toast.LENGTH_SHORT).show()
                                 }
                                 else if(hasExpiration.isChecked && expiration.text.isEmpty()){
-                                    Toast.makeText(c,"Empty Expiration",Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(c,R.string.emptyExpiration.toString(),Toast.LENGTH_SHORT).show()
                                 }
                                 else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
-                                    Toast.makeText(c,"invalid date",Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(c,R.string.invalidDate.toString(),Toast.LENGTH_SHORT).show()
                                 else {
                                     val progressDialog = ProgressDialog(c)
-                                    progressDialog.setMessage("Wait...")
+                                    progressDialog.setMessage(R.string.wait.toString())
                                     progressDialog.setCancelable(false)
                                     progressDialog.show()
                                     if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
@@ -259,7 +259,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 }
                                 dialog.dismiss()
                             }
-                            .setNegativeButton("Cancel"){
+                            .setNegativeButton(R.string.cancel.toString()){
                                     dialog,_->
                                 dialog.dismiss()
                             }
@@ -271,10 +271,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     R.id.delete->{
                         /**set delete*/
                         AlertDialog.Builder(c)
-                            .setTitle("Delete")
+                            .setTitle(R.string.delete.toString())
                             .setIcon(R.drawable.ic_warning)
-                            .setMessage("Are you sure delete this Request?")
-                            .setPositiveButton("Yes"){
+                            .setMessage(R.string.deleteRequest.toString())
+                            .setPositiveButton(R.string.yes.toString()){
                                     dialog,_->
                                 Firebase.database.getReference("requests").child(position.id.toString()).removeValue()
                                 val intent = Intent(c, GroupActivity::class.java)
@@ -302,10 +302,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             builder.setView(v1)
 
                         }
-                        builder.setTitle("Complete")
+                        builder.setTitle(R.string.complete.toString())
                         builder.setIcon(R.drawable.ic_baseline_check_circle_24)
-                        builder.setMessage("Do you want to complete this request?")
-                        builder.setPositiveButton("Yes") { dialog, _ ->
+                        builder.setMessage(R.string.completeRequest.toString())
+                        builder.setPositiveButton(R.string.yes.toString()) { dialog, _ ->
                             position.isCompleted = true
                             if (!toDo) {
                                 val priceValue: String = input!!.text.toString()
@@ -356,10 +356,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     }
                     R.id.restore->{
                         val builder = AlertDialog.Builder(c)
-                        builder.setTitle("Restore")
+                        builder.setTitle(R.string.restore.toString())
                         builder.setIcon(R.drawable.ic_baseline_undo_24)
-                        builder.setMessage("Do you want to restore this request?")
-                        builder.setPositiveButton("Yes"){
+                        builder.setMessage(R.string.restoreRequest.toString())
+                        builder.setPositiveButton(R.string.yes.toString()){
                                 dialog,_->
                             position.isCompleted = false
                             position.expiration = null
@@ -424,11 +424,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         if(newList.price!!.isEmpty())
             holder.price.visibility = View.GONE
         else
-            holder.price.text = "Bought for: ${newList.price} €"
+            holder.price.text = "${R.string.boughtFor}: ${newList.price} €"
         if(newList.comment!!.isEmpty())
             holder.commentRequest.visibility = View.GONE
         else
-            holder.commentRequest.text = "Comment: ${newList.comment}"
+            holder.commentRequest.text = "${R.string.comment}: ${newList.comment}"
         holder.nameRequest.text = newList.nameRequest
         if(!newList.isCompleted){
             holder.completedBy.visibility = View.GONE
@@ -443,12 +443,12 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
         if(!newList.isCompleted && newList.expiration != null){
-            holder.expiration.text = "Valid until ${simpleDateFormat.format(newList.expiration)}"
+            holder.expiration.text = "${R.string.validUntil} ${simpleDateFormat.format(newList.expiration)}"
         }
         else
             holder.expiration.visibility = View.GONE
         if(newList.isCompleted) {
-            holder.completedBy.text = "Completed by ${newList.completedBy!!.nickname}, ${simpleDateFormat.format(newList.expiration)}"
+            holder.completedBy.text = "${R.string.completedBy} ${newList.completedBy!!.nickname}, ${simpleDateFormat.format(newList.expiration)}"
         }
         if(newList.list != null){
             var isOpen = false

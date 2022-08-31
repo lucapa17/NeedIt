@@ -34,7 +34,7 @@ class ShowProfile : AppCompatActivity() {
         var nickname : String
 
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Wait...")
+        progressDialog.setMessage(R.string.wait.toString())
         progressDialog.setCancelable(false)
         progressDialog.show()
 

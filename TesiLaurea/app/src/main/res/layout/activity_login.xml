@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:hint="insert email...."
+                android:hint="@string/insertEmail"
                 android:inputType="textEmailAddress" />
 
             <EditText
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:hint="insert password...."
+                android:hint="@string/insertPass"
                 android:inputType="textPassword" />
 
             <Button
@@ -42,7 +42,7 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:text="Login" />
+                android:text="@string/login" />
 
             <TextView
                 android:id="@+id/switchToRegistration"
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:ems="10"
-                android:text="@string/login"
+                android:text="@string/logtoreg"
                 android:textColor="#1D7854"
                 android:textAlignment="center"/>
 

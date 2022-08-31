@@ -4,10 +4,10 @@
 
     <item android:id="@+id/nav_add_member"
         android:icon="@drawable/ic_baseline_person_add_24"
-        android:title="add member"
+        android:title="@string/addMember"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/nav_leave"
-        android:title="Exit Group"
+        android:title="@string/exitGroup"
         app:showAsAction="never" />
 </menu>

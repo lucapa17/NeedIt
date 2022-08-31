@@ -30,7 +30,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginBottom="5dp"
             android:fontFamily="sans-serif-thin"
-            android:text="You haven't joined any group yet"
+            android:text="@string/noGroup"
             android:textAlignment="center"
             android:textColor="#1D7854"
             android:textSize="20dp"

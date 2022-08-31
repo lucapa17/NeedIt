@@ -46,7 +46,7 @@ class GroupActivity : AppCompatActivity() {
         Firebase.database.getReference("unread").child(FirebaseAuthWrapper(this).getUid()!!).child(groupId.toString()).setValue(0)
         val fragmentArrayList = ArrayList<Fragment>()
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Wait...")
+        progressDialog.setMessage(R.string.wait.toString())
         progressDialog.setCancelable(false)
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -198,12 +198,12 @@ class GroupActivity : AppCompatActivity() {
                                 withContext(Dispatchers.Main) {
                                     if (user!!.id.isEmpty()) {
                                         if(nicknameEditText.text.isNotEmpty()){
-                                            nicknameEditText.error = "user not found"
+                                            nicknameEditText.error = R.string.userNotFound.toString()
                                         }
                                         addUser.visibility = View.GONE
                                     }
                                     else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
-                                        nicknameEditText.error = "this is your user"
+                                        nicknameEditText.error = R.string.yourUser.toString()
                                         addUser.visibility = View.GONE
                                     }
 
@@ -212,7 +212,7 @@ class GroupActivity : AppCompatActivity() {
                                         for(member in memberList){
                                             if(member.id == user!!.id){
                                                 found = true
-                                                nicknameEditText.error = "user already added"
+                                                nicknameEditText.error = R.string.userJustAdded.toString()
                                                 break
                                             }
                                         }
@@ -220,7 +220,7 @@ class GroupActivity : AppCompatActivity() {
                                             for(member in group!!.users!!){
                                                 if(member == user!!.id){
                                                     found = true
-                                                    nicknameEditText.error = "user is already in the group"
+                                                    nicknameEditText.error = R.string.userAlreadyInGroup.toString()
                                                     break
                                                 }
                                             }
@@ -286,13 +286,13 @@ class GroupActivity : AppCompatActivity() {
                             Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
 
                         }
-                        Toast.makeText(this@GroupActivity, "Users added correctly", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@GroupActivity, R.string.userAddedOk.toString(), Toast.LENGTH_SHORT).show()
 
                     }
                     dialog.dismiss()
 
                 }
-                addDialog.setNegativeButton("Cancel") { dialog, _ ->
+                addDialog.setNegativeButton(R.string.cancel.toString()) { dialog, _ ->
                     dialog.dismiss()
                 }
                 addDialog.create()

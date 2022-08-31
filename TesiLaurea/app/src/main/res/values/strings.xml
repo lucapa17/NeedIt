@@ -1,11 +1,97 @@
 <resources>
     <string name="app_name">Need!t</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="login"><u>Are not you already registered? Sign up!</u></string>
-    <string name="registration"><u>Are you already registered? Sign in!</u></string>
+    <string name="logtoreg"><u>Are not you already registered? Sign up!</u></string>
+    <string name="regtolog"><u>Are you already registered? Sign in!</u></string>
     <string name="newGroup"><u>Create a new group</u></string>
     <string name="readList"><u>View List</u></string>
     <string name="closeList"><u>Reduce List</u></string>
+    <string name="userNotFound">User not found</string>
+    <string name="yourUser">You can\'t add yourself</string>
+    <string name="userAlreadyInGroup">User already in the group</string>
+    <string name="userJustAdded">User just added</string>
+    <string name="wait">Wait…</string>
+    <string name="fillAllTheFields">Fill all the fields!</string>
+    <string name="nicknameNotValid">Nickname not valid</string>
+    <string name="nicknameAlreadyUsed">Nickname already used</string>
+    <string name="deleteProfileTitle">Delete my account</string>
+    <string name="deleteProfileMessage">Do you want to delete your profile? Please, insert your password</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="passwordNotValid">Password not valid!</string>
+    <string name="passwordMismatched">Passwords mismatched!</string>
+    <string name="passwordEqualOld">New password is the same as the old one!</string>
+    <string name="passwordOk">Passwords changed correctly!</string>
+    <string name="userAddedOk">Users added correctly</string>
+    <string name="members">participants</string>
+    <string name="member">participant</string>
+    <string name="emptyGroupName">Insert a group name</string>
+    <string name="exitGroup">Exit group</string>
+    <string name="leaveGroup">Do you want to leave this group?</string>
+    <string name="invalidDate">Invalid date</string>
+    <string name="editRequest">Edit request</string>
+    <string name="emptyItem">Insert an item</string>
+    <string name="emptyRequest">Add a title to your request</string>
+    <string name="emptyExpiration">Add an expiration to your request</string>
+    <string name="delete">Delete</string>
+    <string name="deleteRequest">Are you sure delete this Request?</string>
+    <string name="complete">Complete</string>
+    <string name="completeRequest">Do you want to complete this request?</string>
+    <string name="restore">Restore</string>
+    <string name="restoreRequest">Do you want to restore this request?</string>
+    <string name="boughtFor">Bought for</string>
+    <string name="comment">Comment</string>
+    <string name="validUntil">Valid until</string>
+    <string name="completedBy">Completed by</string>
+    <string name="activeList">Active List</string>
+    <string name="completedList">Completed List</string>
+    <string name="sentRequestNot">sent a new request</string>
+    <string name="completedRequestNot">has completed the following request of</string>
+    <string name="addedYouNot">added you</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">Email</string>
+    <string name="save">Save</string>
+    <string name="insertEmail">Insert email</string>
+    <string name="insertPass">Insert password</string>
+    <string name="login">Login</string>
+    <string name="registration">Sign up</string>
+    <string name="noGroup">You haven\'t joined any group yet</string>
+    <string name="groupName">Group name</string>
+    <string name="insertMember">Insert a new member</string>
+    <string name="createGroup">Create Group</string>
+    <string name="insertName">Insert name</string>
+    <string name="insertSurname">Insert surname</string>
+    <string name="insertNickname">Insert nickname</string>
+    <string name="confirmPass">Confirm password</string>
+    <string name="addNewRequest">Add new request</string>
+    <string name="insertRequest">Insert a request</string>
+    <string name="insertComment">Insert a comment (optional)</string>
+    <string name="list">List</string>
+    <string name="expiration">Expiration</string>
+    <string name="addMembers">Add members</string>
+    <string name="changePassword">Change password</string>
+    <string name="oldPassword">Insert old password</string>
+    <string name="newPassword">Insert new password</string>
+    <string name="confirmNewPassword">Confirm new password</string>
+    <string name="price">Price</string>
+    <string name="newGroup">New group</string>
+    <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="addMember">Add member</string>
+    <string name="infoGroup">Info group</string>
+    <string name="changeImage">Change image</string>
+    <string name="deleteImage">Delete image</string>
+    <string name="member">participant</string>
+    <string name="member">participant</string>
+
+
+
+
+
+
+
+
 
 </resources>

@@ -57,12 +57,12 @@ class NewGroupActivity : AppCompatActivity() {
                         withContext(Dispatchers.Main) {
                             if (user!!.id.isEmpty()) {
                                 if(nicknameEditText.text.isNotEmpty()){
-                                    nicknameEditText.error = "user not found"
+                                    nicknameEditText.error = R.string.userNotFound.toString()
                                 }
                                 addUser.visibility = View.GONE
                             }
                             else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
-                                nicknameEditText.error = "this is your user"
+                                nicknameEditText.error = R.string.yourUser.toString()
                                 addUser.visibility = View.GONE
                             }
                             else{
@@ -71,7 +71,7 @@ class NewGroupActivity : AppCompatActivity() {
                                 for(member in memberList){
                                     if(member.id == user!!.id){
                                         found = true
-                                        nicknameEditText.error = "user already added"
+                                        nicknameEditText.error = R.string.userJustAdded.toString()
                                         break
                                     }
                                 }
@@ -122,7 +122,7 @@ class NewGroupActivity : AppCompatActivity() {
         button.setOnClickListener {
             val groupName: EditText = findViewById(R.id.groupName)
             if (groupName.text.toString().trim().isEmpty()) {
-                groupName.error = "Insert the group name!"
+                groupName.error = R.string.emptyGroupName.toString()
             } else {
                 var groupId: Long
                 CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -137,14 +137,12 @@ class NewGroupActivity : AppCompatActivity() {
                             }
                         }
                         if (image != null){
-                            Log.d(TAG, "rrrr0")
                             FirebaseStorageWrapper().upload(image!!, groupId.toString(), this@NewGroupActivity)
                         }
                         else {
                             val tmp = File.createTempFile("image_${groupId}_", null, this@NewGroupActivity.cacheDir)
                             tmp.deleteOnExit()
                         }
-                        Log.d(TAG, "rrrr")
                         val membersId: MutableList<String> = mutableListOf(myUser!!.id)
                         myUser!!.groups!!.add(groupId)
                         Firebase.database.getReference("users").child(myUser!!.id).setValue(myUser)

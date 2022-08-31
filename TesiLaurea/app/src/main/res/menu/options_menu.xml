@@ -3,23 +3,23 @@
     <!--we add icons-->
     <item
         android:id="@+id/complete"
-        android:title="Complete"
+        android:title="@string/complete"
 
         android:icon="@drawable/ic_baseline_check_circle_24"
         />
     <item
         android:id="@+id/editText"
-        android:title="Edit"
+        android:title="@string/editRequest"
         android:icon="@drawable/ic_edit"
         />
     <item
         android:id="@+id/restore"
-        android:title="Restore"
+        android:title="@string/restore"
         android:icon="@drawable/ic_baseline_undo_24"
         />
     <item
         android:id="@+id/delete"
-        android:title="Delete"
+        android:title="@string/delete"
         android:icon="@drawable/ic_delete"
         />
 

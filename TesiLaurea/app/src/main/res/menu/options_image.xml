@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/changeImage"
-        android:title="Change image"
+        android:title="@string/changeImage"
         android:icon="@drawable/ic_edit"
         />
     <item
         android:id="@+id/deleteImage"
-        android:title="Delete image"
+        android:title="@string/deleteImage"
         android:icon="@drawable/ic_delete"
         />
 

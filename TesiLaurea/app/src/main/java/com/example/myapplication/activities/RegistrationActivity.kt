@@ -30,13 +30,13 @@ class RegistrationActivity : AppCompatActivity() {
             if (email.text.toString().trim().isEmpty() || password.text.toString().trim().isEmpty() ||
                 name.text.toString().trim().isEmpty() || nickname.text.toString().trim().isEmpty() ||
                 surname.text.toString().trim().isEmpty() || confirm.text.toString().trim().isEmpty()) {
-                Toast.makeText(v!!.context, "Fill all the fields!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(v!!.context, R.string.fillAllTheFields.toString(), Toast.LENGTH_SHORT).show()
             }
             else if (!Pattern.matches("^[a-zA-Z][a-zA-Z0-9_.-]{5,20}$", nickname.text.toString().trim())){
-                nickname.error = "nickname not valid!"
+                nickname.error = R.string.nicknameNotValid.toString()
             }
             else if (!Pattern.matches("[\\p{Alpha}\\p{Digit}\\p{Punct}]{8,20}", password.text.toString().trim())){
-                password.error = "password not valid!"
+                password.error = R.string.passwordNotValid.toString()
             }
             else {
                 CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -45,7 +45,7 @@ class RegistrationActivity : AppCompatActivity() {
                             nicknameIsAlreadyUsed(v!!.context, nickname.text.toString().trim())
                         withContext(Dispatchers.Main) {
                             if (nicknameAlreadyUsed)
-                                nickname.error = "Nickname is already used"
+                                nickname.error = R.string.nicknameAlreadyUsed.toString()
                             else {
                                 if (password.text.toString().trim() == confirm.text.toString().trim()) {
                                     val firebaseWrapper = FirebaseAuthWrapper(v.context)
@@ -56,7 +56,9 @@ class RegistrationActivity : AppCompatActivity() {
                                         surname.text.toString().trim(),
                                         nickname.text.toString().trim())
                                 } else
-                                    confirm.error = "Passwords mismatched"
+                                    confirm.error = R.string.passwordMismatched.toString()
+
+
                             }
                         }
                     }

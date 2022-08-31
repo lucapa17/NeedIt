@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/price"
             android:inputType="numberDecimal"
-            android:hint="Price"
+            android:hint="@string/price"
             />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

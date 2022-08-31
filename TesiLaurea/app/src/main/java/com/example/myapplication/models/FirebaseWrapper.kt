@@ -621,11 +621,9 @@ class FirebaseStorageWrapper {
 
             e.printStackTrace()
         }
-        Log.d(TAG, "rrrr1")
         val baos = ByteArrayOutputStream()
         bmp!!.compress(Bitmap.CompressFormat.JPEG, 15, baos)
         val fileInBytes: ByteArray = baos.toByteArray()
-        Log.d(TAG, "rrrr2")
         val dir = File(context.cacheDir.absolutePath)
         if (dir.exists()) {
             for (f in dir.listFiles()) {
@@ -666,10 +664,8 @@ class FirebaseStorageWrapper {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {
-                Log.d(TAG, "AAA global scope")
                 storage.child("images/${id}.jpg").getFile(tmp).addOnSuccessListener {
                     image = Uri.fromFile(tmp)
-                    Log.d(TAG, "AAA success listener")
                     lock.withLock {
                         condition.signal()
                     }
@@ -695,7 +691,6 @@ class FirebaseStorageWrapper {
                     condition.signal()
                 }
             }.addOnFailureListener {
-                Log.d(TAG, "error: ${it.message}")
                 lock.withLock {
                     condition.signal()
                 }

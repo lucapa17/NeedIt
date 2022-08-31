@@ -40,7 +40,6 @@ class ActiveListFragment : Fragment() {
     private var uid : String? = null
     private var groupName : String? = null
     private var photoList : ArrayList<String>? = ArrayList()
-    private val myCalendar : Calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +63,7 @@ class ActiveListFragment : Fragment() {
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
-        progressDialog.setMessage("Wait...")
+        progressDialog.setMessage(R.string.wait.toString())
         progressDialog.setCancelable(false)
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -188,7 +187,7 @@ class ActiveListFragment : Fragment() {
         recv1.adapter = itemsAdapter
         addItem.setOnClickListener {
             if(newItem.text.toString().trim().isEmpty())
-                newItem.error = "empty"
+                newItem.error = R.string.emptyItem.toString()
             else {
                 list!!.add(newItem.text.toString().trim())
                 itemsAdapter.notifyDataSetChanged()
@@ -201,13 +200,13 @@ class ActiveListFragment : Fragment() {
             val namerequest = nameRequest.text.toString().trim()
             val comment1 = comment.text.toString().trim()
             if(namerequest.isEmpty()){
-                Toast.makeText(requireContext(),"Empty Request",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),R.string.emptyRequest.toString(),Toast.LENGTH_SHORT).show()
             }
             else if(hasExpiration.isChecked && expiration.text.isEmpty()){
-                Toast.makeText(requireContext(),"Empty Expiration",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),R.string.emptyExpiration.toString(),Toast.LENGTH_SHORT).show()
             }
             else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
-                Toast.makeText(requireContext(),"invalid date",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),R.string.invalidDate.toString(),Toast.LENGTH_SHORT).show()
             else {
                 var request: Request
                 GlobalScope.launch {
@@ -251,7 +250,7 @@ class ActiveListFragment : Fragment() {
             }
         dialog.dismiss()
         }
-        addDialog.setNegativeButton("Cancel"){
+        addDialog.setNegativeButton(R.string.cancel.toString()){
                 dialog,_->
             dialog.dismiss()
         }

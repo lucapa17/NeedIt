@@ -4,10 +4,10 @@
 
     <item
         android:id="@+id/nav_change_password"
-        android:title="Change password"
+        android:title="@string/changePassword"
         app:showAsAction="never" />
     <item
         android:id="@+id/nav_delete"
-        android:title="Delete my Account"
+        android:title="@string/deleteProfileTitle"
         app:showAsAction="never" />
 </menu>
