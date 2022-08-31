@@ -21,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
             if (email.text.toString().trim().isEmpty() || password.text.toString().trim()
                     .isEmpty()
             ) {
-                Toast.makeText(v!!.context, R.string.fillAllTheFields.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(v!!.context, resources.getString(R.string.fillAllTheFields), Toast.LENGTH_SHORT).show()
             } else {
                 val firebaseWrapper = FirebaseAuthWrapper(v!!.context)
                 firebaseWrapper.signIn(

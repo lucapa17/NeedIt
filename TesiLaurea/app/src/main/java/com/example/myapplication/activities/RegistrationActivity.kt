@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -30,13 +31,13 @@ class RegistrationActivity : AppCompatActivity() {
             if (email.text.toString().trim().isEmpty() || password.text.toString().trim().isEmpty() ||
                 name.text.toString().trim().isEmpty() || nickname.text.toString().trim().isEmpty() ||
                 surname.text.toString().trim().isEmpty() || confirm.text.toString().trim().isEmpty()) {
-                Toast.makeText(v!!.context, R.string.fillAllTheFields.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(v!!.context, resources.getString(R.string.fillAllTheFields), Toast.LENGTH_SHORT).show()
             }
             else if (!Pattern.matches("^[a-zA-Z][a-zA-Z0-9_.-]{5,20}$", nickname.text.toString().trim())){
-                nickname.error = R.string.nicknameNotValid.toString()
+                nickname.error = resources.getString(R.string.nicknameNotValid)
             }
             else if (!Pattern.matches("[\\p{Alpha}\\p{Digit}\\p{Punct}]{8,20}", password.text.toString().trim())){
-                password.error = R.string.passwordNotValid.toString()
+                password.error = resources.getString(R.string.passwordNotValid)
             }
             else {
                 CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -45,7 +46,7 @@ class RegistrationActivity : AppCompatActivity() {
                             nicknameIsAlreadyUsed(v!!.context, nickname.text.toString().trim())
                         withContext(Dispatchers.Main) {
                             if (nicknameAlreadyUsed)
-                                nickname.error = R.string.nicknameAlreadyUsed.toString()
+                                nickname.error = resources.getString(R.string.nicknameAlreadyUsed)
                             else {
                                 if (password.text.toString().trim() == confirm.text.toString().trim()) {
                                     val firebaseWrapper = FirebaseAuthWrapper(v.context)
@@ -56,7 +57,7 @@ class RegistrationActivity : AppCompatActivity() {
                                         surname.text.toString().trim(),
                                         nickname.text.toString().trim())
                                 } else
-                                    confirm.error = R.string.passwordMismatched.toString()
+                                    confirm.error = resources.getString(R.string.passwordMismatched)
 
 
                             }

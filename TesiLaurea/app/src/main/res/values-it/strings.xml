@@ -2,11 +2,11 @@
     <string name="app_name">Need!t</string>
     <string name="logtoreg"><u>Non sei ancora registrato? Registrati ora!</u></string>
     <string name="regtolog"><u>Hai già un account? Accedi!</u></string>
-    <string name="newGroup"><u>Crea un nuovo gruppo</u></string>
+    <string name="createNewGroup"><u>Crea un nuovo gruppo</u></string>
     <string name="readList"><u>Espandi lista</u></string>
     <string name="closeList"><u>Riduci lista</u></string>
     <string name="userNotFound">Utente non trovato</string>
-    <string name="yourUser">Sei già nel gruppo</string>
+    <string name="yourUser">Non puoi aggiungere te stesso</string>
     <string name="userAlreadyInGroup">Utente già presente nel gruppo</string>
     <string name="userJustAdded">Utente appena aggiunto</string>
     <string name="wait">Attendi…</string>
@@ -30,6 +30,7 @@
     <string name="invalidDate">Data non valida</string>
     <string name="editRequest">Modifica richiesta</string>
     <string name="emptyItem">Inserisci un nuovo elemento</string>
+    <string name="newItem">Nuovo elemento</string>
     <string name="emptyRequest">Aggiungi un titolo alla tua richiesta</string>
     <string name="emptyExpiration">Aggiungi una scadenza alla tua richiesta</string>
     <string name="delete">Elimina</string>
@@ -42,8 +43,8 @@
     <string name="comment">Commento</string>
     <string name="validUntil">Valido fino a</string>
     <string name="completedBy">Completato da</string>
-    <string name="activeList">Richieste attive</string>
-    <string name="completedList">Richieste completate</string>
+    <string name="activeList">Attive</string>
+    <string name="completedList">Completate</string>
     <string name="sentRequestNot">ha aggiunto una nuova richiesta</string>
     <string name="completedRequestNot">ha completato la seguente richiesta</string>
     <string name="addedYouNot">ti ha aggiunto</string>
@@ -64,9 +65,9 @@
     <string name="insertSurname">Inserisci cognome</string>
     <string name="insertNickname">Inserisci nickname</string>
     <string name="confirmPass">Conferma password</string>
-    <string name="addNewRequest">Aggiungi una nuova richiesta</string>
-    <string name="insertRequest">Inserisci titolo della richiesta</string>
-    <string name="insertComment">Inserisci un commento (facoltativo)</string>
+    <string name="addNewRequest">Nuova richiesta</string>
+    <string name="insertRequest">Titolo richiesta</string>
+    <string name="insertComment">Commento (facoltativo)</string>
     <string name="list">Lista</string>
     <string name="expiration">Scadenza</string>
     <string name="addMembers">Aggiungi utenti</string>
@@ -75,6 +76,7 @@
     <string name="newPassword">Inserisci nuova password</string>
     <string name="confirmNewPassword">Conferma nuova password</string>
     <string name="price">Prezzo</string>
+    <string name="newGroup">Nuovo gruppo</string>
     <string name="logout">Logout</string>
     <string name="profile">Profilo</string>
     <string name="addMember">Aggiungi utente</string>

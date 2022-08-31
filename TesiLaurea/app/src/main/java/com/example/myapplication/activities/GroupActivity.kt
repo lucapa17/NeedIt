@@ -46,7 +46,7 @@ class GroupActivity : AppCompatActivity() {
         Firebase.database.getReference("unread").child(FirebaseAuthWrapper(this).getUid()!!).child(groupId.toString()).setValue(0)
         val fragmentArrayList = ArrayList<Fragment>()
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage(R.string.wait.toString())
+        progressDialog.setMessage(resources.getString(R.string.wait))
         progressDialog.setCancelable(false)
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -77,7 +77,7 @@ class GroupActivity : AppCompatActivity() {
                 fragmentArrayList.add(ActiveListFragment.newInstance(groupId!!, FirebaseAuthWrapper(this@GroupActivity).getUid()!!, groupName!!, photoList))
                 fragmentArrayList.add(CompletedListFragment.newInstance(groupId!!,FirebaseAuthWrapper(this@GroupActivity).getUid()!!, groupName!!, photoList))
                 withContext(Dispatchers.Main) {
-                    val adapter = ViewPagerAdapter(supportFragmentManager, fragmentArrayList)
+                    val adapter = ViewPagerAdapter(supportFragmentManager, fragmentArrayList, this@GroupActivity)
                     binding!!.viewPager.adapter = adapter
                     binding!!.tabs.setupWithViewPager(binding!!.viewPager)
                     progressDialog.dismiss()
@@ -198,12 +198,12 @@ class GroupActivity : AppCompatActivity() {
                                 withContext(Dispatchers.Main) {
                                     if (user!!.id.isEmpty()) {
                                         if(nicknameEditText.text.isNotEmpty()){
-                                            nicknameEditText.error = R.string.userNotFound.toString()
+                                            nicknameEditText.error = resources.getString(R.string.userNotFound)
                                         }
                                         addUser.visibility = View.GONE
                                     }
                                     else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
-                                        nicknameEditText.error = R.string.yourUser.toString()
+                                        nicknameEditText.error = resources.getString(R.string.yourUser)
                                         addUser.visibility = View.GONE
                                     }
 
@@ -212,7 +212,7 @@ class GroupActivity : AppCompatActivity() {
                                         for(member in memberList){
                                             if(member.id == user!!.id){
                                                 found = true
-                                                nicknameEditText.error = R.string.userJustAdded.toString()
+                                                nicknameEditText.error = resources.getString(R.string.userJustAdded)
                                                 break
                                             }
                                         }
@@ -220,7 +220,7 @@ class GroupActivity : AppCompatActivity() {
                                             for(member in group!!.users!!){
                                                 if(member == user!!.id){
                                                     found = true
-                                                    nicknameEditText.error = R.string.userAlreadyInGroup.toString()
+                                                    nicknameEditText.error = resources.getString(R.string.userAlreadyInGroup)
                                                     break
                                                 }
                                             }
@@ -286,13 +286,13 @@ class GroupActivity : AppCompatActivity() {
                             Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
 
                         }
-                        Toast.makeText(this@GroupActivity, R.string.userAddedOk.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@GroupActivity, resources.getString(R.string.userAddedOk), Toast.LENGTH_SHORT).show()
 
                     }
                     dialog.dismiss()
 
                 }
-                addDialog.setNegativeButton(R.string.cancel.toString()) { dialog, _ ->
+                addDialog.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 addDialog.create()

@@ -63,7 +63,7 @@ class ActiveListFragment : Fragment() {
         recv.layoutManager = LinearLayoutManager(context)
         recv.adapter = listAdapter
         val progressDialog = ProgressDialog(context)
-        progressDialog.setMessage(R.string.wait.toString())
+        progressDialog.setMessage(requireContext().getString(R.string.wait))
         progressDialog.setCancelable(false)
         progressDialog.show()
         CoroutineScope(Dispatchers.Main + Job()).launch {
@@ -187,7 +187,7 @@ class ActiveListFragment : Fragment() {
         recv1.adapter = itemsAdapter
         addItem.setOnClickListener {
             if(newItem.text.toString().trim().isEmpty())
-                newItem.error = R.string.emptyItem.toString()
+                newItem.error = requireContext().getString(R.string.emptyItem)
             else {
                 list!!.add(newItem.text.toString().trim())
                 itemsAdapter.notifyDataSetChanged()
@@ -200,13 +200,13 @@ class ActiveListFragment : Fragment() {
             val namerequest = nameRequest.text.toString().trim()
             val comment1 = comment.text.toString().trim()
             if(namerequest.isEmpty()){
-                Toast.makeText(requireContext(),R.string.emptyRequest.toString(),Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),requireContext().getString(R.string.emptyRequest),Toast.LENGTH_SHORT).show()
             }
             else if(hasExpiration.isChecked && expiration.text.isEmpty()){
-                Toast.makeText(requireContext(),R.string.emptyExpiration.toString(),Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),requireContext().getString(R.string.emptyExpiration),Toast.LENGTH_SHORT).show()
             }
             else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
-                Toast.makeText(requireContext(),R.string.invalidDate.toString(),Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),requireContext().getString(R.string.invalidDate),Toast.LENGTH_SHORT).show()
             else {
                 var request: Request
                 GlobalScope.launch {
@@ -250,7 +250,7 @@ class ActiveListFragment : Fragment() {
             }
         dialog.dismiss()
         }
-        addDialog.setNegativeButton(R.string.cancel.toString()){
+        addDialog.setNegativeButton(requireContext().getString(R.string.cancel)){
                 dialog,_->
             dialog.dismiss()
         }

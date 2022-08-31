@@ -30,6 +30,7 @@
     <string name="invalidDate">Invalid date</string>
     <string name="editRequest">Edit request</string>
     <string name="emptyItem">Insert an item</string>
+    <string name="newItem">Insert new item</string>
     <string name="emptyRequest">Add a title to your request</string>
     <string name="emptyExpiration">Add an expiration to your request</string>
     <string name="delete">Delete</string>

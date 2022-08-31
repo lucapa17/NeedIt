@@ -41,7 +41,7 @@ class MainActivity : BaseActivity() {
         recv.adapter = groupsAdapter
         runInstantWorker(this)
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage(R.string.wait.toString())
+        progressDialog.setMessage(resources.getString(R.string.wait))
         progressDialog.setCancelable(false)
         progressDialog.show()
         val layoutNoGroup = this.findViewById<LinearLayout>(R.id.noGroup)

@@ -70,7 +70,7 @@
 
                 <EditText
                     android:id="@+id/newItem"
-                    android:hint="insert new item"
+                    android:hint="@string/newItem"
                     android:inputType="textMultiLine"
                     android:textColor="@color/black"
                     android:background="@drawable/shape_background"
@@ -105,7 +105,7 @@
 
             <EditText
                 android:id="@+id/expiration"
-                android:hint="expiration"
+                android:hint="@string/expiration"
                 android:textColor="@color/black"
                 android:background="@drawable/shape_background"
                 android:padding="15dp"

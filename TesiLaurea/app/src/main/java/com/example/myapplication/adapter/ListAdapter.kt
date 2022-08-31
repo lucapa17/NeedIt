@@ -153,7 +153,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                             calendar[Calendar.MINUTE] = minute
                                             expiration.setText(simpleDateFormat.format(calendar.time))
                                             if (calendar.time <= Calendar.getInstance().time)
-                                                expiration.error = R.string.invalidDate.toString()
+                                                expiration.error = c.resources.getString(R.string.invalidDate)
                                             else
                                                 expiration.error = null
                                         }
@@ -173,7 +173,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
                         }
 
-                        title.text = R.string.editRequest.toString()
+                        title.text = c.resources.getString(R.string.editRequest)
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
                         var itemsAdapter1 = ItemsAdapter(c, ArrayList(), false)
@@ -198,7 +198,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         }
                         addItem.setOnClickListener {
                             if(newItem.text.toString().trim().isEmpty())
-                                newItem.error = R.string.emptyItem.toString()
+                                newItem.error = c.resources.getString(R.string.emptyItem)
                             else if(list == null){
                                 list = ArrayList()
                                 list!!.add(newItem.text.toString().trim())
@@ -223,16 +223,16 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                     dialog,_->
 
                                 if(name.text.toString().trim().isEmpty()){
-                                    Toast.makeText(c,R.string.emptyRequest.toString(),Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(c,c.resources.getString(R.string.emptyRequest),Toast.LENGTH_SHORT).show()
                                 }
                                 else if(hasExpiration.isChecked && expiration.text.isEmpty()){
-                                    Toast.makeText(c,R.string.emptyExpiration.toString(),Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(c,c.resources.getString(R.string.emptyExpiration),Toast.LENGTH_SHORT).show()
                                 }
                                 else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
-                                    Toast.makeText(c,R.string.invalidDate.toString(),Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(c,c.resources.getString(R.string.invalidDate),Toast.LENGTH_SHORT).show()
                                 else {
                                     val progressDialog = ProgressDialog(c)
-                                    progressDialog.setMessage(R.string.wait.toString())
+                                    progressDialog.setMessage(c.resources.getString(R.string.wait))
                                     progressDialog.setCancelable(false)
                                     progressDialog.show()
                                     if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
@@ -259,7 +259,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 }
                                 dialog.dismiss()
                             }
-                            .setNegativeButton(R.string.cancel.toString()){
+                            .setNegativeButton(c.resources.getString(R.string.cancel)){
                                     dialog,_->
                                 dialog.dismiss()
                             }
@@ -271,10 +271,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     R.id.delete->{
                         /**set delete*/
                         AlertDialog.Builder(c)
-                            .setTitle(R.string.delete.toString())
+                            .setTitle(c.resources.getString(R.string.delete))
                             .setIcon(R.drawable.ic_warning)
-                            .setMessage(R.string.deleteRequest.toString())
-                            .setPositiveButton(R.string.yes.toString()){
+                            .setMessage(c.resources.getString(R.string.deleteRequest))
+                            .setPositiveButton(c.resources.getString(R.string.yes)){
                                     dialog,_->
                                 Firebase.database.getReference("requests").child(position.id.toString()).removeValue()
                                 val intent = Intent(c, GroupActivity::class.java)
@@ -302,10 +302,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             builder.setView(v1)
 
                         }
-                        builder.setTitle(R.string.complete.toString())
+                        builder.setTitle(c.resources.getString(R.string.complete))
                         builder.setIcon(R.drawable.ic_baseline_check_circle_24)
-                        builder.setMessage(R.string.completeRequest.toString())
-                        builder.setPositiveButton(R.string.yes.toString()) { dialog, _ ->
+                        builder.setMessage(c.resources.getString(R.string.completeRequest))
+                        builder.setPositiveButton(c.resources.getString(R.string.yes)) { dialog, _ ->
                             position.isCompleted = true
                             if (!toDo) {
                                 val priceValue: String = input!!.text.toString()
@@ -356,10 +356,10 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     }
                     R.id.restore->{
                         val builder = AlertDialog.Builder(c)
-                        builder.setTitle(R.string.restore.toString())
+                        builder.setTitle(c.resources.getString(R.string.restore))
                         builder.setIcon(R.drawable.ic_baseline_undo_24)
-                        builder.setMessage(R.string.restoreRequest.toString())
-                        builder.setPositiveButton(R.string.yes.toString()){
+                        builder.setMessage(c.resources.getString(R.string.restoreRequest))
+                        builder.setPositiveButton(c.resources.getString(R.string.yes)){
                                 dialog,_->
                             position.isCompleted = false
                             position.expiration = null
@@ -424,11 +424,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         if(newList.price!!.isEmpty())
             holder.price.visibility = View.GONE
         else
-            holder.price.text = "${R.string.boughtFor}: ${newList.price} €"
+            holder.price.text = "${c.resources.getString(R.string.boughtFor)}: ${newList.price} €"
         if(newList.comment!!.isEmpty())
             holder.commentRequest.visibility = View.GONE
         else
-            holder.commentRequest.text = "${R.string.comment}: ${newList.comment}"
+            holder.commentRequest.text = "${c.resources.getString(R.string.comment)}: ${newList.comment}"
         holder.nameRequest.text = newList.nameRequest
         if(!newList.isCompleted){
             holder.completedBy.visibility = View.GONE
@@ -443,12 +443,12 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
         if(!newList.isCompleted && newList.expiration != null){
-            holder.expiration.text = "${R.string.validUntil} ${simpleDateFormat.format(newList.expiration)}"
+            holder.expiration.text = "${c.resources.getString(R.string.validUntil)} ${simpleDateFormat.format(newList.expiration)}"
         }
         else
             holder.expiration.visibility = View.GONE
         if(newList.isCompleted) {
-            holder.completedBy.text = "${R.string.completedBy} ${newList.completedBy!!.nickname}, ${simpleDateFormat.format(newList.expiration)}"
+            holder.completedBy.text = "${c.resources.getString(R.string.completedBy)} ${newList.completedBy!!.nickname}, ${simpleDateFormat.format(newList.expiration)}"
         }
         if(newList.list != null){
             var isOpen = false
@@ -461,11 +461,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     holder.recv.visibility = View.VISIBLE
                     holder.open.visibility = View.GONE
                     holder.close.visibility = View.VISIBLE
-                    holder.readList.setText(R.string.closeList)
+                    holder.readList.setText(c.resources.getString(R.string.closeList))
                 }
                 else {
                     holder.recv.visibility = View.GONE
-                    holder.readList.setText(R.string.readList)
+                    holder.readList.setText(c.resources.getString(R.string.readList))
                     holder.open.visibility = View.VISIBLE
                     holder.close.visibility = View.GONE
                 }

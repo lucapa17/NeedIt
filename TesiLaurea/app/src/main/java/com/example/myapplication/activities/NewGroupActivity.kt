@@ -57,12 +57,13 @@ class NewGroupActivity : AppCompatActivity() {
                         withContext(Dispatchers.Main) {
                             if (user!!.id.isEmpty()) {
                                 if(nicknameEditText.text.isNotEmpty()){
-                                    nicknameEditText.error = R.string.userNotFound.toString()
+                                    nicknameEditText.error = resources.getString(R.string.userNotFound)
                                 }
                                 addUser.visibility = View.GONE
                             }
-                            else if(nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))){
-                                nicknameEditText.error = R.string.yourUser.toString()
+                            //nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))
+                            else if(nicknameEditText.text.toString().trim() == myUser!!.nickname || nicknameEditText.text.toString().trim() == myUser!!.email){
+                                nicknameEditText.error = resources.getString(R.string.yourUser)
                                 addUser.visibility = View.GONE
                             }
                             else{
@@ -71,7 +72,7 @@ class NewGroupActivity : AppCompatActivity() {
                                 for(member in memberList){
                                     if(member.id == user!!.id){
                                         found = true
-                                        nicknameEditText.error = R.string.userJustAdded.toString()
+                                        nicknameEditText.error = resources.getString(R.string.userJustAdded)
                                         break
                                     }
                                 }
@@ -122,7 +123,7 @@ class NewGroupActivity : AppCompatActivity() {
         button.setOnClickListener {
             val groupName: EditText = findViewById(R.id.groupName)
             if (groupName.text.toString().trim().isEmpty()) {
-                groupName.error = R.string.emptyGroupName.toString()
+                groupName.error = resources.getString(R.string.emptyGroupName)
             } else {
                 var groupId: Long
                 CoroutineScope(Dispatchers.Main + Job()).launch {
