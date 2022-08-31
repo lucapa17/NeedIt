@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/newGroup"
             android:fontFamily="sans-serif-thin"
-            android:text="@string/newGroup"
+            android:text="@string/createNewGroup"
             android:textAlignment="center"
             android:textColor="#1D7854"
             android:textSize="20dp"

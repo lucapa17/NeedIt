@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">Need!t</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="logtoreg"><u>Are not you already registered? Sign up!</u></string>
     <string name="regtolog"><u>Are you already registered? Sign in!</u></string>
-    <string name="newGroup"><u>Create a new group</u></string>
+    <string name="createNewGroup"><u>Create a new group</u></string>
     <string name="readList"><u>View List</u></string>
     <string name="closeList"><u>Reduce List</u></string>
     <string name="userNotFound">User not found</string>
@@ -21,7 +20,7 @@
     <string name="passwordNotValid">Password not valid!</string>
     <string name="passwordMismatched">Passwords mismatched!</string>
     <string name="passwordEqualOld">New password is the same as the old one!</string>
-    <string name="passwordOk">Passwords changed correctly!</string>
+    <string name="passwordOk">Password changed correctly!</string>
     <string name="userAddedOk">Users added correctly</string>
     <string name="members">participants</string>
     <string name="member">participant</string>
@@ -83,8 +82,7 @@
     <string name="infoGroup">Info group</string>
     <string name="changeImage">Change image</string>
     <string name="deleteImage">Delete image</string>
-    <string name="member">participant</string>
-    <string name="member">participant</string>
+
 
 
 
