@@ -165,10 +165,7 @@ class InfoGroupActivity: AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_leave -> {
-
-
                 val builder = AlertDialog.Builder(this)
-                //builder.setView(v)
                 builder.setTitle(resources.getString(R.string.exitGroup))
                 builder.setIcon(R.drawable.ic_baseline_exit_to_app_24)
                 builder.setMessage(resources.getString(R.string.leaveGroup))
@@ -196,9 +193,6 @@ class InfoGroupActivity: AppCompatActivity() {
                                 Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
                             }
                             Firebase.database.getReference("unread").child(user.id).child(group!!.groupId.toString()).removeValue()
-
-
-
                             withContext(Dispatchers.Main) {
                                 val dir = File(this@InfoGroupActivity.cacheDir.absolutePath)
                                 if (dir.exists()) {
@@ -210,8 +204,6 @@ class InfoGroupActivity: AppCompatActivity() {
                                 }
                                 val intent = Intent(this@InfoGroupActivity, MainActivity::class.java)
                                 this@InfoGroupActivity.startActivity(intent)
-
-
                             }
                         }
                     }
@@ -368,16 +360,6 @@ class InfoGroupActivity: AppCompatActivity() {
                 addDialog.create()
                 addDialog.show()
 
-
-
-
-
-                /*val intent  = Intent(this, AddMemberActivity::class.java)
-                intent.putExtra("groupId", groupId)
-
-                this.startActivity(intent)
-
-                 */
                 true
             }
 
@@ -423,7 +405,6 @@ class InfoGroupActivity: AppCompatActivity() {
                 }
                 else-> true
             }
-
 
         }
         popupMenus.show()

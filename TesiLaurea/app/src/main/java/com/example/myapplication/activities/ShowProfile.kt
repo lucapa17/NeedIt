@@ -25,7 +25,6 @@ class ShowProfile : AppCompatActivity() {
 
         val intent : Intent = intent
         id = intent.getStringExtra("id")
-
         var name: String
         var surname : String
         var email : String
@@ -46,7 +45,6 @@ class ShowProfile : AppCompatActivity() {
                     found = true
                     break
                 }
-
             }
         }
         CoroutineScope(Dispatchers.Main + Job()).launch {

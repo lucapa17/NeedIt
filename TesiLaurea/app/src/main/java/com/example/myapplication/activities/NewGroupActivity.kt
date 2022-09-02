@@ -58,7 +58,6 @@ class NewGroupActivity : AppCompatActivity() {
                                 }
                                 addUser.visibility = View.GONE
                             }
-                            //nicknameEditText.text.toString().trim().equals(arrayOf(myUser!!.nickname, myUser!!.email))
                             else if(nicknameEditText.text.toString().trim() == myUser!!.nickname || nicknameEditText.text.toString().trim() == myUser!!.email){
                                 nicknameEditText.error = resources.getString(R.string.yourUser)
                                 addUser.visibility = View.GONE
@@ -158,7 +157,7 @@ class NewGroupActivity : AppCompatActivity() {
                                 null,
                                 groupName.text.toString().trim(),
                                 notificationId,
-                                java.util.Calendar.getInstance().time,
+                                Calendar.getInstance().time,
                                 groupId,
                                 Notification.Type.NewGroup
                             )
@@ -169,8 +168,6 @@ class NewGroupActivity : AppCompatActivity() {
                             .setValue(group)
                     }
                     withContext(Dispatchers.Main) {
-                        //Thread.sleep(1_000)
-
                         val intent = Intent(this@NewGroupActivity, GroupActivity::class.java)
                         intent.putExtra("groupId", groupId)
                         intent.putExtra("groupName", groupName.text.toString().trim())
@@ -210,7 +207,6 @@ class NewGroupActivity : AppCompatActivity() {
                 }
                 else-> true
             }
-
 
         }
         popupMenus.show()

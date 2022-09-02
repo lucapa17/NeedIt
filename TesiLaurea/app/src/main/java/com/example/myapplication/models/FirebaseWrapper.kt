@@ -285,25 +285,6 @@ fun getGroups (context: Context) : MutableList<Group> {
         lock.withLock {
             condition.signal()
         }
-        /*
-        val uid = FirebaseAuthWrapper(context).getUid()
-        FirebaseDbWrapper(context).readDbGroup(object :
-            FirebaseDbWrapper.Companion.FirebaseReadCallback {
-            override fun onDataChangeCallback(snapshot: DataSnapshot) {
-                val children = snapshot.children
-                for(child in children){
-                    if(child.getValue(Group::class.java)!!.users!!.contains(uid!!))
-                        list.add(child.getValue(Group::class.java)!!)
-                }
-                lock.withLock {
-                    condition.signal()
-                }
-            }
-            override fun onCancelledCallback(error: DatabaseError) {
-            }
-        })
-
-         */
     }
     lock.withLock {
         condition.await()
@@ -654,8 +635,6 @@ class FirebaseStorageWrapper {
                 condition.signal()
             }
         }
-
-
         lock.withLock {
             condition.await()
         }

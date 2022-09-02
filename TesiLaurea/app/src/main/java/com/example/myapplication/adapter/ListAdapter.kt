@@ -114,7 +114,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         val expiration = view.findViewById<EditText>(R.id.expiration)
                         val hasExpiration = view.findViewById<CheckBox>(R.id.hasExpiration)
 
-
                         var list : ArrayList<String>?
                         if(position.list != null)
                             list = ArrayList(position.list)
@@ -291,7 +290,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                         true
                     }
                     R.id.delete->{
-                        /**set delete*/
                         AlertDialog.Builder(c)
                             .setTitle(c.resources.getString(R.string.delete))
                             .setIcon(R.drawable.ic_warning)
@@ -321,7 +319,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             val v1 = LayoutInflater.from(c).inflate(R.layout.set_price, null)
                             input = v1.findViewById(R.id.price)
                             builder.setView(v1)
-
                         }
                         builder.setTitle(c.resources.getString(R.string.complete))
                         builder.setIcon(R.drawable.ic_baseline_check_circle_24)
@@ -419,8 +416,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     }
                     else-> true
                 }
-
-
             }
             popupMenus.show()
             val popup = PopupMenu::class.java.getDeclaredField("mPopup")
@@ -474,7 +469,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             holder.date.text = day
         holder.time.text = time
         holder.userName.text = newList.user.nickname
-        val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
         if(!newList.isCompleted && newList.expiration != null){
             var dayExpiration = sdf.format((newList.expiration!!))

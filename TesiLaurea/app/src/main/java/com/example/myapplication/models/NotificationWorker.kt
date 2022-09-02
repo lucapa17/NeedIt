@@ -24,7 +24,6 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 fun runInstantWorker(context: Context) {
     val requestNotificationWorker = OneTimeWorkRequestBuilder<RequestNotificationWorker>().build()
     WorkManager.getInstance(context).enqueue(requestNotificationWorker)

@@ -56,8 +56,6 @@ class RegistrationActivity : AppCompatActivity() {
                                         nickname.text.toString().trim())
                                 } else
                                     confirm.error = resources.getString(R.string.passwordMismatched)
-
-
                             }
                         }
                     }

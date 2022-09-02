@@ -114,19 +114,15 @@ class MainActivity : BaseActivity() {
             })
         }
 
-
-
     }
     override fun onBackPressed() {
         finishAffinity()
     }
 
-
     override fun onRestart() {
         super.onRestart()
         val intent  = Intent(this, MainActivity::class.java)
         this.startActivity(intent)
-
     }
 
     override fun onPause() {
@@ -134,10 +130,6 @@ class MainActivity : BaseActivity() {
         if(valueEventListener != null)
             Firebase.database.getReference("unread").child(uid!!).removeEventListener(valueEventListener!!) //ref will be your node where you are setting Event Listener.
     }
-
-
-
-
 
     private fun deleteCache(){
         val dir = File(this.cacheDir.absolutePath)

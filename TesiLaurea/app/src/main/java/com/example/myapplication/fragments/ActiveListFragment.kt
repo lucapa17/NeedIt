@@ -97,14 +97,6 @@ class ActiveListFragment : Fragment() {
             intent.putExtra("groupName", groupName)
             this.startActivity(intent)
             requireActivity().overridePendingTransition(0,0)
-
-            /*
-            val intent = Intent(requireContext(), GroupActivity::class.java)
-            intent.putExtra("groupId", groupId)
-            intent.putExtra("groupName", groupName)
-            requireContext().startActivity(intent)
-
-             */
         }
 
         return view
@@ -131,7 +123,6 @@ class ActiveListFragment : Fragment() {
             else {
                 layoutList.visibility = View.GONE
                 recv1.visibility = View.GONE
-
             }
 
         }
@@ -203,10 +194,6 @@ class ActiveListFragment : Fragment() {
 
         }
 
-
-
-
-
         var list : ArrayList<String>? = ArrayList()
         val itemsAdapter = ItemsAdapter(requireContext(), list!!, false)
         recv1.layoutManager = LinearLayoutManager(requireContext())
@@ -269,9 +256,6 @@ class ActiveListFragment : Fragment() {
 
                         }
                     }
-
-
-
                 }
             }
         dialog.dismiss()
@@ -296,5 +280,4 @@ class ActiveListFragment : Fragment() {
                 }
             }
     }
-
 }

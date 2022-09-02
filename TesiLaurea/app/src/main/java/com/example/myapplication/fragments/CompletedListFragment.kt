@@ -85,7 +85,6 @@ class CompletedListFragment : Fragment() {
             this.startActivity(intent)
             requireActivity().overridePendingTransition(0,0)
         }
-
         return view
     }
 

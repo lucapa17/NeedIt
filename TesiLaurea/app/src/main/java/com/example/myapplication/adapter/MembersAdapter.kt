@@ -31,8 +31,6 @@ class MembersAdapter (private val c: Context, private val memberList:ArrayList<U
                 v.context.startActivity(intent)
             }
         }
-
-
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersAdapter.UserViewHolder {
         val inflater = LayoutInflater.from(parent.context)

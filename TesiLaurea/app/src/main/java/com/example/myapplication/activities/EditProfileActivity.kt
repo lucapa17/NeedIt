@@ -153,14 +153,7 @@ class EditProfileActivity : AppCompatActivity() {
                                 findViewById<EditText>(R.id.edit_nickname).visibility = View.GONE
                                 findViewById<Button>(R.id.edit_button).visibility = View.GONE
                                 progressDialog1.dismiss()
-                                /*
-                                val intent = Intent(
-                                    this@EditProfileActivity,
-                                    EditProfileActivity::class.java
-                                )
-                                this@EditProfileActivity.startActivity(intent)
 
-                                 */
                             }
                         }
                     }
@@ -175,7 +168,6 @@ class EditProfileActivity : AppCompatActivity() {
             image = data?.data!!
             findViewById<ImageView>(R.id.profile_image).setImageURI(image)
             GlobalScope.launch{
-                //FirebaseStorageWrapper().delete(id)
                 val dir = File(this@EditProfileActivity.cacheDir.absolutePath)
                 if (dir.exists()) {
                     for (f in dir.listFiles()) {
@@ -262,12 +254,10 @@ class EditProfileActivity : AppCompatActivity() {
             R.id.nav_change_password -> {
                 val inflater = LayoutInflater.from(this@EditProfileActivity)
                 val view = inflater.inflate(R.layout.change_password, null)
-
                 val oldPassword = view.findViewById<EditText>(R.id.old_password)
                 val newPassword = view.findViewById<EditText>(R.id.new_password)
                 val confirmPassword = view.findViewById<EditText>(R.id.confirm_password)
                 val addDialog = AlertDialog.Builder(this@EditProfileActivity)
-
                 addDialog.setView(view)
                 addDialog.setPositiveButton("Ok") {
 
@@ -370,8 +360,6 @@ class EditProfileActivity : AppCompatActivity() {
                 }
                 else-> true
             }
-
-
         }
         popupMenus.show()
         val popup = PopupMenu::class.java.getDeclaredField("mPopup")
