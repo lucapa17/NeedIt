@@ -5,13 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.myapplication.R
 import com.example.myapplication.models.FirebaseStorageWrapper
 import com.example.myapplication.models.User
-import com.example.myapplication.models.getUser
 import com.example.myapplication.models.getUserById
 import kotlinx.coroutines.*
 import java.io.File

@@ -22,12 +22,10 @@ import com.example.myapplication.databinding.ActivityGroupBinding
 import com.example.myapplication.fragments.ActiveListFragment
 import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.*
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.io.File
-import java.util.regex.Pattern
 
 class GroupActivity : AppCompatActivity() {
     private var binding : ActivityGroupBinding? = null
@@ -84,68 +82,6 @@ class GroupActivity : AppCompatActivity() {
                 }
             }
         }
-        /*
-        var requests: ArrayList<Request>
-        GlobalScope.launch {
-            val requestList : MutableList<Request> = getRequestsList(this@GroupActivity, groupId!!)
-            requests = ArrayList(requestList)
-            valueEventListener = Firebase.database.getReference("requests").addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val list : ArrayList<Request> = ArrayList()
-                    for(child in snapshot.children){
-                        val request = child.getValue(Request::class.java)
-                        if(request!!.groupId == groupId)
-                            list.add(request)
-                    }
-                    var same = true
-                    if(list.size != requests.size){
-                        same = false
-                    }
-                    else {
-                        for(i in list.indices){
-                            if(list.get(i).equals(requests.get(i))){
-                                same = false
-                                break
-                            }
-                        }
-                    }
-                    if(!same){
-                        //requireActivity().finish()
-                        //requireActivity().overridePendingTransition(0,0)
-                        finish()
-                        val intent  = Intent(this@GroupActivity, GroupActivity::class.java)
-                        intent.putExtra("groupId", groupId)
-                        intent.putExtra("groupName", groupName)
-                        this@GroupActivity.startActivity(intent)
-                        //requireActivity().overridePendingTransition(0,0)
-                    }
-
-
-
-
-                    /*
-                        val listUnread1 = getUnreadList(this@MainActivity, uid)
-                        for(i in listUnread1){
-                            Log.d(TAG, "rrrr1 "+i.toString())
-                        }
-                        if(listUnread1.equals(listUnread))
-                            Log.d(TAG, "rrrr2 uguali")
-                        else
-                            Log.d(TAG, "rrrr2 diversi")
-
-                         */
-
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d(ContentValues.TAG, "rrrr1")
-                }
-
-            })
-        }
-
-         */
 
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

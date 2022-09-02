@@ -1,13 +1,10 @@
 package com.example.myapplication.models
 
-import android.accounts.NetworkErrorException
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import com.example.myapplication.R
 import com.example.myapplication.activities.LoginActivity
@@ -30,7 +27,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Error
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -54,7 +50,6 @@ class FirebaseAuthWrapper(private val context: Context) {
                 }
                 else {
                     val exception = task.exception as FirebaseException
-                    Log.d(TAG, "qqq "+exception.toString())
                     if(exception is FirebaseAuthUserCollisionException)
                         Toast.makeText(context, context.resources.getString(R.string.emailAlreadyUsed), Toast.LENGTH_SHORT).show()
                     else if(exception is FirebaseNetworkException)
@@ -103,9 +98,7 @@ class FirebaseAuthWrapper(private val context: Context) {
                         Firebase.database.getReference("requests").child(request.id.toString()).removeValue()
                     }
                 }
-                Log.d(TAG, "yyy "+group.users)
                 group.users!!.remove(uid)
-                Log.d(TAG, "yyyy "+group.users)
                 if(group.users!!.isEmpty()){
                     FirebaseStorageWrapper().delete(group.groupId.toString(), context)
                     Firebase.database.getReference("groups").child(group.groupId.toString()).removeValue()
@@ -138,7 +131,6 @@ class FirebaseAuthWrapper(private val context: Context) {
         }
         val intent = Intent(context, LoginActivity::class.java)
         context.startActivity(intent)
-        Log.d(TAG, "yyy intent")
     }
 }
 
@@ -426,7 +418,6 @@ fun getUnreadList(context: Context, userId : String) : ArrayList<Int> {
     lock.withLock {
         condition.await()
     }
-    Log.d(TAG, "rrrr2size "+list.size)
 
     return list
 }

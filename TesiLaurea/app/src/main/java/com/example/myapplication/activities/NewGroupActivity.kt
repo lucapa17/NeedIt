@@ -1,12 +1,10 @@
 package com.example.myapplication.activities
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +15,6 @@ import com.example.myapplication.adapter.NewMembersAdapter
 import com.example.myapplication.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*

@@ -4,21 +4,14 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.app.TimePickerDialog
-import android.content.ClipData
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.text.format.DateUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
-import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -283,7 +276,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
                                     val intent = Intent(c, GroupActivity::class.java)
                                     intent.putExtra("groupId", position.groupId)
-                                    //Log.d(ContentValues.TAG,"www: "+groupName)
                                     intent.putExtra("groupName", groupName)
                                     c.startActivity(intent)
                                 }
@@ -309,7 +301,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 Firebase.database.getReference("requests").child(position.id.toString()).removeValue()
                                 val intent = Intent(c, GroupActivity::class.java)
                                 intent.putExtra("groupId", position.groupId)
-                                //Log.d(ContentValues.TAG,"www: "+groupName)
                                 intent.putExtra("groupName", groupName)
                                 c.startActivity(intent)
                             }
@@ -495,7 +486,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             else if (dateExpiration.get(Calendar.YEAR) == tomorrow.get(Calendar.YEAR) && dateExpiration.get(Calendar.DAY_OF_YEAR) == tomorrow.get(Calendar.DAY_OF_YEAR))
                 dayExpiration = c.resources.getString(R.string.tomorrow)
 
-            holder.expiration.text = "${c.resources.getString(R.string.validUntil)}:  ${dayExpiration} ${timeExpiration}"
+            holder.expiration.text = "${c.resources.getString(R.string.validUntil)}:  $dayExpiration $timeExpiration"
         }
         else
             holder.expiration.visibility = View.GONE
@@ -521,11 +512,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                     holder.recv.visibility = View.VISIBLE
                     holder.open.visibility = View.GONE
                     holder.close.visibility = View.VISIBLE
-                    holder.readList.setText(c.resources.getString(R.string.closeList))
+                    holder.readList.text = c.resources.getString(R.string.closeList)
                 }
                 else {
                     holder.recv.visibility = View.GONE
-                    holder.readList.setText(c.resources.getString(R.string.readList))
+                    holder.readList.text = c.resources.getString(R.string.readList)
                     holder.open.visibility = View.VISIBLE
                     holder.close.visibility = View.GONE
                 }

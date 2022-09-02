@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.activities.ShowProfile
 import com.example.myapplication.models.FirebaseStorageWrapper
 import com.example.myapplication.models.User

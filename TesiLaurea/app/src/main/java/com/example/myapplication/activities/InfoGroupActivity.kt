@@ -3,14 +3,12 @@ package com.example.myapplication.activities
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,11 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.adapter.MembersAdapter
 import com.example.myapplication.adapter.NewMembersAdapter
-import com.example.myapplication.adapter.ViewPagerAdapter
-import com.example.myapplication.fragments.ActiveListFragment
-import com.example.myapplication.fragments.CompletedListFragment
 import com.example.myapplication.models.*
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -32,7 +26,6 @@ import java.io.File
 class InfoGroupActivity: AppCompatActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var membersAdapter: MembersAdapter
-    private var image: Uri? = null
     var groupId : Long? = null
     var group : Group? = null
     var uri : Uri? = null

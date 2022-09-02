@@ -1,12 +1,8 @@
 package com.example.myapplication.adapter
 
 import android.app.Activity
-import android.app.ProgressDialog
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.GroupActivity
 import com.example.myapplication.models.*
-import kotlinx.coroutines.*
-import java.io.File
 
 class GroupsAdapter (private val c:Context, val groupList:ArrayList<Group>, private val photoList:ArrayList<String?>, private val unreadList:ArrayList<Int>):RecyclerView.Adapter<GroupsAdapter.UserViewHolder>() {
     inner class UserViewHolder(v:View):RecyclerView.ViewHolder(v) {
