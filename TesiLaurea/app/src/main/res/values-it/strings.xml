@@ -87,5 +87,7 @@
     <string name="networkError">Errore di connessione</string>
     <string name="emailAlreadyUsed">Email già in uso in un altro account</string>
     <string name="wrongPassword">Password errata</string>
-
+    <string name="today">Oggi</string>
+    <string name="tomorrow">Domani</string>
+    <string name="yesterday">Ieri</string>
 </resources>

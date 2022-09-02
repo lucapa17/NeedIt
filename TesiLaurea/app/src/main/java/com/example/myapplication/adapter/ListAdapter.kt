@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -453,31 +454,61 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         if(newList.price!!.isEmpty())
             holder.price.visibility = View.GONE
         else
-            holder.price.text = "${c.resources.getString(R.string.boughtFor)}: ${newList.price} €"
+            holder.price.text = "${c.resources.getString(R.string.boughtFor)}:  ${newList.price}€"
         if(newList.comment!!.isEmpty())
             holder.commentRequest.visibility = View.GONE
         else
-            holder.commentRequest.text = "${c.resources.getString(R.string.comment)}: ${newList.comment}"
+            holder.commentRequest.text = "${c.resources.getString(R.string.comment)}:  ${newList.comment}"
         holder.nameRequest.text = newList.nameRequest
         if(!newList.isCompleted){
             holder.completedBy.visibility = View.GONE
         }
         val sdf = SimpleDateFormat("dd/MM/yy")
-        val day = sdf.format(newList.date)
+        val day = sdf.format(newList.date!!)
         val sdf2 = SimpleDateFormat("HH:mm")
-        val time = sdf2.format(newList.date)
-        holder.date.text = day
+        val time = sdf2.format(newList.date!!)
+
+        val date = Calendar.getInstance()
+        date.time = newList.date!!
+        val yesterday = Calendar.getInstance()
+        yesterday.add(Calendar.DAY_OF_YEAR, -1)
+        val tomorrow = Calendar.getInstance()
+        tomorrow.add(Calendar.DAY_OF_YEAR, +1)
+        val today = Calendar.getInstance()
+        if (date.get(Calendar.YEAR) == today.get(Calendar.YEAR) && date.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
+            holder.date.text = c.resources.getString(R.string.today)
+        else if (date.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && date.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR))
+            holder.date.text = c.resources.getString(R.string.yesterday)
+        else
+            holder.date.text = day
         holder.time.text = time
         holder.userName.text = newList.user.nickname
         val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
         if(!newList.isCompleted && newList.expiration != null){
-            holder.expiration.text = "${c.resources.getString(R.string.validUntil)} ${simpleDateFormat.format(newList.expiration)}"
+            var dayExpiration = sdf.format((newList.expiration!!))
+            val timeExpiration = sdf2.format((newList.expiration!!))
+            val dateExpiration = Calendar.getInstance()
+            dateExpiration.time = newList.expiration!!
+            if (dateExpiration.get(Calendar.YEAR) == today.get(Calendar.YEAR) && dateExpiration.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
+                dayExpiration = c.resources.getString(R.string.today)
+            else if (dateExpiration.get(Calendar.YEAR) == tomorrow.get(Calendar.YEAR) && dateExpiration.get(Calendar.DAY_OF_YEAR) == tomorrow.get(Calendar.DAY_OF_YEAR))
+                dayExpiration = c.resources.getString(R.string.tomorrow)
+
+            holder.expiration.text = "${c.resources.getString(R.string.validUntil)}:  ${dayExpiration} ${timeExpiration}"
         }
         else
             holder.expiration.visibility = View.GONE
         if(newList.isCompleted) {
-            holder.completedBy.text = "${c.resources.getString(R.string.completedBy)} ${newList.completedBy!!.nickname}, ${simpleDateFormat.format(newList.expiration)}"
+            var dayCompleted = sdf.format((newList.expiration!!))
+            val timeCompleted = sdf2.format((newList.expiration!!))
+            val dateCompleted = Calendar.getInstance()
+            dateCompleted.time = newList.expiration!!
+            if (dateCompleted.get(Calendar.YEAR) == today.get(Calendar.YEAR) && dateCompleted.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
+                dayCompleted = c.resources.getString(R.string.today)
+            else if (dateCompleted.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && dateCompleted.get(Calendar.DAY_OF_YEAR) == tomorrow.get(Calendar.DAY_OF_YEAR))
+                dayCompleted = c.resources.getString(R.string.yesterday)
+            holder.completedBy.text = "${c.resources.getString(R.string.completedBy)}:  ${newList.completedBy!!.nickname}, ${dayCompleted} ${timeCompleted}"
         }
         if(newList.list != null){
             var isOpen = false
