@@ -79,7 +79,8 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:text="@string/registration" />
+                android:text="@string/registration"
+                android:background="@drawable/shape_background_button"/>
 
             <TextView
                 android:id="@+id/switchToLogin"

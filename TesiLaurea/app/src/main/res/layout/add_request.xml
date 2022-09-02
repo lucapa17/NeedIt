@@ -156,28 +156,30 @@
 
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <CheckBox
                     android:id="@+id/isList"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15dp"
-                    android:textStyle="bold"
-                    android:buttonTint="#1D7854"
                     android:layout_marginHorizontal="15dp"
-                    android:text="@string/list" />
+                    android:buttonTint="#1D7854"
+                    android:text="@string/list"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
                 <CheckBox
                     android:id="@+id/hasExpiration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15dp"
-                    android:textStyle="bold"
                     android:buttonTint="#1D7854"
-                    android:layout_marginRight="10dp"
-                    android:text="@string/expiration" />
+                    android:text="@string/expiration"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
