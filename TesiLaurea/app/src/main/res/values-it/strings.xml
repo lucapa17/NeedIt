@@ -72,9 +72,9 @@
     <string name="expiration">Scadenza</string>
     <string name="addMembers">Aggiungi utenti</string>
     <string name="changePassword">Cambia password</string>
-    <string name="oldPassword">Inserisci vecchia password</string>
-    <string name="newPassword">Inserisci nuova password</string>
-    <string name="confirmNewPassword">Conferma nuova password</string>
+    <string name="oldPassword">Vecchia password</string>
+    <string name="newPassword">Nuova password</string>
+    <string name="confirmNewPassword">Conferma password</string>
     <string name="price">Prezzo</string>
     <string name="newGroup">Nuovo gruppo</string>
     <string name="logout">Logout</string>

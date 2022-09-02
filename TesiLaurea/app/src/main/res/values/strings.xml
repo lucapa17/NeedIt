@@ -46,7 +46,7 @@
     <string name="activeList">Active List</string>
     <string name="completedList">Completed List</string>
     <string name="sentRequestNot">sent a new request</string>
-    <string name="completedRequestNot">has completed the following request of</string>
+    <string name="completedRequestNot">has completed the following request</string>
     <string name="addedYouNot">added you</string>
     <string name="name">Name</string>
     <string name="surname">Surname</string>

@@ -47,9 +47,9 @@
             <EditText
                 android:id="@+id/commentRequest"
                 android:hint="@string/insertComment"
-                android:inputType="textMultiLine"
                 android:textColor="@color/black"
                 android:background="@drawable/shape_background"
+                android:inputType="text"
                 android:padding="15dp"
                 android:textSize="18dp"
                 android:textStyle="bold"
@@ -71,9 +71,9 @@
                 <EditText
                     android:id="@+id/newItem"
                     android:hint="@string/newItem"
-                    android:inputType="textMultiLine"
                     android:textColor="@color/black"
                     android:background="@drawable/shape_background"
+                    android:inputType="text"
                     android:padding="15dp"
                     android:textSize="18dp"
                     android:textStyle="bold"

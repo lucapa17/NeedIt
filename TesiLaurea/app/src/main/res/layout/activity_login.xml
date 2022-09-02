@@ -16,7 +16,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_margin="7dp"
-            android:gravity="center">
+            android:gravity="center"
+            >
 
 
             <EditText
@@ -26,7 +27,8 @@
                 android:layout_margin="15dp"
                 android:ems="10"
                 android:hint="@string/insertEmail"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:drawableEnd="@drawable/ic_baseline_email_24"/>
 
             <EditText
                 android:id="@+id/userPassword"
@@ -35,7 +37,8 @@
                 android:layout_margin="15dp"
                 android:ems="10"
                 android:hint="@string/insertPass"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:drawableEnd="@drawable/ic_baseline_lock_24"/>
 
             <Button
                 android:id="@+id/buttonLogin"

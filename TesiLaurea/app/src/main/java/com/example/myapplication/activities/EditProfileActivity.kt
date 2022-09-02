@@ -247,7 +247,6 @@ class EditProfileActivity : AppCompatActivity() {
                     addDialog.setNegativeButton(resources.getString(R.string.cancel)){
                             dialog,_->
                         dialog.dismiss()
-                        Toast.makeText(this,resources.getString(R.string.cancel),Toast.LENGTH_SHORT).show()
                     }
                     addDialog.create()
                     addDialog.show()
@@ -327,7 +326,6 @@ class EditProfileActivity : AppCompatActivity() {
                 }
                 addDialog.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
-                    Toast.makeText(this@EditProfileActivity, resources.getString(R.string.cancel), Toast.LENGTH_SHORT).show()
                 }
                 addDialog.create()
                 addDialog.show()
