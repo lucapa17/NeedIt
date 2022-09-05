@@ -18,16 +18,12 @@ class LoginActivity : AppCompatActivity() {
         button.setOnClickListener { v ->
             val email: EditText = findViewById(R.id.userEmail)
             val password: EditText = findViewById(R.id.userPassword)
-            if (email.text.toString().trim().isEmpty() || password.text.toString().trim()
-                    .isEmpty()
-            ) {
+            if (email.text.toString().trim().isEmpty() || password.text.toString().trim().isEmpty()){
                 Toast.makeText(v!!.context, resources.getString(R.string.fillAllTheFields), Toast.LENGTH_SHORT).show()
-            } else {
+            }
+            else{
                 val firebaseWrapper = FirebaseAuthWrapper(v!!.context)
-                firebaseWrapper.signIn(
-                    email.text.toString().trim(),
-                    password.text.toString().trim()
-                )
+                firebaseWrapper.signIn(email.text.toString().trim(), password.text.toString().trim())
             }
         }
         val link : TextView = findViewById(R.id.switchToRegistration)

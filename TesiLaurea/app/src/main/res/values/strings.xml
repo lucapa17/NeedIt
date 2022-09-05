@@ -11,13 +11,13 @@
     <string name="userJustAdded">User just added</string>
     <string name="wait">Wait…</string>
     <string name="fillAllTheFields">Fill all the fields!</string>
-    <string name="nicknameNotValid">Nickname not valid</string>
+    <string name="nicknameNotValid">Nickname not valid. You must use at least 6 characters (letters, numbers, "-", "_"), starting with a letter</string>
     <string name="nicknameAlreadyUsed">Nickname already used</string>
     <string name="deleteProfileTitle">Delete my account</string>
     <string name="deleteProfileMessage">Do you want to delete your profile? Please, insert your password</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
-    <string name="passwordNotValid">Password not valid!</string>
+    <string name="passwordNotValid">Password not valid. You must use at least 8 characters</string>
     <string name="passwordMismatched">Passwords mismatched!</string>
     <string name="passwordEqualOld">New password is the same as the old one!</string>
     <string name="passwordOk">Password changed correctly!</string>

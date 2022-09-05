@@ -11,13 +11,13 @@
     <string name="userJustAdded">Utente appena aggiunto</string>
     <string name="wait">Attendi…</string>
     <string name="fillAllTheFields">Riempi tutti i campi!</string>
-    <string name="nicknameNotValid">Nickname non valido</string>
+    <string name="nicknameNotValid">Nickname non valido. Devi usare almeno 6 caratteri (lettere, numeri, -, _), iniziando con una lettera</string>
     <string name="nicknameAlreadyUsed">Nickname già in uso</string>
     <string name="deleteProfileTitle">Elimina account</string>
     <string name="deleteProfileMessage">Vuoi eliminare il tuo account? Inserisci la tua password</string>
     <string name="yes">Si</string>
     <string name="cancel">Annulla</string>
-    <string name="passwordNotValid">Password non valida!</string>
+    <string name="passwordNotValid">Password non valida. Devi usare almeno 8 caratteri</string>
     <string name="passwordMismatched">Le due password non corrispondono!</string>
     <string name="passwordEqualOld">La nuova password è uguale alla vecchia</string>
     <string name="passwordOk">Password modificata correttamente!</string>
@@ -81,8 +81,8 @@
     <string name="profile">Profilo</string>
     <string name="addMember">Aggiungi utente</string>
     <string name="infoGroup">Info gruppo</string>
-    <string name="changeImage">Cambia immagine</string>
-    <string name="deleteImage">Elimina immagine</string>
+    <string name="changeImage">Cambia foto</string>
+    <string name="deleteImage">Elimina foto</string>
     <string name="wrongCredentials">Credenziali errate</string>
     <string name="networkError">Errore di connessione</string>
     <string name="emailAlreadyUsed">Email già in uso in un altro account</string>

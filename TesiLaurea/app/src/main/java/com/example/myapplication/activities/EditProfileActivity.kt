@@ -51,9 +51,9 @@ class EditProfileActivity : AppCompatActivity() {
                     found = true
                     break
                 }
-
             }
         }
+
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 user = getUser(this@EditProfileActivity)
@@ -111,6 +111,7 @@ class EditProfileActivity : AppCompatActivity() {
                 startActivityForResult(intent, 100)
             }
         }
+
         val button : Button = findViewById(R.id.edit_button)
         button.setOnClickListener { v ->
             val tName: String = findViewById<EditText>(R.id.edit_name).text.toString().trim()
@@ -196,7 +197,6 @@ class EditProfileActivity : AppCompatActivity() {
                 builder.setMessage(resources.getString(R.string.deleteProfileMessage))
                 builder.setPositiveButton(resources.getString(R.string.yes)){
                         dialog,_->
-
                     val inflter = LayoutInflater.from(this)
                     val v = inflter.inflate(R.layout.delete_login,null)
                     val password = v.findViewById<EditText>(R.id.password)
@@ -260,7 +260,6 @@ class EditProfileActivity : AppCompatActivity() {
                 val addDialog = AlertDialog.Builder(this@EditProfileActivity)
                 addDialog.setView(view)
                 addDialog.setPositiveButton("Ok") {
-
                         dialog, _ ->
 
                     val oldPassword1 = oldPassword.text.toString().trim()

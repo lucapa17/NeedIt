@@ -253,10 +253,6 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
                                     Toast.makeText(c,c.resources.getString(R.string.invalidDate),Toast.LENGTH_SHORT).show()
                                 else {
-                                    val progressDialog = ProgressDialog(c)
-                                    progressDialog.setMessage(c.resources.getString(R.string.wait))
-                                    progressDialog.setCancelable(false)
-                                    progressDialog.show()
                                     if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
                                         list = null
                                     position.nameRequest = name.text.toString()

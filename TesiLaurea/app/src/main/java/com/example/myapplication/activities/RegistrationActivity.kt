@@ -40,20 +40,14 @@ class RegistrationActivity : AppCompatActivity() {
             else {
                 CoroutineScope(Dispatchers.Main + Job()).launch {
                     withContext(Dispatchers.IO) {
-                        val nicknameAlreadyUsed: Boolean =
-                            nicknameIsAlreadyUsed(v!!.context, nickname.text.toString().trim())
+                        val nicknameAlreadyUsed: Boolean = nicknameIsAlreadyUsed(v!!.context, nickname.text.toString().trim())
                         withContext(Dispatchers.Main) {
                             if (nicknameAlreadyUsed)
                                 nickname.error = resources.getString(R.string.nicknameAlreadyUsed)
                             else {
                                 if (password.text.toString().trim() == confirm.text.toString().trim()) {
                                     val firebaseWrapper = FirebaseAuthWrapper(v.context)
-                                    firebaseWrapper.signUp(
-                                        email.text.toString().trim(),
-                                        password.text.toString().trim(),
-                                        name.text.toString().trim(),
-                                        surname.text.toString().trim(),
-                                        nickname.text.toString().trim())
+                                    firebaseWrapper.signUp(email.text.toString().trim(), password.text.toString().trim(), name.text.toString().trim(), surname.text.toString().trim(), nickname.text.toString().trim())
                                 } else
                                     confirm.error = resources.getString(R.string.passwordMismatched)
                             }

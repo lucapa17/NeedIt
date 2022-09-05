@@ -28,8 +28,7 @@ class InfoGroupActivity: AppCompatActivity() {
     private lateinit var membersAdapter: MembersAdapter
     var groupId : Long? = null
     var group : Group? = null
-    var uri : Uri? = null
-
+    private var uri : Uri? = null
 
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +49,7 @@ class InfoGroupActivity: AppCompatActivity() {
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 group = getGroupById(this@InfoGroupActivity, groupId!!)
-                val dir: File = File(this@InfoGroupActivity.cacheDir.absolutePath)
+                val dir = File(this@InfoGroupActivity.cacheDir.absolutePath)
                 var found = false
                 if (dir.exists()) {
                     for (f in dir.listFiles()) {
@@ -76,7 +75,6 @@ class InfoGroupActivity: AppCompatActivity() {
                         findViewById<TextView>(R.id.numberMembers).text = "${groupMembersList.size} ${resources.getString(R.string.members)}:"
                     else
                         findViewById<TextView>(R.id.numberMembers).text = "1 ${resources.getString(R.string.member)}:"
-
 
                     if(uri != null)
                         findViewById<ImageView>(R.id.group_image).setImageURI(uri)
@@ -109,13 +107,12 @@ class InfoGroupActivity: AppCompatActivity() {
         }
 
         val button : Button = findViewById(R.id.edit_button)
-        button.setOnClickListener { v ->
-
+        button.setOnClickListener {
             val newNameGroup: String = findViewById<EditText>(R.id.edit_nameGroup).text.toString().trim()
             if (newNameGroup.isEmpty()) {
                 findViewById<EditText>(R.id.edit_nameGroup).error = resources.getString(R.string.emptyGroupName)
-
-            } else {
+            }
+            else {
                 val progressDialog1 = ProgressDialog(this)
                 progressDialog1.setMessage(resources.getString(R.string.wait))
                 progressDialog1.setCancelable(false)
@@ -130,7 +127,6 @@ class InfoGroupActivity: AppCompatActivity() {
                             findViewById<EditText>(R.id.edit_nameGroup).visibility = View.GONE
                             findViewById<Button>(R.id.edit_button).visibility = View.GONE
                             progressDialog1.dismiss()
-
                         }
                     }
                 }
@@ -156,6 +152,7 @@ class InfoGroupActivity: AppCompatActivity() {
             }
         }
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.nav_menu_infogroup, menu)
@@ -182,12 +179,10 @@ class InfoGroupActivity: AppCompatActivity() {
                             }
                             user.groups!!.remove(groupId)
                             Firebase.database.getReference("users").child(user.id).setValue(user)
-
                             group!!.users!!.remove(user.id)
                             if(group!!.users!!.isEmpty()){
                                 FirebaseStorageWrapper().delete(group!!.groupId.toString(), this@InfoGroupActivity)
                                 Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
-
                             }
                             else{
                                 Firebase.database.getReference("groups").child(group!!.groupId.toString()).setValue(group)
@@ -207,7 +202,6 @@ class InfoGroupActivity: AppCompatActivity() {
                             }
                         }
                     }
-
                 }
                 builder.setNegativeButton("No"){
                         dialog,_->
@@ -266,7 +260,6 @@ class InfoGroupActivity: AppCompatActivity() {
                                         nicknameEditText.error = resources.getString(R.string.yourUser)
                                         addUser.visibility = View.GONE
                                     }
-
                                     else{
                                         var found = false
                                         for(member in memberList){
@@ -284,7 +277,6 @@ class InfoGroupActivity: AppCompatActivity() {
                                                     break
                                                 }
                                             }
-
                                         }
                                         if(!found)
                                             addUser.visibility = View.VISIBLE
@@ -298,25 +290,19 @@ class InfoGroupActivity: AppCompatActivity() {
                 })
 
                 addUser.setOnClickListener {
-                    CoroutineScope(Dispatchers.Main + Job()).launch {
-                        withContext(Dispatchers.IO) {
-                            var found = false
-                            for (member in memberList) {
-                                if (member.id == user!!.id) {
-                                    found = true
-                                    break
-                                }
-                            }
-                            if (!found)
-                                memberList.add(user!!)
-                            withContext(Dispatchers.Main) {
-                                newMembersAdapter.notifyDataSetChanged()
-                                nicknameEditText.setText("")
-
-                            }
+                    var found = false
+                    for (member in memberList) {
+                        if (member.id == user!!.id) {
+                            found = true
+                            break
                         }
                     }
+                    if (!found)
+                        memberList.add(user!!)
+                    newMembersAdapter.notifyDataSetChanged()
+                    nicknameEditText.setText("")
                 }
+
                 addDialog.setPositiveButton("Ok") {
                         dialog, _ ->
 
@@ -327,24 +313,11 @@ class InfoGroupActivity: AppCompatActivity() {
                                 member.groups!!.add(groupId!!)
                                 Firebase.database.getReference("users").child(member.id).setValue(member)
                                 Firebase.database.getReference("unread").child(member.id).child(groupId.toString()).setValue(0)
-                                val notificationId: Long =
-                                    getNotificationId(this@InfoGroupActivity, member.id)
-                                val notification = Notification(
-                                    member.id,
-                                    null,
-                                    myUser!!.nickname,
-                                    null,
-                                    group!!.nameGroup,
-                                    notificationId,
-                                    java.util.Calendar.getInstance().time,
-                                    groupId!!,
-                                    Notification.Type.NewGroup
-                                )
-                                Firebase.database.getReference("notifications").child(member.id)
-                                    .child(notificationId.toString()).setValue(notification)
+                                val notificationId: Long = getNotificationId(this@InfoGroupActivity, member.id)
+                                val notification = Notification(member.id, null, myUser!!.nickname, null, group!!.nameGroup, notificationId, java.util.Calendar.getInstance().time, groupId!!, Notification.Type.NewGroup)
+                                Firebase.database.getReference("notifications").child(member.id).child(notificationId.toString()).setValue(notification)
                             }
                             Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
-
                         }
                         val i = Intent(this@InfoGroupActivity, GroupActivity::class.java)
                         i.putExtra("groupId", groupId)
@@ -359,20 +332,21 @@ class InfoGroupActivity: AppCompatActivity() {
                 }
                 addDialog.create()
                 addDialog.show()
-
                 true
             }
 
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     override fun onBackPressed() {
         startActivity(Intent(this, GroupActivity::class.java)
             .putExtra("groupId", groupId)
             .putExtra("groupName", group!!.nameGroup)
         )
     }
-    fun popupMenus(v:View) {
+
+    private fun popupMenus(v:View) {
         val popupMenus = PopupMenu(this,v)
         popupMenus.inflate(R.menu.options_image)
         popupMenus.setOnMenuItemClickListener {
@@ -396,10 +370,8 @@ class InfoGroupActivity: AppCompatActivity() {
                             }
                         }
                     }
-
                     val tmp = File.createTempFile("image_${groupId}_", null, this.cacheDir)
                     tmp.deleteOnExit()
-
                     uri = null
                     true
                 }
@@ -411,7 +383,6 @@ class InfoGroupActivity: AppCompatActivity() {
         val popup = PopupMenu::class.java.getDeclaredField("mPopup")
         popup.isAccessible = true
         val menu = popup.get(popupMenus)
-        menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
-            .invoke(menu,true)
+        menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java).invoke(menu,true)
     }
 }

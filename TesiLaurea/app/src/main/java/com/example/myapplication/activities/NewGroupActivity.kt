@@ -64,7 +64,6 @@ class NewGroupActivity : AppCompatActivity() {
                             }
                             else{
                                 var found = false
-
                                 for(member in memberList){
                                     if(member.id == user!!.id){
                                         found = true
@@ -84,23 +83,17 @@ class NewGroupActivity : AppCompatActivity() {
         })
 
         addUser.setOnClickListener {
-            CoroutineScope(Dispatchers.Main + Job()).launch {
-                withContext(Dispatchers.IO) {
-                    var found = false
-                    for (member in memberList) {
-                        if (member.id == user!!.id) {
-                            found = true
-                            break
-                        }
-                    }
-                    if (!found)
-                        memberList.add(user!!)
-                    withContext(Dispatchers.Main) {
-                        membersAdapter.notifyDataSetChanged()
-                        nicknameEditText.setText("")
-                    }
+            var found = false
+            for (member in memberList) {
+                if (member.id == user!!.id) {
+                    found = true
+                    break
                 }
             }
+            if (!found)
+                memberList.add(user!!)
+            membersAdapter.notifyDataSetChanged()
+            nicknameEditText.setText("")
         }
 
         val editPhoto : ImageView = findViewById(R.id.edit_group_photo)
@@ -115,12 +108,14 @@ class NewGroupActivity : AppCompatActivity() {
                 startActivityForResult(intent, 100)
             }
         }
+
         val button : Button = findViewById(R.id.buttonCreateGroup)
         button.setOnClickListener {
             val groupName: EditText = findViewById(R.id.groupName)
             if (groupName.text.toString().trim().isEmpty()) {
                 groupName.error = resources.getString(R.string.emptyGroupName)
-            } else {
+            }
+            else {
                 var groupId: Long
                 CoroutineScope(Dispatchers.Main + Job()).launch {
                     withContext(Dispatchers.IO) {
@@ -150,22 +145,11 @@ class NewGroupActivity : AppCompatActivity() {
                             Firebase.database.getReference("users").child(member.id).setValue(member)
                             Firebase.database.getReference("unread").child(member.id).child(groupId.toString()).setValue(0)
                             val notificationId: Long = getNotificationId(this@NewGroupActivity, member.id)
-                            val notification = Notification(
-                                member.id,
-                                null,
-                                myUser!!.nickname,
-                                null,
-                                groupName.text.toString().trim(),
-                                notificationId,
-                                Calendar.getInstance().time,
-                                groupId,
-                                Notification.Type.NewGroup
-                            )
+                            val notification = Notification(member.id, null, myUser!!.nickname, null, groupName.text.toString().trim(), notificationId, Calendar.getInstance().time, groupId, Notification.Type.NewGroup)
                             Firebase.database.getReference("notifications").child(member.id).child(notificationId.toString()).setValue(notification)
                         }
                         val group = Group(groupId, groupName.text.toString().trim(), membersId, Calendar.getInstance().time)
-                        Firebase.database.getReference("groups").child(group.groupId.toString())
-                            .setValue(group)
+                        Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
                     }
                     withContext(Dispatchers.Main) {
                         val intent = Intent(this@NewGroupActivity, GroupActivity::class.java)
@@ -207,13 +191,11 @@ class NewGroupActivity : AppCompatActivity() {
                 }
                 else-> true
             }
-
         }
         popupMenus.show()
         val popup = PopupMenu::class.java.getDeclaredField("mPopup")
         popup.isAccessible = true
         val menu = popup.get(popupMenus)
-        menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
-            .invoke(menu,true)
+        menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java).invoke(menu,true)
     }
 }

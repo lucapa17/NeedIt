@@ -85,7 +85,7 @@ class GroupActivity : AppCompatActivity() {
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
-        inflater.inflate(com.example.myapplication.R.menu.nav_menu_group, menu)
+        inflater.inflate(R.menu.nav_menu_group, menu)
         return true
     }
 
@@ -139,7 +139,6 @@ class GroupActivity : AppCompatActivity() {
                                         nicknameEditText.error = resources.getString(R.string.yourUser)
                                         addUser.visibility = View.GONE
                                     }
-
                                     else{
                                         var found = false
                                         for(member in memberList){
@@ -157,7 +156,6 @@ class GroupActivity : AppCompatActivity() {
                                                     break
                                                 }
                                             }
-
                                         }
                                         if(!found)
                                             addUser.visibility = View.VISIBLE
@@ -171,25 +169,19 @@ class GroupActivity : AppCompatActivity() {
                 })
 
                 addUser.setOnClickListener {
-                    CoroutineScope(Dispatchers.Main + Job()).launch {
-                        withContext(Dispatchers.IO) {
-                            var found = false
-                            for (member in memberList) {
-                                if (member.id == user!!.id) {
-                                    found = true
-                                    break
-                                }
-                            }
-                            if (!found)
-                                memberList.add(user!!)
-                            withContext(Dispatchers.Main) {
-                                membersAdapter.notifyDataSetChanged()
-                                nicknameEditText.setText("")
-
-                            }
+                    var found = false
+                    for (member in memberList) {
+                        if (member.id == user!!.id) {
+                            found = true
+                            break
                         }
                     }
+                    if (!found)
+                        memberList.add(user!!)
+                    membersAdapter.notifyDataSetChanged()
+                    nicknameEditText.setText("")
                 }
+
                 addDialog.setPositiveButton("Ok") {
                         dialog, _ ->
 
@@ -200,37 +192,21 @@ class GroupActivity : AppCompatActivity() {
                                 member.groups!!.add(groupId!!)
                                 Firebase.database.getReference("users").child(member.id).setValue(member)
                                 Firebase.database.getReference("unread").child(member.id).child(groupId.toString()).setValue(0)
-                                val notificationId: Long =
-                                    getNotificationId(this@GroupActivity, member.id)
-                                val notification = Notification(
-                                    member.id,
-                                    null,
-                                    myUser!!.nickname,
-                                    null,
-                                    group!!.nameGroup,
-                                    notificationId,
-                                    java.util.Calendar.getInstance().time,
-                                    groupId!!,
-                                    Notification.Type.NewGroup
-                                )
-                                Firebase.database.getReference("notifications").child(member.id)
-                                    .child(notificationId.toString()).setValue(notification)
+                                val notificationId: Long = getNotificationId(this@GroupActivity, member.id)
+                                val notification = Notification(member.id, null, myUser!!.nickname, null, group!!.nameGroup, notificationId, java.util.Calendar.getInstance().time, groupId!!, Notification.Type.NewGroup)
+                                Firebase.database.getReference("notifications").child(member.id).child(notificationId.toString()).setValue(notification)
                             }
                             Firebase.database.getReference("groups").child(groupId.toString()).setValue(group)
-
                         }
                         Toast.makeText(this@GroupActivity, resources.getString(R.string.userAddedOk), Toast.LENGTH_SHORT).show()
-
                     }
                     dialog.dismiss()
-
                 }
                 addDialog.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 addDialog.create()
                 addDialog.show()
-
                 true
             }
             R.id.nav_show_members -> {

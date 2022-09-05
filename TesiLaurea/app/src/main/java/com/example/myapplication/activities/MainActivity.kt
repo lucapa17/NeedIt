@@ -4,8 +4,12 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -21,12 +25,11 @@ import kotlinx.coroutines.*
 import java.io.File
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var groupsAdapter: GroupsAdapter
     private val uid = FirebaseAuthWrapper(this@MainActivity).getUid()
     private var valueEventListener : ValueEventListener? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,7 @@ class MainActivity : BaseActivity() {
         progressDialog.setCancelable(false)
         progressDialog.show()
         val layoutNoGroup = this.findViewById<LinearLayout>(R.id.noGroup)
+
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val groupList : MutableList<Group> = getGroups(this@MainActivity)
@@ -86,6 +90,7 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
         val link = this.findViewById<TextView>(R.id.newGroup)
         link.setOnClickListener { v ->
             val intent = Intent(v!!.context, NewGroupActivity::class.java)
@@ -94,14 +99,13 @@ class MainActivity : BaseActivity() {
 
         GlobalScope.launch {
             val listUnread = getUnreadList(this@MainActivity, uid!!)
-
             valueEventListener = Firebase.database.getReference("unread").child(uid).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = ArrayList<Int>()
                     for(child in snapshot.children){
                         list.add(child.getValue(Int::class.java)!!)
                     }
-                    if(!listUnread.equals(list)){
+                    if(listUnread != list){
                         finish()
                         val intent  = Intent(this@MainActivity, MainActivity::class.java)
                         this@MainActivity.startActivity(intent)
@@ -110,10 +114,8 @@ class MainActivity : BaseActivity() {
 
                 override fun onCancelled(error: DatabaseError) {
                 }
-
             })
         }
-
     }
     override fun onBackPressed() {
         finishAffinity()
@@ -128,7 +130,42 @@ class MainActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         if(valueEventListener != null)
-            Firebase.database.getReference("unread").child(uid!!).removeEventListener(valueEventListener!!) //ref will be your node where you are setting Event Listener.
+            Firebase.database.getReference("unread").child(uid!!).removeEventListener(valueEventListener!!)
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.nav_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.nav_profile -> {
+                finish()
+                val intent  = Intent(this, EditProfileActivity::class.java)
+                this.startActivity(intent)
+                true
+            }
+            R.id.nav_new_group -> {
+                finish()
+                val intent  = Intent(this, NewGroupActivity::class.java)
+                this.startActivity(intent)
+                true
+            }
+            R.id.nav_logout -> {
+                val dir = File(this.cacheDir.absolutePath)
+                if (dir.exists()) {
+                    for (f in dir.listFiles()) {
+                        f.delete()
+                    }
+                }
+                finish()
+                val firebaseWrapper  = FirebaseAuthWrapper(this)
+                firebaseWrapper.logOut()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun deleteCache(){
