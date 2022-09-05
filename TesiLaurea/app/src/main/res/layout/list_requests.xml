@@ -18,13 +18,14 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_weight="1"
             android:orientation="vertical"
             android:layout_margin="5dp"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -35,7 +36,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:src="@drawable/ic_baseline_person_grey"
                     app:civ_border_color="#FF000000"
                     app:civ_border_width="0.05dp">
@@ -45,7 +46,7 @@
                     android:id="@+id/userName"
                     android:text=""
                     android:textColor="#1E5520"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
@@ -54,7 +55,7 @@
             <TextView
                 android:id="@+id/nameRequest"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_margin="1dp"
                 android:layout_width="match_parent"
@@ -64,7 +65,7 @@
             <TextView
                 android:id="@+id/commentRequest"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_margin="1dp"
                 android:layout_width="match_parent"
@@ -72,7 +73,7 @@
             <TextView
                 android:id="@+id/completedBy"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_margin="1dp"
                 android:layout_width="match_parent"
@@ -84,7 +85,7 @@
                 android:layout_marginHorizontal="1dp"
                 android:layout_marginTop="1dp"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/price"
@@ -93,7 +94,7 @@
                 android:layout_marginHorizontal="1dp"
                 android:layout_marginTop="1dp"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -106,7 +107,7 @@
                     android:text="@string/readList"
                     android:id="@+id/readList"
                     android:textColor="@android:color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:layout_marginHorizontal="1dp"
                     android:layout_marginTop="1dp"
@@ -142,7 +143,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginRight="5dp">
+        android:layout_marginEnd="5dp">
 
         <ImageView
             android:id="@+id/optionsMenu"
@@ -152,7 +153,7 @@
         <TextView
             android:id="@+id/Date"
             android:textColor="@android:color/darker_gray"
-            android:textSize="13dp"
+            android:textSize="13sp"
             android:textAlignment="center"
             android:textStyle="bold"
             android:layout_margin="0dp"
@@ -161,7 +162,7 @@
         <TextView
             android:id="@+id/Time"
             android:textColor="@android:color/darker_gray"
-            android:textSize="13dp"
+            android:textSize="13sp"
             android:textAlignment="center"
             android:textStyle="bold"
             android:layout_margin="0dp"

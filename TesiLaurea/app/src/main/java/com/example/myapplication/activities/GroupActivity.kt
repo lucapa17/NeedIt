@@ -102,7 +102,7 @@ class GroupActivity : AppCompatActivity() {
 
                 val memberList : ArrayList<User> = ArrayList()
                 recv = view.findViewById(R.id.mRecycler)
-                membersAdapter = NewMembersAdapter(this, memberList)
+                membersAdapter = NewMembersAdapter(memberList)
                 recv.layoutManager = LinearLayoutManager(this)
                 recv.adapter = membersAdapter
 

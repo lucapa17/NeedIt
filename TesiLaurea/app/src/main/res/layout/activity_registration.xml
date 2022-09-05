@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +12,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_margin="7dp">
@@ -27,7 +26,8 @@
                 android:layout_margin="15dp"
                 android:inputType="textPersonName"
                 android:hint="@string/insertName"
-                android:drawableEnd="@drawable/ic_baseline_person_24_icon"/>
+                android:drawableEnd="@drawable/ic_baseline_person_24_icon"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/userSurname"
@@ -37,7 +37,8 @@
                 android:layout_margin="15dp"
                 android:inputType="textPersonName"
                 android:hint="@string/insertSurname"
-                android:drawableEnd="@drawable/ic_baseline_person_24_icon"/>
+                android:drawableEnd="@drawable/ic_baseline_person_24_icon"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/userNickname"
@@ -47,7 +48,8 @@
                 android:layout_margin="15dp"
                 android:inputType="textPersonName"
                 android:hint="@string/insertNickname"
-                android:drawableEnd="@drawable/ic_baseline_person_24_icon"/>
+                android:drawableEnd="@drawable/ic_baseline_person_24_icon"
+                android:importantForAutofill="no" />
 
 
             <EditText
@@ -58,7 +60,8 @@
                 android:ems="10"
                 android:hint="@string/insertEmail"
                 android:inputType="textEmailAddress"
-                android:drawableEnd="@drawable/ic_baseline_email_24"/>
+                android:drawableEnd="@drawable/ic_baseline_email_24"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/userPassword"
@@ -68,7 +71,8 @@
                 android:ems="10"
                 android:hint="@string/insertPass"
                 android:inputType="textPassword"
-                android:drawableEnd="@drawable/ic_baseline_lock_24"/>
+                android:drawableEnd="@drawable/ic_baseline_lock_24"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/userPassword2"
@@ -78,7 +82,8 @@
                 android:ems="10"
                 android:hint="@string/confirmPass"
                 android:inputType="textPassword"
-                android:drawableEnd="@drawable/ic_baseline_lock_24"/>
+                android:drawableEnd="@drawable/ic_baseline_lock_24"
+                android:importantForAutofill="no" />
 
             <Button
                 android:id="@+id/buttonRegistration"

@@ -16,6 +16,6 @@
             android:id="@+id/price"
             android:inputType="numberDecimal"
             android:hint="@string/price"
-            />
+            android:importantForAutofill="no" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

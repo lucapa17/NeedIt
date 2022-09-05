@@ -1,6 +1,5 @@
 package com.example.myapplication.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +9,9 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 
-class ItemsAdapter (val c: Context, val itemsList:ArrayList<String>, val isSent : Boolean): RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
+class ItemsAdapter (private val itemsList:ArrayList<String>, val isSent : Boolean): RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
     inner class ItemViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var card : CardView
+        private var card : CardView
         var item: TextView
         var remove : ImageView
         init {

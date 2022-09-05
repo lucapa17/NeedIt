@@ -69,6 +69,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
+                        android:maxWidth="280dp"
                         android:textSize="25sp"
                         android:textStyle="bold" />
 
@@ -77,10 +78,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text=""
+                        android:maxWidth="280dp"
                         android:textColor="@color/black"
                         android:textSize="22sp"
                         android:textStyle="bold"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:inputType="textMultiLine"
+                        android:importantForAutofill="no" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -107,7 +111,7 @@
                 android:layout_margin="8dp"
                 android:text="@string/save"
                 android:background="@drawable/shape_background_button"
-                android:textSize="16dp"
+                android:textSize="14sp"
                 android:visibility="gone"
                 />
 
@@ -117,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:textColor="#878583"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView

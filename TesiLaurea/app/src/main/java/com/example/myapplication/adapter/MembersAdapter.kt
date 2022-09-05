@@ -32,6 +32,7 @@ class MembersAdapter (private val c: Context, private val memberList:ArrayList<U
             }
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersAdapter.UserViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val v  = inflater.inflate(R.layout.list_members,parent,false)

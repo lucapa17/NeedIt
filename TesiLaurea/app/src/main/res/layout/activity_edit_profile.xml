@@ -53,10 +53,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:baselineAligned="false">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/name"
                     android:textColor="#878583"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -77,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
                 <EditText
                     android:id="@+id/edit_name"
@@ -85,9 +85,11 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine" />
             </LinearLayout>
 
             <LinearLayout
@@ -95,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginRight="5dp">
+                android:layout_marginEnd="5dp">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -109,10 +111,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:baselineAligned="false">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
@@ -124,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/surname"
                     android:textColor="#878583"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -133,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
                 <EditText
                     android:id="@+id/edit_surname"
@@ -141,9 +143,11 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine" />
             </LinearLayout>
 
             <LinearLayout
@@ -151,7 +155,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginRight="5dp">
+                android:layout_marginEnd="5dp">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -166,10 +170,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:baselineAligned="false">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
@@ -181,7 +185,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/nickname"
                     android:textColor="#878583"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -190,7 +194,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
                 <EditText
                     android:id="@+id/edit_nickname"
@@ -198,9 +202,11 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine" />
             </LinearLayout>
 
             <LinearLayout
@@ -208,7 +214,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginRight="5dp">
+                android:layout_marginEnd="5dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -222,10 +228,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:baselineAligned="false">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
@@ -237,7 +243,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/email"
                     android:textColor="#878583"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -246,7 +252,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -257,7 +263,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:text="@string/save"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:id="@+id/edit_button"
             android:background="@drawable/shape_background_button"
             android:visibility="gone"/>

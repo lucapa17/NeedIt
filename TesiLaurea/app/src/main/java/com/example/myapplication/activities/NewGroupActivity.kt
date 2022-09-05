@@ -34,7 +34,7 @@ class NewGroupActivity : AppCompatActivity() {
         }
         val memberList : ArrayList<User> = ArrayList()
         recv = this.findViewById(R.id.mRecycler)
-        membersAdapter = NewMembersAdapter(this, memberList)
+        membersAdapter = NewMembersAdapter(memberList)
         recv.layoutManager = LinearLayoutManager(this)
         recv.adapter = membersAdapter
         val nicknameEditText: EditText = findViewById(R.id.memberNickname)

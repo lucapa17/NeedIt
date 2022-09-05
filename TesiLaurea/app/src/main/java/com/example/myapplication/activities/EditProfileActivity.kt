@@ -24,8 +24,8 @@ import java.util.regex.Pattern
 
 class EditProfileActivity : AppCompatActivity() {
     private var image: Uri? = null
-    val id : String = FirebaseAuthWrapper(this@EditProfileActivity).getUid()!!
-    var user : User? = null
+    private val id : String = FirebaseAuthWrapper(this@EditProfileActivity).getUid()!!
+    private var user : User? = null
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

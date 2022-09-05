@@ -51,6 +51,7 @@ class CompletedListFragment : Fragment() {
         progressDialog.setMessage(requireContext().getString(R.string.wait))
         progressDialog.setCancelable(false)
         progressDialog.show()
+
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val requestList: MutableList<Request> = getRequestsList(context, groupId!!)
@@ -62,19 +63,14 @@ class CompletedListFragment : Fragment() {
                     }
                 }
                 withContext(Dispatchers.Main) {
-                    listAdapter = ListAdapter(
-                        requireContext(),
-                        groupCompletedList,
-                        photoList!!,
-                        groupName!!,
-                        false
-                    )
+                    listAdapter = ListAdapter(requireContext(), groupCompletedList, photoList!!, groupName!!, false)
                     recv.layoutManager = LinearLayoutManager(requireContext())
                     recv.adapter = listAdapter
                     progressDialog.dismiss()
                 }
             }
         }
+
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
             requireActivity().finish()

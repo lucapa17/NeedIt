@@ -65,6 +65,7 @@ class ActiveListFragment : Fragment() {
         progressDialog.setMessage(requireContext().getString(R.string.wait))
         progressDialog.setCancelable(false)
         progressDialog.show()
+
         CoroutineScope(Dispatchers.Main + Job()).launch {
             withContext(Dispatchers.IO) {
                 val requestList : MutableList<Request> = getRequestsList(context, groupId!!)
@@ -87,9 +88,9 @@ class ActiveListFragment : Fragment() {
                 }
             }
         }
+
         val mySwipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         mySwipeRefreshLayout.setOnRefreshListener {
-            //requireActivity().recreate()
             requireActivity().finish()
             requireActivity().overridePendingTransition(0,0)
             val intent  = Intent(requireContext(), GroupActivity::class.java)
@@ -98,9 +99,9 @@ class ActiveListFragment : Fragment() {
             this.startActivity(intent)
             requireActivity().overridePendingTransition(0,0)
         }
-
         return view
     }
+
     private fun addInfo() {
         val inflter = LayoutInflater.from(requireContext())
         val v = inflter.inflate(R.layout.add_request,null)
@@ -124,9 +125,7 @@ class ActiveListFragment : Fragment() {
                 layoutList.visibility = View.GONE
                 recv1.visibility = View.GONE
             }
-
         }
-
         val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
 
         hasExpiration.setOnClickListener {
@@ -148,16 +147,9 @@ class ActiveListFragment : Fragment() {
                                 else
                                     expiration.error = null
                             }
-                        TimePickerDialog(
-                            requireContext(), timeSetListener,
-                            calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false
-                        ).show()
+                        TimePickerDialog(requireContext(), timeSetListener, calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false).show()
                     }
-
-                DatePickerDialog(
-                    requireContext(), dateSetListener,
-                    calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
-                ).show()
+                DatePickerDialog(requireContext(), dateSetListener, calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]).show()
             }
             else {
                 expiration.visibility = View.GONE
@@ -181,21 +173,13 @@ class ActiveListFragment : Fragment() {
                             else
                                 expiration.error = null
                         }
-                    TimePickerDialog(
-                        requireContext(), timeSetListener,
-                        calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false
-                    ).show()
+                    TimePickerDialog(requireContext(), timeSetListener, calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false).show()
                 }
-
-            DatePickerDialog(
-                requireContext(), dateSetListener,
-                calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
-            ).show()
-
+            DatePickerDialog(requireContext(), dateSetListener, calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]).show()
         }
 
         var list : ArrayList<String>? = ArrayList()
-        val itemsAdapter = ItemsAdapter(requireContext(), list!!, false)
+        val itemsAdapter = ItemsAdapter(list!!, false)
         recv1.layoutManager = LinearLayoutManager(requireContext())
         recv1.adapter = itemsAdapter
         addItem.setOnClickListener {
@@ -210,6 +194,7 @@ class ActiveListFragment : Fragment() {
         addDialog.setView(v)
         addDialog.setPositiveButton("Ok"){
                 dialog,_->
+
             val namerequest = nameRequest.text.toString().trim()
             val comment1 = comment.text.toString().trim()
             if(namerequest.isEmpty()){
@@ -218,7 +203,7 @@ class ActiveListFragment : Fragment() {
             else if(hasExpiration.isChecked && expiration.text.isEmpty()){
                 Toast.makeText(requireContext(),requireContext().getString(R.string.emptyExpiration),Toast.LENGTH_SHORT).show()
             }
-            else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
+            else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString())!! <= Calendar.getInstance().time)
                 Toast.makeText(requireContext(),requireContext().getString(R.string.invalidDate),Toast.LENGTH_SHORT).show()
             else {
                 var request: Request
@@ -253,7 +238,6 @@ class ActiveListFragment : Fragment() {
                             var unreadMessages = getUnread(requireContext(), groupId!!, userId)!!
                             unreadMessages++
                             Firebase.database.getReference("unread").child(userId).child(groupId.toString()).setValue(unreadMessages)
-
                         }
                     }
                 }

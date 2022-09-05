@@ -17,7 +17,7 @@ import java.io.File
 class ShowProfile : AppCompatActivity() {
     private var image: Uri? = null
     private var id : String? = null
-    var user : User? = null
+    private var user : User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

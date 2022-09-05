@@ -98,7 +98,7 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                                 uri = FirebaseStorageWrapper().download(notification.groupId.toString(), context)
                             var bitmap : Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.logo2nobackground)
                             if(uri != null){
-                                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri)
+                                bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
                             }
 
                             withContext(Dispatchers.Main) {
@@ -122,7 +122,6 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                                         NotificationChannel("NOTIFICATION", name, importance).apply {
                                             description = descriptionText
                                         }
-
                                     val notificationManager: NotificationManager =
                                         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                                     notificationManager.createNotificationChannel(channel)
@@ -131,7 +130,6 @@ class RequestNotificationWorker(val context: Context, params: WorkerParameters) 
                                 with(NotificationManagerCompat.from(context)) {
                                     notify(notification.notificationId.toInt(), builder.build())
                                 }
-
                                 Firebase.database.getReference("notifications").child(uid!!).child(notification.notificationId.toString()).removeValue()
                             }
                         }

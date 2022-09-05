@@ -2,7 +2,6 @@ package com.example.myapplication.adapter
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.ProgressDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -41,7 +40,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
         var close: ImageView
         var price: TextView
         var photo: ImageView
-        var card : CardView
+        private var card : CardView
         var recv : RecyclerView
         var expiration:TextView
 
@@ -66,13 +65,11 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             photo.setOnClickListener {
                 val position = requestList[adapterPosition]
                 if(position.user.id != FirebaseAuthWrapper(c).getUid()){
-
                     val intent = Intent(v.context, ShowProfile::class.java)
                     intent.putExtra("id", position.user.id)
                     v.context.startActivity(intent)
                 }
             }
-
             optionsMenu = v.findViewById(R.id.optionsMenu)
             optionsMenu.setOnClickListener { popupMenus(it) }
 
@@ -116,14 +113,14 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
 
                         var list : ArrayList<String>?
                         if(position.list != null)
-                            list = ArrayList(position.list)
+                            list = ArrayList(position.list!!)
                         else
                             list = null
                         val simpleDateFormat = SimpleDateFormat("dd/MM/yy HH:mm")
                         if(position.expiration != null){
                             expiration.visibility = View.VISIBLE
                             hasExpiration.isChecked = true
-                            expiration.setText(simpleDateFormat.format(position.expiration))
+                            expiration.setText(simpleDateFormat.format(position.expiration!!))
                         }
                         hasExpiration.setOnClickListener {
                             if(hasExpiration.isChecked){
@@ -144,19 +141,9 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                                 else
                                                     expiration.error = null
                                             }
-                                        TimePickerDialog(
-                                            c,
-                                            timeSetListener,
-                                            calendar[Calendar.HOUR_OF_DAY],
-                                            calendar[Calendar.MINUTE],
-                                            false
-                                        ).show()
+                                        TimePickerDialog(c, timeSetListener, calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false).show()
                                     }
-
-                                DatePickerDialog(
-                                    c, dateSetListener,
-                                    calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
-                                ).show()
+                                DatePickerDialog(c, dateSetListener, calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]).show()
                             }
                             else {
                                 expiration.visibility = View.GONE
@@ -179,34 +166,24 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                             else
                                                 expiration.error = null
                                         }
-                                    TimePickerDialog(
-                                        c,
-                                        timeSetListener,
-                                        calendar[Calendar.HOUR_OF_DAY],
-                                        calendar[Calendar.MINUTE],
-                                        false
-                                    ).show()
+                                    TimePickerDialog(c, timeSetListener, calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], false).show()
                                 }
-
-                            DatePickerDialog(
-                                c, dateSetListener,
-                                calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]
-                            ).show()
-
+                            DatePickerDialog(c, dateSetListener, calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH]).show()
                         }
 
                         title.text = c.resources.getString(R.string.editRequest)
                         name.setText(position.nameRequest)
                         comment.setText(position.comment)
-                        var itemsAdapter1 = ItemsAdapter(c, ArrayList(), false)
+                        var itemsAdapter1 = ItemsAdapter(ArrayList(), false)
                         if(list != null) {
                             isList.isChecked = true
                             layoutList.visibility = View.VISIBLE
                             recv1.visibility = View.VISIBLE
-                            itemsAdapter1 = ItemsAdapter(c, list, false)
+                            itemsAdapter1 = ItemsAdapter(list, false)
                             recv1.layoutManager = LinearLayoutManager(c)
                             recv1.adapter = itemsAdapter1
                         }
+
                         isList.setOnClickListener {
                             if(isList.isChecked){
                                 layoutList.visibility = View.VISIBLE
@@ -215,16 +192,16 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                             else {
                                 layoutList.visibility = View.GONE
                                 recv1.visibility = View.GONE
-
                             }
                         }
+
                         addItem.setOnClickListener {
                             if(newItem.text.toString().trim().isEmpty())
                                 newItem.error = c.resources.getString(R.string.emptyItem)
                             else if(list == null){
                                 list = ArrayList()
                                 list!!.add(newItem.text.toString().trim())
-                                itemsAdapter1 = ItemsAdapter(c, list!!, false)
+                                itemsAdapter1 = ItemsAdapter(list!!, false)
                                 recv1.layoutManager = LinearLayoutManager(c)
                                 recv1.adapter = itemsAdapter1
                                 newItem.setText("")
@@ -250,7 +227,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 else if(hasExpiration.isChecked && expiration.text.isEmpty()){
                                     Toast.makeText(c,c.resources.getString(R.string.emptyExpiration),Toast.LENGTH_SHORT).show()
                                 }
-                                else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString()) <= Calendar.getInstance().time)
+                                else if(hasExpiration.isChecked && simpleDateFormat.parse(expiration.text.toString())!! <= Calendar.getInstance().time)
                                     Toast.makeText(c,c.resources.getString(R.string.invalidDate),Toast.LENGTH_SHORT).show()
                                 else {
                                     if(!isList.isChecked || (isList.isChecked && list!!.isEmpty()))
@@ -338,20 +315,8 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                                 for (userId in group!!.users!!) {
                                     if (userId != uid) {
                                         val notificationId: Long = getNotificationId(c, userId)
-                                        val notification = Notification(
-                                            userId,
-                                            position,
-                                            position.user.nickname,
-                                            completedBy!!.nickname,
-                                            groupName,
-                                            notificationId,
-                                            Calendar.getInstance().time,
-                                            position.groupId,
-                                            Notification.Type.CompletedRequest
-                                        )
-                                        Firebase.database.getReference("notifications")
-                                            .child(userId).child(notificationId.toString())
-                                            .setValue(notification)
+                                        val notification = Notification(userId, position, position.user.nickname, completedBy!!.nickname, groupName, notificationId, Calendar.getInstance().time, position.groupId, Notification.Type.CompletedRequest)
+                                        Firebase.database.getReference("notifications").child(userId).child(notificationId.toString()).setValue(notification)
                                     }
                                 }
                                 val intent = Intent(c, GroupActivity::class.java)
@@ -417,8 +382,7 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             val popup = PopupMenu::class.java.getDeclaredField("mPopup")
             popup.isAccessible = true
             val menu = popup.get(popupMenus)
-            menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
-                .invoke(menu,true)
+            menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java).invoke(menu,true)
         }
     }
 
@@ -487,13 +451,13 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
             dateCompleted.time = newList.expiration!!
             if (dateCompleted.get(Calendar.YEAR) == today.get(Calendar.YEAR) && dateCompleted.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
                 dayCompleted = c.resources.getString(R.string.today)
-            else if (dateCompleted.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && dateCompleted.get(Calendar.DAY_OF_YEAR) == tomorrow.get(Calendar.DAY_OF_YEAR))
+            else if (dateCompleted.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && dateCompleted.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR))
                 dayCompleted = c.resources.getString(R.string.yesterday)
             holder.completedBy.text = "${c.resources.getString(R.string.completedBy)}:  ${newList.completedBy!!.nickname}, ${dayCompleted} ${timeCompleted}"
         }
         if(newList.list != null){
             var isOpen = false
-            val itemsAdapter = ItemsAdapter(c, newList.list!!, true)
+            val itemsAdapter = ItemsAdapter(newList.list!!, true)
             holder.recv.layoutManager = LinearLayoutManager(c)
             holder.recv.adapter = itemsAdapter
             holder.readListLayout.visibility = View.VISIBLE
@@ -520,8 +484,8 @@ class ListAdapter(val c:Context, val requestList:ArrayList<Request>, private val
                 break
             }
         }
-
     }
+
     override fun getItemCount(): Int {
         return  requestList.size
     }

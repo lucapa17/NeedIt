@@ -13,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center">
 
@@ -63,7 +63,8 @@
                 android:layout_marginVertical="5dp"
                 android:ems="10"
                 android:hint="@string/groupName"
-                android:inputType="text" />
+                android:inputType="text"
+                android:importantForAutofill="no" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,12 +78,13 @@
 
                 <EditText
                     android:id="@+id/memberNickname"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
                     android:hint="@string/insertMember"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:importantForAutofill="no" />
 
                 <ImageView
                     android:id="@+id/addUser"

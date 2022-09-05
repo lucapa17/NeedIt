@@ -62,12 +62,12 @@ class FirebaseAuthWrapper(private val context: Context) {
     }
 
     fun signIn(email: String, password: String) {
-
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val intent  = Intent(this.context, SplashActivity::class.java)
                 context.startActivity(intent)
-            } else {
+            }
+            else {
                 val exception = task.exception as FirebaseException
                 if(exception is FirebaseAuthInvalidCredentialsException)
                     Toast.makeText(context, context.resources.getString(R.string.wrongCredentials), Toast.LENGTH_SHORT).show()
@@ -77,7 +77,6 @@ class FirebaseAuthWrapper(private val context: Context) {
                     Toast.makeText(context, context.resources.getString(R.string.networkError), Toast.LENGTH_SHORT).show()
                 else
                     Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
-
             }
         }
     }
@@ -87,12 +86,13 @@ class FirebaseAuthWrapper(private val context: Context) {
         val intent = Intent(this.context, SplashActivity::class.java)
         context.startActivity(intent)
     }
+
     fun delete(){
         val uid = getUid()
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {
-            FirebaseStorageWrapper().delete(uid!!, context)
+            FirebaseStorageWrapper().delete(uid!!)
             val groupList : MutableList<Group> = getGroups(context)
             for(group in groupList){
                 val requestList : MutableList<Request> = getRequestsList(context, group.groupId)
@@ -103,7 +103,7 @@ class FirebaseAuthWrapper(private val context: Context) {
                 }
                 group.users!!.remove(uid)
                 if(group.users!!.isEmpty()){
-                    FirebaseStorageWrapper().delete(group.groupId.toString(), context)
+                    FirebaseStorageWrapper().delete(group.groupId.toString())
                     Firebase.database.getReference("groups").child(group.groupId.toString()).removeValue()
                 }
                 else{
@@ -112,13 +112,13 @@ class FirebaseAuthWrapper(private val context: Context) {
             }
             Firebase.database.getReference("users").child(uid).removeValue()
             auth.currentUser!!.delete().addOnCompleteListener { task ->
-
                 if (task.isSuccessful) {
                     lock.withLock {
                         condition.signal()
                     }
 
-                } else {
+                }
+                else {
                     Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -126,6 +126,7 @@ class FirebaseAuthWrapper(private val context: Context) {
         lock.withLock {
             condition.await()
         }
+
         val dir = File(context.cacheDir.absolutePath)
         if (dir.exists()) {
             for (f in dir.listFiles()) {
@@ -380,7 +381,7 @@ fun getUnread(context: Context, groupId: Long, userId : String) : Int? {
 fun getUnreadList(context: Context, userId : String) : ArrayList<Int> {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
-    var list = ArrayList<Int>()
+    val list = ArrayList<Int>()
     GlobalScope.launch {
         FirebaseDbWrapper(context).readDbUnread(object :
             FirebaseDbWrapper.Companion.FirebaseReadCallback {
@@ -402,10 +403,8 @@ fun getUnreadList(context: Context, userId : String) : ArrayList<Int> {
     lock.withLock {
         condition.await()
     }
-
     return list
 }
-
 
 fun getGroupById (context: Context, groupId : Long) : Group? {
     val lock = ReentrantLock()
@@ -487,6 +486,7 @@ fun getUserByNickname (context: Context, nickname: String ) : User {
     }
     return user
 }
+
 fun getUserByEmail (context: Context, email: String ) : User {
     val lock = ReentrantLock()
     val condition = lock.newCondition()
@@ -614,7 +614,6 @@ class FirebaseStorageWrapper {
         try {
             bmp = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
         } catch (e: IOException) {
-
             e.printStackTrace()
         }
         val baos = ByteArrayOutputStream()
@@ -676,7 +675,7 @@ class FirebaseStorageWrapper {
         return image
     }
 
-    fun delete(id: String, context: Context) {
+    fun delete(id: String) {
         val lock = ReentrantLock()
         val condition = lock.newCondition()
         GlobalScope.launch {

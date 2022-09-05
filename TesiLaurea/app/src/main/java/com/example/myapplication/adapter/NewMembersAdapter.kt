@@ -1,6 +1,5 @@
 package com.example.myapplication.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.models.User
 
-class NewMembersAdapter (val c: Context, val memberList:ArrayList<User>): RecyclerView.Adapter<NewMembersAdapter.UserViewHolder>() {
+class NewMembersAdapter (private val memberList:ArrayList<User>): RecyclerView.Adapter<NewMembersAdapter.UserViewHolder>() {
     inner class UserViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var username: TextView
         var name: TextView

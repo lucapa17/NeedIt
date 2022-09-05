@@ -26,8 +26,8 @@ import java.io.File
 class InfoGroupActivity: AppCompatActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var membersAdapter: MembersAdapter
-    var groupId : Long? = null
-    var group : Group? = null
+    private var groupId : Long? = null
+    private var group : Group? = null
     private var uri : Uri? = null
 
     @SuppressLint("CutPasteId")
@@ -181,7 +181,7 @@ class InfoGroupActivity: AppCompatActivity() {
                             Firebase.database.getReference("users").child(user.id).setValue(user)
                             group!!.users!!.remove(user.id)
                             if(group!!.users!!.isEmpty()){
-                                FirebaseStorageWrapper().delete(group!!.groupId.toString(), this@InfoGroupActivity)
+                                FirebaseStorageWrapper().delete(group!!.groupId.toString())
                                 Firebase.database.getReference("groups").child(group!!.groupId.toString()).removeValue()
                             }
                             else{
@@ -223,7 +223,7 @@ class InfoGroupActivity: AppCompatActivity() {
 
                 val memberList : ArrayList<User> = ArrayList()
                 recv1 = view.findViewById(R.id.mRecycler)
-                newMembersAdapter = NewMembersAdapter(this, memberList)
+                newMembersAdapter = NewMembersAdapter(memberList)
                 recv1.layoutManager = LinearLayoutManager(this)
                 recv1.adapter = newMembersAdapter
 
