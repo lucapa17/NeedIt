@@ -109,6 +109,7 @@ class FirebaseAuthWrapper(private val context: Context) {
                 else{
                     Firebase.database.getReference("groups").child(group.groupId.toString()).setValue(group)
                 }
+                Firebase.database.getReference("unread").child(uid).child(group.groupId.toString()).removeValue()
             }
             Firebase.database.getReference("users").child(uid).removeValue()
             auth.currentUser!!.delete().addOnCompleteListener { task ->
