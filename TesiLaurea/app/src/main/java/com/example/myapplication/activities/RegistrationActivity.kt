@@ -34,6 +34,9 @@ class RegistrationActivity : AppCompatActivity() {
             else if (!Pattern.matches("^[a-zA-Z][a-zA-Z0-9_.-]{5,20}$", nickname.text.toString().trim())){
                 nickname.error = resources.getString(R.string.nicknameNotValid)
             }
+            else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email.text.toString().trim()).matches()) {
+                email.error = resources.getString(R.string.emailBadlyFormatted)
+            }
             else if (!Pattern.matches("[\\p{Alpha}\\p{Digit}\\p{Punct}]{8,20}", password.text.toString().trim())){
                 password.error = resources.getString(R.string.passwordNotValid)
             }

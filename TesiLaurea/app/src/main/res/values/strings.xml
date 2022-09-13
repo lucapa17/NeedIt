@@ -86,6 +86,7 @@
     <string name="wrongCredentials">Wrong credentials</string>
     <string name="networkError">Network Error</string>
     <string name="emailAlreadyUsed">The email address is already in use by another account</string>
+    <string name="emailBadlyFormatted">The email address is badly formatted</string>
     <string name="wrongPassword">Wrong password</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
