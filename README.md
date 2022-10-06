@@ -5,7 +5,7 @@ Developed by:
 * Giacomo Bisio
 * Edoardo Pozzi
 
-This repo contains the App code that we are developing for our Bachelor's thesis. </br>
+This repo contains the code of an Android application, NeedIt. </br>
 Need!t is an application that allows users to create To-Do/To-Buy Lists to share with groups of relatives, friends, etc...
 
 ## App Feature & Design
